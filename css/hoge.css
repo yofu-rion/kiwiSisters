@@ -71,6 +71,17 @@ body {
   line-height: normal;
 }
 
+.sign-up {
+  margin-bottom: -2px;
+  color: #fff;
+  font-family: 'Kiwi Maru';
+  font-size: 60px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+
 .user {
   width: 80%;
   height: 100px;
@@ -86,7 +97,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 .label {

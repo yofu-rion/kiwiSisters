@@ -17,7 +17,7 @@
     <div class="login-box-place">
         <div class="login-box">
             <form method="POST" action="controller/login.php" class="form-container">
-                <h1 class="sign-in">Sign Up</h1>
+                <h1 class="sign-up">Sign Up</h1>
                 <div class="user-signup">
                     <label for="username" class="label">ID</label>
                     <input type="text" id="username" name="username" required class="form-input" />
@@ -27,7 +27,7 @@
                     <input type="password" id="password" name="password" required class="form-input" />
                 </div>
                 <div class="user-signup">
-                    <label for="password" class="label">パスワード</label>
+                    <label for="password" class="label">パスワード(確認)</label>
                     <input type="password" id="password" name="password" required class="form-input" />
                 </div>
                 <button type="submit" class="button-login" onclick="location.href='../controller/StartController.php'">
