@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>kiwi-sisters-signup</title>
-    <link rel="stylesheet" href="../css/hoge.css">
+    <link rel="stylesheet" href="../css/sign.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
