@@ -1,0 +1,13 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  font-family: 'Kiwi Maru', serif;
+  background: linear-gradient(
+    103deg,
+    rgba(98, 9, 20, 0.97) 63.47%,
+    rgba(200, 19, 40, 0.97) 95.69%
+  );
+  display: flex;
+  flex-direction: row;
+}
