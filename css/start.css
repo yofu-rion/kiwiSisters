@@ -52,8 +52,10 @@ body {
   font-size: 24px;
 }
 
+
 .menu-item {
   margin: 8px 0;
+  transition: transform 0.2s ease;
 }
 
 /* ここがよくわからん */
@@ -64,7 +66,21 @@ body {
   margin-right: 0.5rem;
   visibility: hidden;
 }
-/* ここがよくわからん2 */
+
+.menu-item.active {
+  opacity: 0.8;
+}
+
 .menu-item.active .indicator {
   visibility: visible;
+}
+
+.button {
+  background: none;
+  color: #ffffff;
+  font-family: 'Kiwi Maru';
+  font-size: 28px;
+  background: transparent;
+  border: none;
+  outline: none;
 }

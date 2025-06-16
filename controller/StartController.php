@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <title>kiwi-sisters-signup</title>
+    <title>kiwi-sisters-start</title>
     <link rel="stylesheet" href="../css/start.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,9 +18,15 @@
             <h1 class="title">タイトル</h1>
         </div>
         <div class="menu" id="menu">
-            <div class="menu-item active"><span class="indicator">▶</span> 話を選ぶ</div>
-            <div class="menu-item"><span class="indicator">▶</span> つづきから</div>
-            <div class="menu-item"><span class="indicator">▶</span> オプション</div>
+            <div class="menu-item active"><span class="indicator">▶</span>
+                <button type="button" class="button" onclick="location.href='StorySelectController.php'">話を選ぶ</button>
+            </div>
+            <div class="menu-item"><span class="indicator">▶</span>
+                <button type="button" class="button" onclick="location.href='DataLoadController.php'">続きから</button>
+            </div>
+            <div class="menu-item"><span class="indicator">▶</span>
+                <button type="button" class="button" onclick="location.href='Setting.php'">オプション</button>
+            </div>
         </div>
     </div>
 
@@ -42,8 +48,11 @@
                 index = (index - 1 + items.length) % items.length;
                 updateActive();
             } else if (e.key === 'Enter') {
-                alert(`「${items[index].innerText.replace("▶", "").trim()}」を選択しました`);
+                const activeItem = items[index];
+                const button = activeItem.querySelector('button');
+                if (button) button.click();
             }
+
         });
     </script>
 
