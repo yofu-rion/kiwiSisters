@@ -17,10 +17,10 @@ if ($page < 1 || $page > 4) {
 }
 
 $stories = [
-    1 => ["title" => "鷺の話", "image" => "../images/story.png"],
-    2 => ["title" => "雉の話", "image" => "../images/story.png"],
-    3 => ["title" => "鷹の話", "image" => "../images/story.png"],
-    4 => ["title" => "飛べない鳥の話", "image" => "../images/story.png"],
+    1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story.png"],
+    2 => ["title" => "雉の話", "image" => "/kiwiSisters/img/story.png"],
+    3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story.png"],
+    4 => ["title" => "飛べない鳥の話", "image" => "/kiwiSisters/img/story.png"],
 ];
 
 $current = $stories[$page];
@@ -30,6 +30,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
 
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,21 +43,24 @@ $nextPage = $page < 4 ? $page + 1 : null;
 
 <body>
     <?php if ($prevPage): ?>
-        <a href="/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>" class="nav">← 前の章</a>
+        <a href="/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>" class="arrow left">◀</a>
     <?php endif; ?>
     <div class="kokuban">
-        <h2 class="h2">第<?= $page ?>章 </h2>
-        <h1><?= htmlspecialchars($current["title"]) ?></h1>
-        <!-- <div class="image">
-            <img src="<?= $current["image"] ?>" alt="第<?= $page ?>章の画像">
-        </div> -->
-        <div class="buttons">
-            <a href="/kiwiSisters/controller/StoryPlayController.php/<?= $page ?>" class="start">はじめる</a>
-            <a href="/kiwiSisters/controller/StartController.php" class="title">タイトルへ戻る</a>
+        <div class="chapter-content">
+            <h2>第<?= $page ?>章</h2>
+            <h1><?= htmlspecialchars($current["title"]) ?></h1>
+            <div class="image">
+                <img src="<?= $current["image"] ?>" alt="第<?= $page ?>章の画像" class="img"/>
+            </div>
+            <div class="buttons">
+                <a href="/kiwiSisters/controller/StoryPlayController.php/<?= $page ?>" class="start">はじめる</a>
+                <a href="/kiwiSisters/controller/StartController.php" class="title">タイトルへ</a>
+            </div>
         </div>
     </div>
+
     <?php if ($nextPage): ?>
-        <a href="/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>" class="nav">次の章 →</a>
+        <a href="/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>" class="arrow right">▶</a>
     <?php endif; ?>
 </body>
 
