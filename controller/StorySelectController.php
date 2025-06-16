@@ -42,6 +42,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
 </head>
 
 <body>
+    <audio id="select-sound" src="/kiwiSisters/music/select.mp3" preload="auto"></audio>
     <?php if ($prevPage): ?>
         <a href="/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>" class="arrow left">◀</a>
     <?php endif; ?>
@@ -50,18 +51,80 @@ $nextPage = $page < 4 ? $page + 1 : null;
             <h2>第<?= $page ?>章</h2>
             <h1><?= htmlspecialchars($current["title"]) ?></h1>
             <div class="image">
-                <img src="<?= $current["image"] ?>" alt="第<?= $page ?>章の画像" class="img"/>
+                <img src="<?= $current["image"] ?>" alt="第<?= $page ?>章の画像" class="img" />
             </div>
             <div class="buttons">
-                <a href="/kiwiSisters/controller/StoryPlayController.php/<?= $page ?>" class="start">はじめる</a>
+                <button class="start" id="start-button">はじめる</button>
                 <a href="/kiwiSisters/controller/StartController.php" class="title">タイトルへ</a>
             </div>
+
         </div>
     </div>
 
     <?php if ($nextPage): ?>
         <a href="/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>" class="arrow right">▶</a>
     <?php endif; ?>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p>この章を始めますか？</p>
+            <div class="modal-buttons">
+                <button id="modal-ok">はい</button>
+                <button id="modal-cancel">いいえ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const audioSelect = document.getElementById("select-sound");
+        const chapterPage = <?= $page ?>;
+        const storyUrl = "/kiwiSisters/controller/StoryPlayController.php/" + chapterPage;
+        const modal = document.getElementById("modal-overlay");
+        const okButton = document.getElementById("modal-ok");
+        const cancelButton = document.getElementById("modal-cancel");
+
+        const showModal = () => {
+            modal.classList.remove("hidden");
+        };
+
+        const hideModal = () => {
+            modal.classList.add("hidden");
+        };
+
+        document.getElementById("start-button").addEventListener("click", () => {
+            showModal();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (!modal.classList.contains("hidden")) return;
+
+            if (e.key === "ArrowLeft") {
+                <?php if ($prevPage): ?>
+                    window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>";
+                    audioSelect.currentTime = 0;
+                    audioSelect.play().catch(() => { });
+                <?php endif; ?>
+            } else if (e.key === "ArrowRight") {
+                <?php if ($nextPage): ?>
+                    window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>";
+                    audioSelect.currentTime = 0;
+                    audioSelect.play().catch(() => { });
+                <?php endif; ?>
+            } else if (e.key === "Enter") {
+                showModal();
+            }
+        });
+        okButton.addEventListener("click", () => {
+            window.location.href = storyUrl;
+        });
+
+        cancelButton.addEventListener("click", () => {
+            hideModal();
+        });
+
+    </script>
+
+
 </body>
 
 </html>
