@@ -25,13 +25,15 @@
             $sql=$pdo->prepare('insert into login values(?,?)');
             $sql->execute([$_REQUEST['username'], $_REQUEST['password']]);
             echo '登録しました。';
+            // フロントおねしゃす
         }else{
             echo 'パスワードが一致しません。';
-            exit;
+            // フロントおねしゃす
         }
         
     } else {
         echo 'IDがすでに使用されていますので、変更してください。';
+        // フロントおねしゃす
     }
     ?>
 </body>
