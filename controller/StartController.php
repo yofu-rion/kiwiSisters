@@ -12,83 +12,105 @@
 </head>
 
 <body>
-    <audio id="kettei-sound" src="../music/kettei.mp3" preload="auto"></audio>
-    <audio id="select-sound" src="../music/select.mp3" preload="auto"></audio>
 
+    <?php session_start(); ?>
+    <?php
+    unset($_SESSION['login']);
+    $pdo=new PDO('mysql:host=localhost;dbname=kiwi_datas;charset=utf8', 
+        'staff', 'password');
+    $sql=$pdo->prepare('select * from login where name=? and pass=?');
+    $sql->execute([$_REQUEST['username'], $_REQUEST['password']]);
+    foreach ($sql as $row) {
+        $_SESSION['login']=[
+            'name'=>$row['name'], 
+            'pass'=>$row['pass']];
+    }
+    if (isset($_SESSION['login'])) {
+        ?>
+        <audio id="kettei-sound" src="../music/kettei.mp3" preload="auto"></audio>
+        <audio id="select-sound" src="../music/select.mp3" preload="auto"></audio>
+        <div class="choice">
+            <div class="title-place">
+                <h1 class="title">タイトル</h1>
+            </div>
+            <div class="menu" id="menu">
+                <div class="menu-item active"><span class="indicator">▶</span>
+                    <button type="button" class="button" onclick="location.href='StorySelectController.php'">話を選ぶ</button>
+                </div>
+                <div class="menu-item"><span class="indicator">▶</span>
+                    <button type="button" class="button" onclick="location.href='DataLoadController.php'">続きから</button>
+                </div>
+                <div class="menu-item"><span class="indicator">▶</span>
+                    <button type="button" class="button" onclick="location.href='Setting.php'">オプション</button>
+                </div>
 
-    <div class="choice">
-        <div class="title-place">
-            <h1 class="title">タイトル</h1>
+            </div>
         </div>
-        <div class="menu" id="menu">
-            <div class="menu-item active">
-                <span class="indicator">▶</span>
-                <button type="button" class="button" data-href="StorySelectController.php">話を選ぶ</button>
-            </div>
-            <div class="menu-item">
-                <span class="indicator">▶</span>
-                <button type="button" class="button" data-href="DataLoadController.php">続きから</button>
-            </div>
-            <div class="menu-item">
-                <span class="indicator">▶</span>
-                <button type="button" class="button" data-href="Setting.php">オプション</button>
-            </div>
-        </div>
-    </div>
 
-    <div class="illust">
+        <div class="illust">
         <h1 class="h1">イラストが乗る予定</h1>
-    </div>
+        </div>
 
-    <div id="fade-overlay"></div>
+        <div id="fade-overlay"></div>
 
-    <script>
-        const items = document.querySelectorAll(".menu-item");
-        const audio = document.getElementById("kettei-sound");
-        const fadeOverlay = document.getElementById("fade-overlay");
-        const audioSelect = document.getElementById("select-sound");
-        let index = 0;
+        <script>
+            const items = document.querySelectorAll(".menu-item");
+            const audio = document.getElementById("kettei-sound");
+            const fadeOverlay = document.getElementById("fade-overlay");
+            const audioSelect = document.getElementById("select-sound");
+            let index = 0;
 
-        const updateActive = () => {
-            items.forEach((item, i) => {
-                item.classList.toggle("active", i === index);
-            });
-        };
+            const updateActive = () => {
+                items.forEach((item, i) => {
+                    item.classList.toggle("active", i === index);
+                });
+            };
 
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowDown") {
-                index = (index + 1) % items.length;
-                updateActive();
-                audioSelect.currentTime = 0;
-                audioSelect.play().catch(() => { });
-            } else if (e.key === "ArrowUp") {
-                index = (index - 1 + items.length) % items.length;
-                updateActive();
-                audioSelect.currentTime = 0;
-                audioSelect.play().catch(() => { });
-            } else if (e.key === "Enter") {
-                const activeItem = items[index];
-                const button = activeItem.querySelector("button");
-                if (button) {
-                    const targetUrl = button.dataset.href;
-                    audio.currentTime = 0;
-                    audio.play().catch(() => { });
-                    // フェード
-                    fadeOverlay.classList.add("fade-out");
-                    // 2秒後に遷移
-                    setTimeout(() => {
-                        location.href = targetUrl;
-                    }, 2000);
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowDown") {
+                    index = (index + 1) % items.length;
+                    updateActive();
+                    audioSelect.currentTime = 0;
+                    audioSelect.play().catch(() => { });
+                } else if (e.key === "ArrowUp") {
+                    index = (index - 1 + items.length) % items.length;
+                    updateActive();
+                    audioSelect.currentTime = 0;
+                    audioSelect.play().catch(() => { });
+                } else if (e.key === "Enter") {
+                    const activeItem = items[index];
+                    const button = activeItem.querySelector("button");
+                    if (button) {
+                        const targetUrl = button.dataset.href;
+                        audio.currentTime = 0;
+                        audio.play().catch(() => { });
+                        // フェード
+                        fadeOverlay.classList.add("fade-out");
+                        // 2秒後に遷移
+                        setTimeout(() => {
+                            location.href = targetUrl;
+                        }, 2000);
+                    }
                 }
-            }
-        });
+            });
 
-        window.onpageshow = function (event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        };
-    </script>
+            window.onpageshow = function (event) {
+                if (event.persisted) {
+                    window.location.reload();
+                }
+            };
+        </script>
+
+        <div class="illust">
+            <h1 class="h1">イラストが乗る予定</h1>
+        </div>
+    <?php
+    } else {
+        echo 'ログイン名またはパスワードが違います。';
+        // フロントおねしゃす
+    }
+    ?>
+    
 </body>
 
 </html>
