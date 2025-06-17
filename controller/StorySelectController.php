@@ -89,7 +89,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <script>
         const audioSelect = document.getElementById("select-sound");
         const chapterPage = <?= $page ?>;
-        const storyUrl = "/kiwiSisters/controller/StoryPlayController.php/" + chapterPage;
+        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php";
         const modal = document.getElementById("modal-overlay");
         const okButton = document.getElementById("modal-ok");
         const cancelButton = document.getElementById("modal-cancel");
@@ -136,4 +136,5 @@ $nextPage = $page < 4 ? $page + 1 : null;
         });
     </script>
 </body>
+
 </html>
