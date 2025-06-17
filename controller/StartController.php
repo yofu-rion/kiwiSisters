@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>kiwi-sisters-start</title>
-    <link rel="stylesheet" href="../css/start.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/start.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet" />
 </head>
 
 <body>
+
     <?php session_start(); ?>
     <?php
     unset($_SESSION['login']);
@@ -27,6 +27,8 @@
     }
     if (isset($_SESSION['login'])) {
         ?>
+        <audio id="kettei-sound" src="../music/kettei.mp3" preload="auto"></audio>
+        <audio id="select-sound" src="../music/select.mp3" preload="auto"></audio>
         <div class="choice">
             <div class="title-place">
                 <h1 class="title">タイトル</h1>
@@ -41,33 +43,62 @@
                 <div class="menu-item"><span class="indicator">▶</span>
                     <button type="button" class="button" onclick="location.href='Setting.php'">オプション</button>
                 </div>
+
             </div>
         </div>
 
+        <div class="illust">
+        <h1 class="h1">イラストが乗る予定</h1>
+        </div>
+
+        <div id="fade-overlay"></div>
+
         <script>
-            const items = document.querySelectorAll('.menu-item');
+            const items = document.querySelectorAll(".menu-item");
+            const audio = document.getElementById("kettei-sound");
+            const fadeOverlay = document.getElementById("fade-overlay");
+            const audioSelect = document.getElementById("select-sound");
             let index = 0;
 
             const updateActive = () => {
                 items.forEach((item, i) => {
-                    item.classList.toggle('active', i === index);
+                    item.classList.toggle("active", i === index);
                 });
             };
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowDown') {
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowDown") {
                     index = (index + 1) % items.length;
                     updateActive();
-                } else if (e.key === 'ArrowUp') {
+                    audioSelect.currentTime = 0;
+                    audioSelect.play().catch(() => { });
+                } else if (e.key === "ArrowUp") {
                     index = (index - 1 + items.length) % items.length;
                     updateActive();
-                } else if (e.key === 'Enter') {
+                    audioSelect.currentTime = 0;
+                    audioSelect.play().catch(() => { });
+                } else if (e.key === "Enter") {
                     const activeItem = items[index];
-                    const button = activeItem.querySelector('button');
-                    if (button) button.click();
+                    const button = activeItem.querySelector("button");
+                    if (button) {
+                        const targetUrl = button.dataset.href;
+                        audio.currentTime = 0;
+                        audio.play().catch(() => { });
+                        // フェード
+                        fadeOverlay.classList.add("fade-out");
+                        // 2秒後に遷移
+                        setTimeout(() => {
+                            location.href = targetUrl;
+                        }, 2000);
+                    }
                 }
-
             });
+
+            window.onpageshow = function (event) {
+                if (event.persisted) {
+                    window.location.reload();
+                }
+            };
         </script>
 
         <div class="illust">

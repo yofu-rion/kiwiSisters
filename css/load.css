@@ -1,7 +1,6 @@
 body {
   width: 100vw;
   height: 100vh;
-  position: relative;
   font-family: 'Kiwi Maru', serif;
   background: linear-gradient(
     103deg,
@@ -10,4 +9,29 @@ body {
   );
   display: flex;
   flex-direction: row;
+}
+
+.header {
+  width: 80%;
+  height: auto;
+}
+
+.are {
+  width: 120px;
+  height: auto;
+  color: #fff;
+  font-family: 'Kiwi Maru';
+  font-size: 120px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.line {
+  width: 1248px;
+  height: 0px;
+  flex-shrink: 0;
+  width: 1248px;
+  height: 0px;
+  flex-shrink: 0;
 }
