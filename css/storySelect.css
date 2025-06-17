@@ -1,7 +1,6 @@
 body {
   width: 100vw;
   height: 100vh;
-  position: relative;
   font-family: 'Kiwi Maru', serif;
   background: linear-gradient(
     180deg,
@@ -9,6 +8,173 @@ body {
     rgba(200, 19, 40, 0.97) 100%
   );
   display: flex;
-  flex-direction: row;
+  /* flex-direction: col; */
+  justify-content: center;
+  align-item: center;
   overflow: hidden;
+}
+
+body.final-page {
+  background: #1a0000;
+  background-size: auto, auto, cover;
+}
+
+.kokuban {
+  width: 70%;
+  height: 84%;
+  border: 3px solid #fff;
+  background: #273c26;
+  text-align: center;
+  padding: 40px;
+}
+
+.chapter-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  color: #ffffff;
+  font-size: 40px;
+  margin: 20px 0;
+  text-align: center;
+  font-family: 'Kiwi Maru';
+  font-size: 80px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+h2 {
+  color: #fffafa;
+  text-align: center;
+  font-family: 'Kiwi Maru';
+  font-size: 52px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 20px 0;
+}
+
+.buttons {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  align-content: space-between;
+  margin: 30px 0;
+  border: none;
+}
+
+.img {
+  width: 60%;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 48px;
+  color: white;
+  text-decoration: none;
+  padding: 20px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.arrow.left {
+  left: 30px;
+}
+
+.arrow.right {
+  right: 30px;
+}
+
+.start {
+  text-decoration: none;
+  font-size: 40px;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Kiwi Maru';
+  padding: 0;
+}
+
+.title {
+  font-size: 40px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: #620914;
+  border: 2px solid white;
+  padding: 30px 40px;
+  text-align: center;
+  color: white;
+  font-family: 'Kiwi Maru';
+  font-size: 24px;
+  border-radius: 12px;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  margin: 0 10px;
+  font-size: 20px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Kiwi Maru';
+}
+
+.modal-buttons #modal-ok {
+  background-color: #4caf50;
+  color: white;
+}
+
+.modal-buttons #modal-cancel {
+  background-color: #ccc;
+  color: black;
+}
+
+.hidden {
+  display: none;
+}
+
+.kokuban.final-chapter {
+  border: 3px solid #fff;
+  background: #273c26;
+  background-image:
+    url('/kiwiSisters/img/blood-big.png'),
+    url('/kiwiSisters/img/blood-small.png');
+  background-repeat: no-repeat, no-repeat;
+  background-position: top left, bottom right;
+  background-size: auto, auto;
+}
+
+
+.kokuban.final-chapter h1,
+.kokuban.final-chapter h2 {
+  color: #fff;
 }
