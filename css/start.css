@@ -18,13 +18,20 @@ body {
   width: 100%;
   height: auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .title {
   color: #fff;
   font-size: 52px;
+
+}
+
+.user {
   padding: 48px 0;
+  color: #ffffff;
 }
 
 .choice {
@@ -101,3 +108,5 @@ body {
 #fade-overlay.fade-out {
   opacity: 1;
 }
+
+

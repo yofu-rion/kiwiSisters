@@ -1,0 +1,34 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  font-family: 'Kiwi Maru', serif;
+  background: linear-gradient(
+    244deg,
+    #520e15 20.11%,
+    #67111b 63.36%,
+    #ed344a 97.96%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  overflow: hidden;
+}
+
+.error-title {
+  color: #fff;
+  font-family: 'Kiwi Maru';
+  font-size: 52px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.error-message {
+  color: #fff;
+  font-family: 'Kiwi Maru';
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}

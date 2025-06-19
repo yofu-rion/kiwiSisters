@@ -19,8 +19,8 @@
             <form method="POST" action="SignUp.php" class="form-container">
                 <h1 class="sign-up">Sign Up</h1>
                 <div class="user-signup">
-                    <label for="username" class="label">ID</label>
-                    <input type="text" id="username" name="username" required class="form-input" />
+                    <label for="name" class="label">ID</label>
+                    <input type="text" id="name" name="name" required class="form-input" />
                 </div>
                 <div class="user-signup">
                     <label for="password" class="label">パスワード</label>

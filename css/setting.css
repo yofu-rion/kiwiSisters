@@ -13,3 +13,20 @@ body {
   flex-direction: row;
   overflow: hidden;
 }
+
+/* --- 設定画面用（任意） --------------------------- */
+.setting-page   { text-align:center; color:#fff; }
+.setting-title  { font-size:40px; margin:40px 0; }
+
+.logout-area    { margin-top:60px; }
+.logout-btn {
+  padding:12px 48px;
+  background:#c81328;
+  color:#fff;
+  border-radius:6px;
+  font-family:'Kiwi Maru',serif;
+  font-size:20px;
+  text-decoration:none;
+  transition:opacity .2s;
+}
+.logout-btn:hover { opacity:.8; }
