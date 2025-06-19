@@ -1,11 +1,7 @@
 <?php
-/* -----------------------------------------------
-   Logout.php   －  ログアウト処理
------------------------------------------------- */
-session_start();                 // セッションを開始
-$_SESSION = [];                  // セッション変数を空配列で初期化
+session_start();
+$_SESSION = [];
 if (ini_get('session.use_cookies')) {
-    // セッションクッキーも削除（完全ログアウト）
     $params = session_get_cookie_params();
     setcookie(
         session_name(), '', time() - 42000,
@@ -13,9 +9,8 @@ if (ini_get('session.use_cookies')) {
         $params['secure'], $params['httponly']
     );
 }
-session_destroy();               // セッションを破棄
+session_destroy();
 
-/* --- ここでログイン画面へリダイレクト ---------------- */
 echo <<<HTML
     <!DOCTYPE html>
     <html lang="ja">
