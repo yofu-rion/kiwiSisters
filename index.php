@@ -19,8 +19,8 @@
             <form method="POST" action="./controller/StartController.php" class="form-container">
                 <h1 class="sign-in">Sign In</h1>
                 <div class="user">
-                    <label for="username" class="label">ID</label>
-                    <input type="text" id="username" name="username" required class="form-input" />
+                    <label for="name" class="label">ID</label>
+                    <input type="text" id="name" name="name" required class="form-input" />
                 </div>
                 <div class="user">
                     <label for="password" class="label">パスワード</label>

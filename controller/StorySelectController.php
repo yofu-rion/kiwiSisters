@@ -67,7 +67,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
                 <?php if (!$isFinalChapter || ($isFinalChapter && $unlockFinalChapter)): ?>
                     <button class="start" id="start-button">はじめる</button>
                 <?php endif; ?>
-                <a href="/kiwiSisters/controller/StartController.php" class="title">タイトルへ</a>
+                <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトルへ</a>
             </div>
         </div>
     </div>
