@@ -13,7 +13,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="are">ロード</div>
+        <div class="load">ロード</div>
         <a href="/kiwiSisters/controller/StartMenu.php" class="back">戻る→</a>
     </div>
     <div class="save">
