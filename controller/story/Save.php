@@ -13,8 +13,8 @@
 </head>
 <body>
     <div class="header">
-        <div class="are">ロード</div>
-        <a href="/kiwiSisters/controller/StartMenu.php" class="back">戻る→</a>
+        <div class="are">セーブ</div>
+        <a href="/kiwiSisters/controller/story/StoryPlayController1.php" class="back">戻る→</a>
     </div>
     <div class="save">
         <div class="save-block">1</div>

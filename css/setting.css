@@ -10,8 +10,9 @@ body {
     rgba(237, 52, 74, 0.97) 99.21%
   );
   display: flex;
-  flex-direction: row;
-  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  overflow:hidden;
 }
 
 .header {
@@ -50,15 +51,30 @@ body {
   height: auto;
   display: flex;
   flex-direction: column;
+  margin-top: 36px;
 }
 
-.logout-btn {
+.logout {
   color: #fff;
+  margin-bottom:12px;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #fff;
   font-family: 'Kiwi Maru';
-  font-size: 48px;
+  font-size: 28px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  outline: none;
+}
+
+.oto {
+  color: #fff;
+  margin-bottom:24px;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #fff;
+  font-family: 'Kiwi Maru';
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 400;
+  outline: none;
 }

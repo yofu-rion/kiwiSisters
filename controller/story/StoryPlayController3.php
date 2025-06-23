@@ -16,7 +16,7 @@
         <div class="comment">
             <div class="hako">
                 <div class="name">なまえ</div>
-                <div class="text">ストーリー1だよ</div>
+                <div class="text">ストーリー3だよ</div>
                 <div class="menu">
                     <a href="/kiwiSisters/controller/story/Save.php" class="save">セーブ</a>
                     <!-- <button>ロード</button> -->

@@ -14,7 +14,7 @@ if (!isset($_SESSION['login'])) {    // 未ログインならログイン画面�
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>kiwi-sisters - 設定</title>
 
-  <link rel="stylesheet" href="../css/load.css">
+  <link rel="stylesheet" href="../css/setting.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
@@ -25,8 +25,8 @@ if (!isset($_SESSION['login'])) {    // 未ログインならログイン画面�
   <a href="/kiwiSisters/controller/StartMenu.php" class="back">戻る→</a>
 </div>
 <div class="settei">
-  <div>音量設定</div>
-  <a href="Logout.php" class="logout-btn">ログアウト</a>
+  <div class="oto">音量設定</div>
+  <a href="Logout.php" class="logout">ログアウト</a>
 </div>
 </body>
 
