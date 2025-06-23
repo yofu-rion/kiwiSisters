@@ -14,7 +14,13 @@
 <body>
     <div class="header">
         <div class="are">記憶</div>
-        <div class="line"></div>
+        <a href="/kiwiSisters/controller/StartMenu.php" class="back">戻る→</a>
+    </div>
+    <div class="save">
+        <div class="save-block">1</div>
+        <div class="save-block">2</div>
+        <div class="save-block">3</div>
+        <div class="save-block">4</div>
     </div>
 </body>
 
