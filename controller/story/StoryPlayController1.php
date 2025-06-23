@@ -16,11 +16,14 @@
         <div class="comment">
             <div class="hako">
                 <div class="name">なまえ</div>
-                <div class="text">ストーリー1だよ</div>
+                <div class="text">
+                    <div>ストーリー1だよ</div>
+                    <button class="next">></button>
+                </div>
                 <div class="menu">
                     <a href="/kiwiSisters/controller/story/Save.php" class="save">セーブ</a>
                     <!-- <button>ロード</button> -->
-                   <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
+                    <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
                 </div>
             </div>
         </div>

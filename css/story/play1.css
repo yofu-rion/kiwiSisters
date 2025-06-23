@@ -69,6 +69,8 @@ body {
   background-color: #e7dc81;
   display: flex;
   align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .menu {
@@ -83,6 +85,11 @@ body {
   padding-left: 12px;
   padding-right: 12px;
   outline: none;
+}
+
+.next {
+   margin-top:80px;
+   margin-right:20px;
 }
 
 .title {
