@@ -16,7 +16,6 @@
         <div class="are">記憶</div>
         <a href="/kiwiSisters/controller/StartMenu.php" class="back">戻る→</a>
     </div>
-    <!-- 先にバックエンドあった方がいいと思った -->
     <div class="save">
         <div class="save-block">1</div>
         <div class="save-block">2</div>
