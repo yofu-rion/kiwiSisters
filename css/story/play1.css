@@ -53,6 +53,7 @@ body {
 .name {
   width: 30%;
   height: 20%;
+  font-size:20px;
   background-color: #273c26;
   color: #ffffff;
   display: flex;

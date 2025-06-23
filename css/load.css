@@ -32,6 +32,15 @@ body {
   line-height: normal;
 }
 
+.kore {
+  color: #fff;
+  font-family: 'Kiwi Maru';
+  font-size: 48px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
 .back {
   color: #fff;
   font-family: 'Kiwi Maru';

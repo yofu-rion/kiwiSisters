@@ -18,7 +18,7 @@
                 <div class="name">なまえ</div>
                 <div class="text">ここに文章が入るよ</div>
                 <div class="menu">
-                    <a class="save">セーブ</a>
+                    <a href="/kiwiSisters/controller/story/Save.php" class="save">セーブ</a>
                     <!-- <button>ロード</button> -->
                    <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
                 </div>
