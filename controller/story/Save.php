@@ -13,7 +13,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="kore">記憶(ゲームプレイ中…)</div>
+        <div class="are">セーブ</div>
         <a href="/kiwiSisters/controller/story/StoryPlayController1.php" class="back">戻る→</a>
     </div>
     <div class="save">

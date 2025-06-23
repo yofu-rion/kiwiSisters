@@ -82,9 +82,11 @@ body {
 .save {
   padding-left: 12px;
   padding-right: 12px;
+  outline: none;
 }
 
 .title {
   padding-left: 12px;
   padding-right: 12px;
+  outline: none;
 }

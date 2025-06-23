@@ -26,15 +26,6 @@ body {
 .are {
   color: #fff;
   font-family: 'Kiwi Maru';
-  font-size: 64px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
-.kore {
-  color: #fff;
-  font-family: 'Kiwi Maru';
   font-size: 48px;
   font-style: normal;
   font-weight: 400;
@@ -44,7 +35,7 @@ body {
 .back {
   color: #fff;
   font-family: 'Kiwi Maru';
-  font-size: 48px;
+  font-size: 40px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
