@@ -3,14 +3,7 @@ body {
   height: 100vh;
   position: relative;
   font-family: 'Kiwi Maru', serif;
-  background-image: url('../../img/rouka.png'),
-    /* ① 写真（上） */
-      linear-gradient(
-        180deg,
-        rgba(98, 9, 20, 0.97) 77.49%,
-        rgba(200, 19, 40, 0.97) 100%
-      ); /* ② グラデ（下） */
-
+  /* 背景画像はPHP側で設定 */
   background-size: cover, 100% 100%;
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
