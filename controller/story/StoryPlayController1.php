@@ -2,6 +2,10 @@
 <html lang="en">
 
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -30,7 +34,7 @@ list($background, $talkingCharacter, $text, $next_state, $character1, $character
 if ($background === '廊下') {
     $backgroundImage = '../../img/rouka.png';
 } elseif($background === 'トイレ') {
-    $backgroundImage = '../../img/toire.png'; 
+    $backgroundImage = '../../img/toire.png';
 }
 
 

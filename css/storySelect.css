@@ -178,3 +178,18 @@ h2 {
 .kokuban.final-chapter h2 {
   color: #fff;
 }
+
+/* 画面全体を覆う黒いレイヤー ─ 初期状態は透明 */
+.fade-overlay{
+  position:fixed;
+  inset:0;                 /* top:0; right:0; bottom:0; left:0; と同義 */
+  background:#000;
+  opacity:0;
+  pointer-events:none;     /* クリック無効化 */
+  transition:opacity .8s ease; /* フェード時間 (0.8秒) は好みで */
+  z-index:9999;            /* モーダルより上に重ねる */
+}
+/* フェード開始時に付与するクラス */
+.fade-overlay.fade-in{
+  opacity:1;
+}

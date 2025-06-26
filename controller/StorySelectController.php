@@ -85,7 +85,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
             </div>
         </div>
     </div>
-
+    <div id="fade-overlay" class="fade-overlay"></div>
     <script>
         const audioSelect = document.getElementById("select-sound");
         const chapterPage = <?= $page ?>;
@@ -128,13 +128,21 @@ $nextPage = $page < 4 ? $page + 1 : null;
                 showModal();
             }
         });
+        const fadeOverlay = document.getElementById("fade-overlay");
+
         okButton.addEventListener("click", () => {
-            window.location.href = storyUrl;
+            fadeOverlay.classList.add("fade-in");
+
+            setTimeout(() => {
+                window.location.href = storyUrl;
+            }, 2000);
         });
+
         cancelButton.addEventListener("click", () => {
             hideModal();
         });
     </script>
+
 </body>
 
 </html>
