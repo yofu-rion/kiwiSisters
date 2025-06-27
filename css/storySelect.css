@@ -178,3 +178,19 @@ h2 {
 .kokuban.final-chapter h2 {
   color: #fff;
 }
+
+/* 画面全体を覆う黒いレイヤー ─ 初期状態は透明 */
+.fade-overlay{
+  position:fixed;
+  inset:0;
+  background:#000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .8s ease;
+  z-index:9999;
+}
+
+.fade-overlay.fade-in{
+  opacity:1;
+}
+

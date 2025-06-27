@@ -6,48 +6,51 @@ require '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-// シナリオファイル名
 $inputFileName = '../../scenario/ScenarioPlay1.xlsx';
-
 $spreadsheet = IOFactory::load($inputFileName);
 $sheet = $spreadsheet->getActiveSheet();
 
-// GETパラメータから行番号を取得（デフォルトは1）
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $row = $sheet->getRowIterator($page, $page)->current();
-$cellIterator = $row->getCellIterator('A', 'G'); // A列〜G列（1〜7列目）
+
+$cellIterator = $row->getCellIterator();
 $cellIterator->setIterateOnlyExistingCells(false);
 
-// 変数に格納
 $values = [];
 foreach ($cellIterator as $cell) {
     $values[] = $cell->getValue();
 }
 
-list($background, $talkingCharacter, $text, $next_state, $character1, $character2, $character3) = $values;
+$background = $values[0] ?? '';
+$talkingCharacter = $values[1] ?? '';
+$text = $values[2] ?? '';
+$next_state = $values[3] ?? '';
+$illustration = $values[4] ?? '';
 
-// 背景画像のパスを設定
 if ($background === '廊下') {
     $backgroundImage = '../../img/rouka.png';
-} elseif($background === 'トイレ') {
-    $backgroundImage = '../../img/toire.png'; 
+} elseif ($background === 'トイレ') {
+    $backgroundImage = '../../img/toire.png';
 }
 
+$charImageMap = [
+    '白鷺' => '/kiwiSisters/img/shirasagi_standard.png',
+    '雉真' => '/kiwiSisters/img/kijima_standard.png',
+    // 必要に応じてここへ追加
+];
 
+$charImageFile = $charImageMap[$illustration] ?? null;
 $nextPage = $page + 1;
-// ボタンが押されたか判定
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($next_state == 0) {
-        // 終了
         header("Location: ../StartMenu.php");
         exit;
     } elseif ($next_state == 1) {
-        // 次のページに遷移
         header("Location: StoryPlayController1.php?page={$nextPage}");
         exit;
     } elseif ($next_state == 2) {
         // 選択肢画面に遷移
-
         exit;
     }
 }
@@ -63,17 +66,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         body {
             background-image: url('<?php echo $backgroundImage; ?>'),
-                linear-gradient(
-                    180deg,
+                linear-gradient(180deg,
                     rgba(98, 9, 20, 0.97) 77.49%,
-                    rgba(200, 19, 40, 0.97) 100%
-                );
+                    rgba(200, 19, 40, 0.97) 100%);
         }
     </style>
 </head>
 
 <body>
     <div class="full">
+        <?php if ($charImageFile): ?>
+            <img class="char-stand" src="<?= htmlspecialchars($charImageFile) ?>"
+                alt="<?= htmlspecialchars($illustration) ?>">
+        <?php endif; ?>
+
         <div class="kuuhaku">a</div>
         <div class="comment">
             <div class="hako">
@@ -86,12 +92,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="menu">
                     <a href="/kiwiSisters/controller/story/Save.php" class="save">セーブ</a>
-                    <!-- <button>ロード</button> -->
                     <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("form");
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && form) {
+                    e.preventDefault();
+                    form.submit();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
