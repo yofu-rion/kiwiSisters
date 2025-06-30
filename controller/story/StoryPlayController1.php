@@ -47,6 +47,7 @@ $charImageMap = [
     '鷹森' => '/kiwiSisters/img/takamori_standard.png',
     '江永' => '/kiwiSisters/img/enaga_standard.png',
     // '花子' => '/kiwiSisters/img/hanako_standard.png',
+    'キーウィ・キウイ' => '/kiwiSisters/img/item0.png',
 ];
 
 $charImageFile = $charImageMap[$illustration] ?? null;
