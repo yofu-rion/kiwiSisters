@@ -46,6 +46,8 @@ $nextPage = $page < 4 ? $page + 1 : null;
 
 <body class="<?= $isFinalChapter ? 'final-page' : '' ?>">
     <audio id="select-sound" src="/kiwiSisters/music/select.mp3" preload="auto"></audio>
+    <audio id="kettei-sound" src="/kiwiSisters/music/kettei.mp3" preload="auto"></audio>
+
     <?php if ($prevPage): ?>
         <a href="/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>" class="arrow left">◀</a>
     <?php endif; ?>
@@ -86,13 +88,17 @@ $nextPage = $page < 4 ? $page + 1 : null;
         </div>
     </div>
 
+    <div id="fade-overlay" class="fade-overlay"></div>
+
     <script>
         const audioSelect = document.getElementById("select-sound");
         const chapterPage = <?= $page ?>;
-        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=1";
+        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
         const modal = document.getElementById("modal-overlay");
         const okButton = document.getElementById("modal-ok");
         const cancelButton = document.getElementById("modal-cancel");
+        const fadeOverlay = document.getElementById("fade-overlay");
+        const audioKettei = document.getElementById("kettei-sound");
 
         const showModal = () => {
             modal.classList.remove("hidden");
@@ -128,9 +134,16 @@ $nextPage = $page < 4 ? $page + 1 : null;
                 showModal();
             }
         });
+
         okButton.addEventListener("click", () => {
-            window.location.href = storyUrl;
+            audioKettei.currentTime = 0;
+            audioKettei.play().catch(() => { });
+            fadeOverlay.classList.add("fade-in");
+            setTimeout(() => {
+                window.location.href = storyUrl;
+            }, 2000);
         });
+
         cancelButton.addEventListener("click", () => {
             hideModal();
         });

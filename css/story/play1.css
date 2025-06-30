@@ -7,6 +7,7 @@ body {
   background-size: cover, 100% 100%;
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
+  overflow: hidden;
 }
 
 .full {
@@ -27,26 +28,31 @@ body {
 }
 
 .comment {
+  position: relative;
+  z-index: 2;
   width: 90%;
   height: 40%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
 }
 
 .hako {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 220px;
   background-color: #d9d9d9;
-  opacity:80%;
+  opacity: 80%;
 }
 
 .name {
+  position: relative;
+  z-index: 2;
   width: 30%;
-  height: 20%;
-  font-size:20px;
+  height: 25%;
+  font-size: 28px;
   background-color: #273c26;
   color: #ffffff;
   display: flex;
@@ -55,11 +61,14 @@ body {
 }
 
 .text {
+  position: relative;
+  border-bottom: thick double #ffffff;
+  z-index: 2;
   width: auto;
-  height: 65%;
-  margin-left: 12px;
-  margin-right: 12px;
-  background-color: #e7dc81;
+  height: 60%;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: 24px;
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -67,6 +76,8 @@ body {
 }
 
 .menu {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 15%;
   display: flex;
@@ -81,12 +92,43 @@ body {
 }
 
 .next {
-   margin-top:80px;
-   margin-right:20px;
+  margin-top: 80px;
+  margin-right: 20px;
 }
 
 .title {
   padding-left: 12px;
   padding-right: 12px;
   outline: none;
+}
+
+.char-stand {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-height: 200%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.choices {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 10;
+  color: #000000;
+}
+
+.choices button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background-color: #fefefe;
+  border: 2px solid #333;
+  cursor: pointer;
+  color: #000000;
 }
