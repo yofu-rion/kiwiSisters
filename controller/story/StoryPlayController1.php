@@ -44,8 +44,8 @@ if ($background === '廊下') {
 $charImageMap = [
     '白鷺' => '/kiwiSisters/img/shirasagi_standard.png',
     '雉真' => '/kiwiSisters/img/kijima_standard.png',
-    // '鷹森' => '/kiwiSisters/img/takamori_standard.png',
-    // '江永' => '/kiwiSisters/img/enaga_standard.png',
+    '鷹森' => '/kiwiSisters/img/takamori_standard.png',
+    '江永' => '/kiwiSisters/img/enaga_standard.png',
     // '花子' => '/kiwiSisters/img/hanako_standard.png',
 ];
 
