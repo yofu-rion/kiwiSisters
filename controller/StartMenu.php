@@ -43,7 +43,6 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
             <div class="menu-item"><span class="indicator">▶</span>
                 <button type="button" class="button" data-href="Setting.php">オプション</button>
             </div>
-
         </div>
     </div>
 
