@@ -32,6 +32,8 @@ $illustration = $values[4] ?? '';
 $choice1 = $values[9] ?? '';
 $choice2 = $values[10] ?? '';
 $jumpTarget = $values[11] ?? '';
+$correctjumpTarget = $values[12] ?? '';
+$incorrectjumpTarget = $values[13] ?? '';
 
 if ($background === '廊下') {
     $backgroundImage = '../../img/rouka.png';
@@ -121,12 +123,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php elseif ($next_state == 4): ?>
             <div class="file-section">
                 <!-- ダウンロード -->
-                <form action="/kiwiSisters/download.php" method="get" class="file-download">
+                <form action="download1.php" method="get" class="file-download">
                     <button type="submit">ファイルをダウンロード</button>
                 </form>
                 <!-- アップロード -->
-                <form action="/kiwiSisters/upload.php" method="post" enctype="multipart/form-data" class="file-upload">
+                <form action="upload1.php" method="post" enctype="multipart/form-data" class="file-upload">
                     <input type="file" name="uploaded_file" accept=".php" required>
+                    <input type="hidden" name="correctjumpTarget" value="<?php echo $correctjumpTarget; ?>">
+                    <input type="hidden" name="incorrectjumpTarget" value="<?php echo $incorrectjumpTarget; ?>">
                     <button type="submit">ファイルをアップロード</button>
                 </form>
             </div>
