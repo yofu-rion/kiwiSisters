@@ -87,13 +87,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
             </div>
         </div>
     </div>
-<<<<<<< HEAD
     <div id="fade-overlay" class="fade-overlay"></div>
-=======
-
-    <div id="fade-overlay" class="fade-overlay"></div>
-
->>>>>>> 19ee2fcf55ddbd6d5a7ce9d976b6af32bab8f889
     <script>
         const audioSelect = document.getElementById("select-sound");
         const chapterPage = <?= $page ?>;
