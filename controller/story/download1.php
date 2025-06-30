@@ -1,5 +1,5 @@
 <?php
-$filepath = __DIR__ . '/../problems/problem1.php'; // 問題ファイル
+$filepath = __DIR__ . '/../../problems/problem1.php'; // 問題ファイル
 
 if (file_exists($filepath)) {
     header('Content-Type: application/x-httpd-php');
