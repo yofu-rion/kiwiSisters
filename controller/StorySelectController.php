@@ -132,19 +132,16 @@ $nextPage = $page < 4 ? $page + 1 : null;
                 showModal();
             }
         });
-<<<<<<< HEAD
         const fadeOverlay = document.getElementById("fade-overlay");
 
         okButton.addEventListener("click", () => {
             fadeOverlay.classList.add("fade-in");
 
-=======
 
         okButton.addEventListener("click", () => {
             audioKettei.currentTime = 0;
             audioKettei.play().catch(() => { });
             fadeOverlay.classList.add("fade-in");
->>>>>>> 19ee2fcf55ddbd6d5a7ce9d976b6af32bab8f889
             setTimeout(() => {
                 window.location.href = storyUrl;
             }, 2000);
