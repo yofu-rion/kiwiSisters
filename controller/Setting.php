@@ -42,13 +42,14 @@ if (!isset($_SESSION['login'])) {
     let index = 0;
     const audioSelect = new Audio("../music/select.mp3");
     const audioKettei = new Audio("../music/kettei.mp3");
-    let isMuted = false;
+    let isMuted = localStorage.getItem("volumeMuted") === "true";
     const statusDisplay = document.getElementById("volume-status");
 
     const setVolumeState = () => {
       const vol = isMuted ? 0 : 1;
       audioSelect.volume = vol;
       audioKettei.volume = vol;
+      localStorage.setItem("volumeMuted", isMuted); // ← ここが重要
       statusDisplay.textContent = "音量：" + (isMuted ? "OFF" : "ON");
     };
 

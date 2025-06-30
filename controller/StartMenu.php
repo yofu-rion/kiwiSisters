@@ -57,6 +57,12 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
         const audio = document.getElementById("kettei-sound");
         const fadeOverlay = document.getElementById("fade-overlay");
         const audioSelect = document.getElementById("select-sound");
+
+        // ✅ 音量ON/OFFを localStorage から読み取り反映
+        const isMuted = localStorage.getItem("volumeMuted") === "true";
+        audioSelect.volume = isMuted ? 0 : 1;
+        audio.volume = isMuted ? 0 : 1;
+
         let index = 0;
 
         const updateActive = () => {
@@ -83,9 +89,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
                     const targetUrl = button.dataset.href;
                     audio.currentTime = 0;
                     audio.play().catch(() => { });
-                    // フェード
                     fadeOverlay.classList.add("fade-out");
-                    // 2秒後に遷移
                     setTimeout(() => {
                         location.href = targetUrl;
                     }, 2000);
@@ -99,6 +103,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
             }
         };
     </script>
+
 
     <div class="illust">
         <h1 class="h1">イラストが乗る予定</h1>
