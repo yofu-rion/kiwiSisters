@@ -3,7 +3,6 @@
 
 <?php
 require '../../vendor/autoload.php';
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 $inputFileName = '../../scenario/ScenarioPlay1.xlsx';
@@ -26,6 +25,9 @@ $talkingCharacter = $values[1] ?? '';
 $text = $values[2] ?? '';
 $next_state = $values[3] ?? '';
 $illustration = $values[4] ?? '';
+$choice1 = $values[9] ?? '';
+$choice2 = $values[10] ?? '';
+$jumpTarget = $values[11] ?? '';
 
 if ($background === '廊下') {
     $backgroundImage = '../../img/rouka.png';
@@ -36,7 +38,9 @@ if ($background === '廊下') {
 $charImageMap = [
     '白鷺' => '/kiwiSisters/img/shirasagi_standard.png',
     '雉真' => '/kiwiSisters/img/kijima_standard.png',
-    // 必要に応じてここへ追加
+    // '鷹森' => '/kiwiSisters/img/takamori_standard.png',
+    // '江永' => '/kiwiSisters/img/enaga_standard.png',
+    // '花子' => '/kiwiSisters/img/hanako_standard.png',
 ];
 
 $charImageFile = $charImageMap[$illustration] ?? null;
@@ -50,10 +54,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: StoryPlayController1.php?page={$nextPage}");
         exit;
     } elseif ($next_state == 2) {
-        // 選択肢画面に遷移
-        exit;
+        if (isset($_POST['choice'])) {
+            $targetPage = (int) $_POST['choice'];
+            header("Location: StoryPlayController1.php?page=$targetPage");
+            exit;
+        }
+    } elseif ($next_state == 3) {
+        if (is_numeric($jumpTarget)) {
+            header("Location: StoryPlayController1.php?page=$jumpTarget");
+            exit;
+        }
     }
 }
+
 ?>
 
 <head>
@@ -79,6 +92,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img class="char-stand" src="<?= htmlspecialchars($charImageFile) ?>"
                 alt="<?= htmlspecialchars($illustration) ?>">
         <?php endif; ?>
+        <?php if ($next_state == 2): ?>
+            <form method="post" class="choices">
+                <?php if ($choice1 && preg_match('/(.+?)\((\d+)\)/', $choice1, $match1)): ?>
+                    <button type="submit" name="choice" value="<?= $match1[2] ?>">
+                        <?= htmlspecialchars($match1[1]) ?>
+                    </button>
+                <?php endif; ?>
+                <?php if ($choice2 && preg_match('/(.+?)\((\d+)\)/', $choice2, $match2)): ?>
+                    <button type="submit" name="choice" value="<?= $match2[2] ?>">
+                        <?= htmlspecialchars($match2[1]) ?>
+                    </button>
+                <?php endif; ?>
+                <?php if ($jumpTarget && preg_match('/(.+?)\((\d+)\)/', $jumpTarget, $match3)): ?>
+                    <button type="submit" name="choice" value="<?= $match3[2] ?>">
+                        <?= htmlspecialchars($match3[1]) ?>
+                    </button>
+                <?php endif; ?>
+
+            </form>
+        <?php else: ?>
+            <!-- 通常のセリフ表示と次へボタン -->
+        <?php endif; ?>
+
 
         <div class="kuuhaku">a</div>
         <div class="comment">
