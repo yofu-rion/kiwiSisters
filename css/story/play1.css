@@ -7,7 +7,7 @@ body {
   background-size: cover, 100% 100%;
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .full {
@@ -131,4 +131,34 @@ body {
   border: 2px solid #333;
   cursor: pointer;
   color: #000000;
+}
+
+.file-section {
+  width:20%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.file-download{
+  width:100%;
+}
+
+.file-upload {
+  margin-top:36px;
+  display:flex;
+  flex-direction: column-reverse;
+}
+
+.file-section button {
+  width:100%;
+  border-radius: 12px;
+  margin: 10px;
+  padding: 8px 16px;
+  font-size: 1rem;
+}
+
+.file-section input[type='file'] {
+  margin-top: 10px;
 }

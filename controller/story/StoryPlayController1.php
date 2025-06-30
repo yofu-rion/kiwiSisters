@@ -68,7 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: StoryPlayController1.php?page=$jumpTarget");
             exit;
         }
+    } elseif ($next_state == 4) {
+        // ファイルアップロード・ダウンロード画面を表示（分岐なしで止まる）
     }
+
 }
 
 ?>
@@ -115,6 +118,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
 
             </form>
+        <?php elseif ($next_state == 4): ?>
+            <div class="file-section">
+                <!-- ダウンロード -->
+                <form action="/kiwiSisters/download.php" method="get" class="file-download">
+                    <button type="submit">ファイルをダウンロード</button>
+                </form>
+                <!-- アップロード -->
+                <form action="/kiwiSisters/upload.php" method="post" enctype="multipart/form-data" class="file-upload">
+                    <input type="file" name="uploaded_file" accept=".php" required>
+                    <button type="submit">ファイルをアップロード</button>
+                </form>
+            </div>
         <?php else: ?>
             <!-- 通常のセリフ表示と次へボタン -->
         <?php endif; ?>
