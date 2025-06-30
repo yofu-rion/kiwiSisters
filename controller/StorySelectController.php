@@ -132,11 +132,6 @@ $nextPage = $page < 4 ? $page + 1 : null;
                 showModal();
             }
         });
-        const fadeOverlay = document.getElementById("fade-overlay");
-
-        okButton.addEventListener("click", () => {
-            fadeOverlay.classList.add("fade-in");
-
 
         okButton.addEventListener("click", () => {
             audioKettei.currentTime = 0;
