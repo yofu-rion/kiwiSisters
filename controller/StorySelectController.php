@@ -19,8 +19,8 @@ $isFinalChapter = $page === 4;
 $unlockFinalChapter = false;
 
 $stories = [
-    1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story.png"],
-    2 => ["title" => "雉の話", "image" => "/kiwiSisters/img/story.png"],
+    1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
+    2 => ["title" => "雉の話", "image" => "/kiwiSisters/img/story2.png"],
     3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story.png"],
     4 => ["title" => "???????", "image" => "/kiwiSisters/img/story.png"],
 ];
