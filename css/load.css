@@ -36,50 +36,14 @@ body {
 }
 
 .save-block {
-  background: #222;
-  padding: 15px;
-  border: 1px solid #555;
-  border-radius: 8px;
+  padding: 1em;
+  background-color: #ddd;
+  margin-bottom: 1em;
+  font-family: "Kiwi Maru", serif;
+  text-align: left;
 }
 
-.save-block a {
-  color: #8f8;
-  text-decoration: none;
-}
-
-
-.are {
-  color: #fff;
-  font-family: 'Kiwi Maru';
-  font-size: 48px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
-.back {
-  color: #fff;
-  font-family: 'Kiwi Maru';
-  font-size: 40px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  background: transparent;
-  text-decoration: none;
-  outline: none;
-}
-
-.save {
-  width: 80%;
-  height: auto;
-  margin-top: 48px;
-  background-color: #ffffff;
-}
-
-.save-block {
-  width: full;
-  height: 120px;
-  flex-shrink: 0;
-  background: #D9D9D9;
-  border-bottom: 1px solid;
+.load-text {
+  color: limegreen;
+  font-weight: bold;
 }
