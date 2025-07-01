@@ -1,0 +1,5 @@
+# セーブスロットのPHPファイルをGit管理から除外
+save/*.php
+
+# ただし save フォルダ自体は除外しないように（空の .gitkeep を入れるとよい）
+!save/.gitkeep

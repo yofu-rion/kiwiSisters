@@ -22,8 +22,6 @@ $data = [
 ];
 
 $content = "<?php\nreturn " . var_export($data, true) . ";\n";
-
-// 保存先のパス
 $saveDir = dirname(__DIR__) . "/save";
 $savePath = $saveDir . "/slot{$slot}.php";
 
@@ -34,7 +32,10 @@ if (!is_dir($saveDir)) {
 
 // ファイル保存
 file_put_contents($savePath, $content);
+@chmod($savePath, 0666);
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -49,7 +50,7 @@ file_put_contents($savePath, $content);
 </head>
 <body>
   <div class="container">
-    <p class="success-message">スロット<?= $slot ?>にセーブしました！3秒後に戻ります…</p>
+    <p class="success-message">スロット<?= $slot ?>にセーブしました</p>
   </div>
 </body>
 </html>
