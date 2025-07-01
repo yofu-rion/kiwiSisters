@@ -23,6 +23,31 @@ body {
   border-color: #ffffff;
 }
 
+.back {
+  color: #9cf;
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+}
+
+.save {
+  display: grid;
+  gap: 20px;
+}
+
+.save-block {
+  background: #222;
+  padding: 15px;
+  border: 1px solid #555;
+  border-radius: 8px;
+}
+
+.save-block a {
+  color: #8f8;
+  text-decoration: none;
+}
+
+
 .are {
   color: #fff;
   font-family: 'Kiwi Maru';

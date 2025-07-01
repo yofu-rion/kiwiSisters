@@ -1,0 +1,59 @@
+body {
+  font-family: "Kiwi Maru", serif;
+  background: #220000;
+  color: #fff;
+  padding: 2rem;
+  margin: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.slot-list {
+  list-style: none;
+  padding: 0;
+}
+
+.slot-list li {
+  margin-bottom: 1.5rem;
+  background: #fff;
+  color: #000;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.slot-info {
+  margin-bottom: 0.5rem;
+}
+
+.save-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #a00;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.save-button:hover {
+  background: #d00;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 2rem;
+  color: #aaf;
+  text-decoration: underline;
+}
+
+.success-message {
+  font-size: 1.5rem;
+  color: lightgreen;
+}

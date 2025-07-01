@@ -43,7 +43,7 @@ if ($background === '廊下') {
 
 $charImageMap = [
     '白鷺' => '/kiwiSisters/img/shirasagi_standard.png',
-    '雉真' => '/kiwiSisters/img/kijima_standard.png',
+    '雉真' => '/kiwiSisters/img/kijima_chotosmile.png',
     '鷹森' => '/kiwiSisters/img/takamori_standard.png',
     '江永' => '/kiwiSisters/img/enaga_standard.png',
     // '花子' => '/kiwiSisters/img/hanako_standard.png',
@@ -150,10 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button class="next">></button>
                     </form>
                 </div>
+                <!-- セーブメニュー（スロット選択リンク付き） -->
                 <div class="menu">
-                    <a href="/kiwiSisters/controller/story/Save.php" class="save">セーブ</a>
+                    <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $page ?>" class="save">セーブ</a>
                     <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
                 </div>
+
             </div>
         </div>
     </div>
