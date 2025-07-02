@@ -123,11 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         <?php elseif ($next_state == 4): ?>
             <div class="file-section">
-                <!-- ダウンロード -->
                 <form action="download1.php" method="get" class="file-download">
                     <button type="submit">ファイルをダウンロード</button>
                 </form>
-                <!-- アップロード -->
                 <form action="upload1.php" method="post" enctype="multipart/form-data" class="file-upload">
                     <input type="file" name="uploaded_file" accept=".php" required>
                     <input type="hidden" name="correctjumpTarget" value="<?php echo $correctjumpTarget; ?>">
@@ -150,7 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button class="next">></button>
                     </form>
                 </div>
-                <!-- セーブメニュー（スロット選択リンク付き） -->
                 <div class="menu">
                     <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $page ?>" class="save">セーブ</a>
                     <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>

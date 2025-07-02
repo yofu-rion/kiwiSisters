@@ -15,8 +15,8 @@ body {
 }
 
 h1 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 40px;
+  margin-bottom: 20px;
 }
 
 .slot-list {
@@ -51,11 +51,8 @@ h1 {
 
 .back {
   font-size:24px;
-  display: inline-block;
-  margin-top: 4px;
   color: #ffffff;
-  border: none;
-  outline: none;
+  text-decoration: none;
 }
 
 .success-message {

@@ -52,7 +52,7 @@ function loadSlotData($slotNumber)
         </li>
       <?php endfor; ?>
     </ul>
-    <a class="back-link" href="StartMenu.php">戻る</a>
+    <a class="back" href="StartMenu.php">←戻る</a>
   </div>
 </body>
 
