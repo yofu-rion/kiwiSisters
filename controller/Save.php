@@ -41,7 +41,7 @@ file_put_contents($savePath, $content);
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="3;url=/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $page ?>">
+  <meta http-equiv="refresh" content="1;url=/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $page ?>">
   <title>セーブ完了</title>
   <link rel="stylesheet" href="../css/save_select.css">
   <link rel="preconnect" href="https://fonts.googleapis.com" />

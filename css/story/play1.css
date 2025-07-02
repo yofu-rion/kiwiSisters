@@ -100,8 +100,13 @@ body {
 }
 
 .next {
-  margin-top: 80px;
+  font-size:48px;
+  font-color: : #273c26;
+  margin-top: 40px;
   margin-right: 20px;
+  font-family: 'Kiwi Maru', serif;
+  border: none;
+  background: none;
 }
 
 .title {
