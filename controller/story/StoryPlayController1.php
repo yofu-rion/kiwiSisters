@@ -46,7 +46,7 @@ $charImageMap = [
     '雉真' => '/kiwiSisters/img/kijima_chotosmile.png',
     '鷹森' => '/kiwiSisters/img/takamori_standard.png',
     '江永' => '/kiwiSisters/img/enaga_standard.png',
-    // '花子' => '/kiwiSisters/img/hanako_standard.png',
+    '花子' => '/kiwiSisters/img/hanakosan_smile.png',
     'キーウィ・キウイ' => '/kiwiSisters/img/kiwi.png',
 ];
 
