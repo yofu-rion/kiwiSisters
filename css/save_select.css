@@ -1,19 +1,22 @@
 body {
   font-family: "Kiwi Maru", serif;
-  background: #220000;
+  background: linear-gradient(180deg, #200 0%, #800 100%);
   color: #fff;
   padding: 2rem;
   margin: 0;
 }
 
 .container {
-  max-width: 700px;
+  width:60%;
+  display:flex;
+  flex-direction: column;
+  justify-content:center;
   margin: 0 auto;
 }
 
 h1 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 40px;
+  margin-bottom: 20px;
 }
 
 .slot-list {
@@ -46,14 +49,14 @@ h1 {
   background: #d00;
 }
 
-.back-link {
-  display: inline-block;
-  margin-top: 2rem;
-  color: #aaf;
-  text-decoration: underline;
+.back {
+  font-size:24px;
+  color: #ffffff;
+  text-decoration: none;
 }
 
 .success-message {
-  font-size: 1.5rem;
-  color: lightgreen;
+  height:100vh;
+  font-size: 32px;
+  color: #ffffff;
 }

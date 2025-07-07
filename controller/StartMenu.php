@@ -102,6 +102,30 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
                 window.location.reload();
             }
         };
+
+        items.forEach((item, i) => {
+    item.addEventListener("click", () => {
+        index = i;
+        updateActive();
+        audioSelect.currentTime = 0;
+        audioSelect.play().catch(() => { });
+    });
+
+    const button = item.querySelector("button");
+    if (button) {
+        button.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const targetUrl = button.dataset.href;
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+            fadeOverlay.classList.add("fade-out");
+            setTimeout(() => {
+                location.href = targetUrl;
+            }, 2000);
+        });
+    }
+});
+
     </script>
 
 
