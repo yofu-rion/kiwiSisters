@@ -10,15 +10,37 @@ if (!isset($_SESSION['login'])) {
 }
 
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$saveDir = __DIR__ . '/../save';
+$chapter = isset($_GET['chapter']) ? intval($_GET['chapter']) : 1;
 
-function loadSlotData($slotNumber)
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
+
+// データベース接続
+$pdo = new PDO(
+    'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',
+    'staff',
+    'password'
+);
+
+function loadSlotData($slotNumber, $pdo, $username)
 {
-  $path = __DIR__ . "/../save/slot{$slotNumber}.php";
-  if (file_exists($path)) {
-    return include $path;
+  try {
+    $sql = $pdo->prepare('SELECT page, chapter, timestamp FROM save_data WHERE user_name = ? AND slot_num = ?');
+    $sql->execute([$username, $slotNumber]);
+    $result = $sql->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result) {
+      return [
+        'page' => $result['page'],
+        'chapter' => $result['chapter'],
+        'timestamp' => $result['timestamp']
+      ];
+    }
+    return null;
+  } catch (PDOException $e) {
+    error_log('セーブデータ読み込みエラー: ' . $e->getMessage());
+    return null;
   }
-  return null;
 }
 ?>
 
@@ -39,19 +61,20 @@ function loadSlotData($slotNumber)
     <h1>セーブするスロットを選んでください</h1>
     <ul class="slot-list">
       <?php for ($i = 1; $i <= 4; $i++): ?>
-        <?php $data = loadSlotData($i); ?>
+        <?php $data = loadSlotData($i, $pdo, $username); ?>
         <li>
           <?php if ($data): ?>
             <?php
             $timestamp = isset($data['timestamp']) ? htmlspecialchars($data['timestamp']) : '未保存';
             $pageNumber = isset($data['page']) ? htmlspecialchars((string) $data['page']) : '?';
+            $chapterNumber = isset($data['chapter']) ? htmlspecialchars((string) $data['chapter']) : '?';
             ?>
-            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Page <?= $pageNumber ?> を保存済み</div>
+            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?> を保存済み</div>
           <?php else: ?>
             <div class="slot-info">スロット<?= $i ?>：空</div>
           <?php endif; ?>
 
-          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>">セーブ</a>
+          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>&chapter=<?= $chapter ?>">セーブ</a>
         </li>
       <?php endfor; ?>
     </ul>

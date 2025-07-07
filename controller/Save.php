@@ -10,29 +10,39 @@ if (!isset($_SESSION['login'])) {
 
 $slot = isset($_GET['slot']) ? intval($_GET['slot']) : 0;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$chapter = isset($_GET['chapter']) ? intval($_GET['chapter']) : 1;
+
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
 
 if ($slot < 1 || $slot > 4) {
     echo "スロット番号が不正です。";
     exit;
 }
 
-$data = [
-    'page' => $page,
-    'timestamp' => date('Y-m-d H:i:s'),
-];
+$pdo = new PDO(
+    'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',
+    'staff',
+    'password'
+);
 
-$content = "<?php\nreturn " . var_export($data, true) . ";\n";
-$saveDir = dirname(__DIR__) . "/save";
-$savePath = $saveDir . "/slot{$slot}.php";
-
-// ディレクトリがなければ作成
-if (!is_dir($saveDir)) {
-    mkdir($saveDir, 0777, true);
+try {
+    // まず既存データを削除してから挿入（確実に上書き）
+    $deleteSql = $pdo->prepare('DELETE FROM save_data WHERE user_name = ? AND slot_num = ?');
+    $deleteSql->execute([$username, $slot]);
+    
+    // 新しいセーブデータを挿入
+    $insertSql = $pdo->prepare('
+        INSERT INTO save_data (user_name, slot_num, page, chapter, timestamp)
+        VALUES (?, ?, ?, ?, NOW())
+    ');
+    $insertSql->execute([$username, $slot, $page, $chapter]);
+    
+    $saveSuccess = true;
+} catch (PDOException $e) {
+    $saveSuccess = false;
+    error_log('セーブエラー: ' . $e->getMessage());
 }
-
-// ファイル保存
-file_put_contents($savePath, $content);
-@chmod($savePath, 0666);
 ?>
 
 
@@ -50,7 +60,11 @@ file_put_contents($savePath, $content);
 </head>
 <body>
   <div class="container">
-    <p class="success-message">スロット<?= $slot ?>にセーブしました</p>
+    <?php if (isset($saveSuccess) && $saveSuccess): ?>
+      <p class="success-message">スロット<?= $slot ?>にセーブしました</p>
+    <?php else: ?>
+      <p class="error-message">セーブに失敗しました。再試行してください。</p>
+    <?php endif; ?>
   </div>
 </body>
 </html>
