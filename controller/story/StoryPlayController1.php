@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
                 <div class="menu">
-                    <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $page ?>" class="save">セーブ</a>
+                    <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $page ?>&chapter=1" class="save">セーブ</a>
                     <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
                 </div>
 

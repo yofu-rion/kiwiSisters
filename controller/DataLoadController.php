@@ -24,7 +24,7 @@ $slots = [];
 
 try {
     // 現在のユーザーのセーブデータを全て取得
-    $sql = $pdo->prepare('SELECT slot_num, page, timestamp FROM save_data WHERE user_name = ? ORDER BY slot_num');
+    $sql = $pdo->prepare('SELECT slot_num, page, chapter, timestamp FROM save_data WHERE user_name = ? ORDER BY slot_num');
     $sql->execute([$username]);
     
     // 結果を連想配列に変換
@@ -32,6 +32,7 @@ try {
     while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
         $saveData[$row['slot_num']] = [
             'page' => $row['page'],
+            'chapter' => $row['chapter'],
             'timestamp' => $row['timestamp']
         ];
     }
@@ -72,8 +73,9 @@ try {
             <?php
               $timestamp = isset($data['timestamp']) ? htmlspecialchars($data['timestamp']) : '未保存';
               $pageNumber = isset($data['page']) ? htmlspecialchars((string) $data['page']) : '?';
+              $chapterNumber = isset($data['chapter']) ? htmlspecialchars((string) $data['chapter']) : '?';
             ?>
-            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Page <?= $pageNumber ?> を保存済み</div>
+            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?> を保存済み</div>
             <a class="save-button" href="/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $pageNumber ?>">ロード</a>
           <?php else: ?>
             <div class="slot-info">スロット<?= $i ?>：空</div>

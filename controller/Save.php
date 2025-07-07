@@ -10,6 +10,7 @@ if (!isset($_SESSION['login'])) {
 
 $slot = isset($_GET['slot']) ? intval($_GET['slot']) : 0;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$chapter = isset($_GET['chapter']) ? intval($_GET['chapter']) : 1;
 
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
@@ -32,10 +33,10 @@ try {
     
     // 新しいセーブデータを挿入
     $insertSql = $pdo->prepare('
-        INSERT INTO save_data (user_name, slot_num, page, timestamp)
-        VALUES (?, ?, ?, NOW())
+        INSERT INTO save_data (user_name, slot_num, page, chapter, timestamp)
+        VALUES (?, ?, ?, ?, NOW())
     ');
-    $insertSql->execute([$username, $slot, $page]);
+    $insertSql->execute([$username, $slot, $page, $chapter]);
     
     $saveSuccess = true;
 } catch (PDOException $e) {
@@ -60,7 +61,7 @@ try {
 <body>
   <div class="container">
     <?php if (isset($saveSuccess) && $saveSuccess): ?>
-      <p class="success-message">スロット<?= $slot ?>にセーブしました！3秒後に戻ります…</p>
+      <p class="success-message">スロット<?= $slot ?>にセーブしました</p>
     <?php else: ?>
       <p class="error-message">セーブに失敗しました。再試行してください。</p>
     <?php endif; ?>

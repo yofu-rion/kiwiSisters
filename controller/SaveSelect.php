@@ -10,6 +10,7 @@ if (!isset($_SESSION['login'])) {
 }
 
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$chapter = isset($_GET['chapter']) ? intval($_GET['chapter']) : 1;
 
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
@@ -24,13 +25,14 @@ $pdo = new PDO(
 function loadSlotData($slotNumber, $pdo, $username)
 {
   try {
-    $sql = $pdo->prepare('SELECT page, timestamp FROM save_data WHERE user_name = ? AND slot_num = ?');
+    $sql = $pdo->prepare('SELECT page, chapter, timestamp FROM save_data WHERE user_name = ? AND slot_num = ?');
     $sql->execute([$username, $slotNumber]);
     $result = $sql->fetch(PDO::FETCH_ASSOC);
     
     if ($result) {
       return [
         'page' => $result['page'],
+        'chapter' => $result['chapter'],
         'timestamp' => $result['timestamp']
       ];
     }
@@ -65,13 +67,14 @@ function loadSlotData($slotNumber, $pdo, $username)
             <?php
             $timestamp = isset($data['timestamp']) ? htmlspecialchars($data['timestamp']) : '未保存';
             $pageNumber = isset($data['page']) ? htmlspecialchars((string) $data['page']) : '?';
+            $chapterNumber = isset($data['chapter']) ? htmlspecialchars((string) $data['chapter']) : '?';
             ?>
-            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Page <?= $pageNumber ?> を保存済み</div>
+            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?> を保存済み</div>
           <?php else: ?>
             <div class="slot-info">スロット<?= $i ?>：空</div>
           <?php endif; ?>
 
-          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>">セーブ</a>
+          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>&chapter=<?= $chapter ?>">セーブ</a>
         </li>
       <?php endfor; ?>
     </ul>
