@@ -9,13 +9,43 @@ if (!isset($_SESSION['login'])) {
   exit;
 }
 
-function loadSlotData($slotNumber)
-{
-  $path = __DIR__ . "/../save/slot{$slotNumber}.php";
-  if (file_exists($path)) {
-    return include $path;
-  }
-  return null;
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
+
+// データベース接続
+$pdo = new PDO(
+    'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',
+    'staff',
+    'password'
+);
+
+// セーブスロット読み込み（データベースから）
+$slots = [];
+
+try {
+    // 現在のユーザーのセーブデータを全て取得
+    $sql = $pdo->prepare('SELECT slot_num, page, timestamp FROM save_data WHERE user_name = ? ORDER BY slot_num');
+    $sql->execute([$username]);
+    
+    // 結果を連想配列に変換
+    $saveData = [];
+    while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+        $saveData[$row['slot_num']] = [
+            'page' => $row['page'],
+            'timestamp' => $row['timestamp']
+        ];
+    }
+    
+    // スロット1-4の情報を整理
+    for ($i = 1; $i <= 4; $i++) {
+        $slots[$i] = isset($saveData[$i]) ? $saveData[$i] : null;
+    }
+} catch (PDOException $e) {
+    error_log('ロードエラー: ' . $e->getMessage());
+    // エラー時は空のスロットを設定
+    for ($i = 1; $i <= 4; $i++) {
+        $slots[$i] = null;
+    }
 }
 ?>
 
@@ -36,7 +66,7 @@ function loadSlotData($slotNumber)
     <h1>ロードするスロットを選んでください</h1>
     <ul class="slot-list">
       <?php for ($i = 1; $i <= 4; $i++): ?>
-        <?php $data = loadSlotData($i); ?>
+        <?php $data = $slots[$i]; ?>
         <li>
           <?php if ($data): ?>
             <?php
