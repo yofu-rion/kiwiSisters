@@ -71,11 +71,11 @@ function loadSlotData($slotNumber, $pdo, $username)
             <div class="slot-info">スロット<?= $i ?>：空</div>
           <?php endif; ?>
 
-          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>">スロット<?= $i ?>にセーブ</a>
+          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>">セーブ</a>
         </li>
       <?php endfor; ?>
     </ul>
-    <a class="back-link" href="javascript:history.back()">戻る</a>
+    <a class="back" href="javascript:history.back()">戻る</a>
   </div>
 </body>
 
