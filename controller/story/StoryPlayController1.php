@@ -1,7 +1,29 @@
+<?php
+ob_start();
+
+if (
+    !isset($_SERVER['HTTP_REFERER']) ||
+    strpos($_SERVER['HTTP_REFERER'], 'MainWrapper.php') === false
+) {
+    $page = $_GET['page'] ?? 1;
+    $chapter = $_GET['chapter'] ?? 1;
+
+    // MainWrapper にリダイレクト、target で元のURLを渡す
+    $target = "/kiwiSisters/controller/story/StoryPlayController1.php?page=$page&chapter=$chapter";
+    $encodedTarget = urlencode($target);
+    header("Location: /kiwiSisters/controller/MainWrapper.php?target=$encodedTarget");
+    exit;
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <?php
+
 session_start();
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 
@@ -191,28 +213,26 @@ $nextPage = $page + 1;
     <script>
         // ✅ ページ遷移（リロードせずにiframe src書き換え）
         const goToPage = (page) => {
-            const bgmFrame = window.top.document.getElementById("bgm-frame")
-            const bgmWindow = bgmFrame?.contentWindow
+            const bgmFrame = window.top.document.getElementById("bgm-frame");
+            const bgmWindow = bgmFrame?.contentWindow;
 
-            // ✅ 再生位置保存を指示
+            // ✅ BGMの再生位置保存を指示
             if (bgmWindow) {
-                bgmWindow.postMessage({ type: "saveCurrentTime" }, "*")
+                bgmWindow.postMessage({ type: "saveCurrentTime" }, "*");
             }
 
             setTimeout(() => {
-                const topParams = new URLSearchParams(window.top.location.search)
-                const chapter = topParams.get("chapter") || "1"
-                const newUrl = `/kiwiSisters/controller/story/StoryPlayController1.php?page=${page}&chapter=${chapter}`
+                const topParams = new URLSearchParams(window.top.location.search);
+                const chapter = topParams.get("chapter") || "1";
 
-                const storyFrame = window.top.document.getElementById("story-frame")
-                if (storyFrame) {
-                    storyFrame.src = newUrl
-                }
+                // ✅ 正しいパスに修正（controller/ にある MainWrapper.php を指定）
+                const newUrl = `/kiwiSisters/controller/MainWrapper.php?page=${page}&chapter=${chapter}`;
 
-                window.top.history.replaceState(null, "", newUrl)
-            }, 50)
-        }
-
+                // ✅ 親ウィンドウ全体を遷移
+                window.top.location.href = newUrl;
+            }, 50);
+        };
+        sessionStorage.setItem("currentPage", <?= $page ?>);
 
         // ✅ Enterキー対応
         document.addEventListener("keydown", (e) => {
