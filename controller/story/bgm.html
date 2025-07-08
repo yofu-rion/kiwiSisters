@@ -1,70 +1,59 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <title>BGM Player</title>
-</head>
-<body>
-  <audio id="bgm" loop autoplay></audio>
-  <script>
-    const audio = document.getElementById("bgm");
+  <head>
+    <meta charset="UTF-8" />
+    <title>BGM Player</title>
+  </head>
+  <body>
+    <audio id="bgm" loop autoplay></audio>
+    <script>
+      const audio = document.getElementById('bgm');
 
-    // 初回読み込み処理
-    const bgmFile = sessionStorage.getItem("lastBgm");
-    const bgmTime = parseFloat(sessionStorage.getItem("bgmTime") || "0");
+      window.addEventListener('message', (e) => {
+        const { bgm, currentTime, type } = e.data || {};
 
-    console.log("📦 Initial lastBgm:", bgmFile);
-    console.log("📦 Initial bgmTime:", bgmTime);
-
-    if (bgmFile && bgmFile !== "null" && bgmFile !== "") {
-      audio.src = "/kiwiSisters/music/" + bgmFile;
-      audio.currentTime = !isNaN(bgmTime) ? bgmTime : 0;
-      audio.play().catch((e) => console.warn("Autoplay error:", e));
-    }
-
-    console.log("👂 Waiting for messages...");
-
-    // メッセージ受信処理
-    window.addEventListener("message", (e) => {
-      console.log("📩 Received message:", e.data);
-
-      const { bgm, currentTime, type } = e.data || {};
-
-      if (type === "requestCurrentTime") {
-        if (!audio.paused) {
-          e.source?.postMessage({ currentTime: audio.currentTime }, "*");
+        if (type === 'requestCurrentTime') {
+          e.source?.postMessage(
+            { type: 'responseCurrentTime', currentTime: audio.currentTime },
+            '*',
+          );
+          return;
         }
-        return;
-      }
 
-      if (bgm == null || bgm === "null" || bgm === "") {
-        console.log("✅ Received null → Stopping BGM");
-        audio.pause();
-        audio.removeAttribute("src");
-        audio.load();
-        sessionStorage.removeItem("lastBgm");
-        sessionStorage.removeItem("bgmTime");
-        return;
-      }
+        if (type === 'setBgm') {
+          if (!bgm) {
+            audio.pause();
+            audio.removeAttribute('src');
+            audio.load();
+            return;
+          }
 
-      if (typeof bgm !== "string" || !bgm) return;
+          const expectedSrc = location.origin + '/kiwiSisters/music/' + bgm;
+          const time = typeof currentTime === 'number' && !isNaN(currentTime)
+            ? currentTime
+            : 0;
 
-      const time = typeof currentTime === "number" ? currentTime : 0;
+          if (audio.src !== expectedSrc) {
+            audio.src = expectedSrc;
+            audio.onloadedmetadata = () => {
+              audio.currentTime = time;
+              audio.play().catch(console.warn);
+            };
+          } else {
+            audio.currentTime = time;
+            audio.play().catch(console.warn);
+          }
+          return;
+        }
 
-      if (!audio.src.includes(bgm)) {
-        audio.src = "/kiwiSisters/music/" + bgm;
-      }
-
-      audio.currentTime = time;
-      audio.play().catch((e) => console.warn("Play error:", e));
-      sessionStorage.setItem("lastBgm", bgm);
-    });
-
-    window.addEventListener("beforeunload", () => {
-      if (!audio.paused) {
-        sessionStorage.setItem("bgmTime", audio.currentTime);
-      }
-    });
-  </script>
-</body>
+        if (type === 'saveCurrentTime') {
+          if (!audio.paused) {
+            sessionStorage.setItem('bgmTime', audio.currentTime);
+            sessionStorage.setItem('lastBgm', audio.src.split('/').pop());
+            console.log('💾 再生位置を保存しました:', audio.currentTime);
+          }
+        }
+      });
+    </script>
+  </body>
 </html>

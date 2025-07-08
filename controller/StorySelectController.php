@@ -140,7 +140,9 @@ $nextPage = $page < 4 ? $page + 1 : null;
             audioKettei.play().catch(() => { });
             fadeOverlay.classList.add("fade-in");
             setTimeout(() => {
-                window.location.href = `/kiwiSisters/controller/story/StoryPlayController1.php?page=2&chapter=${chapterPage}`;
+                // window.location.href = `/kiwiSisters/controller/story/StoryPlayController1.php?page=2&chapter=${chapterPage}`;
+                // window.location.href の代わりに
+                window.open(`/kiwiSisters/controller/MainWrapper.php?page=2&chapter=1`, "_self");
             }, 2000);
 
         });

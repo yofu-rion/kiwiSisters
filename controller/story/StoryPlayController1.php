@@ -2,6 +2,7 @@
 <html lang="en">
 
 <?php
+session_start();
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 
 if ($page === 1) {
@@ -34,7 +35,7 @@ foreach ($cellIterator as $cell) {
     $values[] = $cell->getValue();
 }
 
-session_start();
+
 
 $background = $values[0] ?? '';
 $talkingCharacter = $values[1] ?? '';
@@ -78,6 +79,7 @@ $charImageMap = [
 $bgmMap = [
     '探索' => 'tansaku.mp3',
     '探索_不穏' => 'tansaku_fuon.mp3',
+    '花子' => 'hanako.mp3',
     '静止' => null,
 ];
 
@@ -128,10 +130,8 @@ $nextPage = $page + 1;
 </head>
 
 <body>
-    <!-- BGM制御のiframe（StoryPlayController内で） -->
-    <iframe id="bgm-frame" src="/kiwiSisters/controller/story/bgm.html" style="display: none;"
-        allow="autoplay"></iframe>
-
+    <!-- <iframe id="bgm-frame" src="/kiwiSisters/controller/story/bgm.html" style="display: none;"
+        allow="autoplay"></iframe> -->
     <div class="full">
         <?php if ($charImageFile): ?>
             <img class="char-stand" src="<?= htmlspecialchars($charImageFile) ?>"
@@ -140,22 +140,21 @@ $nextPage = $page + 1;
         <?php if ($next_state == 2): ?>
             <div class="choices">
                 <?php if ($choice1 && preg_match('/(.+?)\((\d+)\)/', $choice1, $match1)): ?>
-                    <form method="get" action="StoryPlayController1.php">
-                        <input type="hidden" name="page" value="<?= $match1[2] ?>">
-                        <button type="submit"><?= htmlspecialchars($match1[1]) ?></button>
-                    </form>
+                    <button onclick="goToPage(<?= $match1[2] ?>)">
+                        <?= htmlspecialchars($match1[1]) ?>
+                    </button>
                 <?php endif; ?>
+
                 <?php if ($choice2 && preg_match('/(.+?)\((\d+)\)/', $choice2, $match2)): ?>
-                    <form method="get" action="StoryPlayController1.php">
-                        <input type="hidden" name="page" value="<?= $match2[2] ?>">
-                        <button type="submit"><?= htmlspecialchars($match2[1]) ?></button>
-                    </form>
+                    <button onclick="goToPage(<?= $match2[2] ?>)">
+                        <?= htmlspecialchars($match2[1]) ?>
+                    </button>
                 <?php endif; ?>
+
                 <?php if ($jumpTarget && preg_match('/(.+?)\((\d+)\)/', $jumpTarget, $match3)): ?>
-                    <form method="get" action="StoryPlayController1.php">
-                        <input type="hidden" name="page" value="<?= $match3[2] ?>">
-                        <button type="submit"><?= htmlspecialchars($match3[1]) ?></button>
-                    </form>
+                    <button onclick="goToPage(<?= $match3[2] ?>)">
+                        <?= htmlspecialchars($match3[1]) ?>
+                    </button>
                 <?php endif; ?>
             </div>
         <?php elseif ($next_state == 4): ?>
@@ -178,10 +177,7 @@ $nextPage = $page + 1;
                 <div class="name"><?php echo htmlspecialchars($talkingCharacter); ?></div>
                 <div class="text">
                     <div><?php echo htmlspecialchars($text); ?></div>
-                    <form id="nextForm" method="get" action="StoryPlayController1.php">
-                        <input type="hidden" name="page" value="<?= $nextPage ?>">
-                        <button id="nextButton" class="next">></button>
-                    </form>
+                    <button id="nextButton" class="next" onclick="goToPage(<?= $nextPage ?>)">></button>
                 </div>
                 <div class="menu">
                     <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $page ?>&chapter=1" class="save">セーブ</a>
@@ -193,69 +189,69 @@ $nextPage = $page + 1;
     </div>
 
     <script>
-        const saveBgmTime = () => {
-            const bgmFrame = window.top.document.getElementById("bgm-frame");
-            const bgmWindow = bgmFrame?.contentWindow;
+        // ✅ ページ遷移（リロードせずにiframe src書き換え）
+        const goToPage = (page) => {
+            const bgmFrame = window.top.document.getElementById("bgm-frame")
+            const bgmWindow = bgmFrame?.contentWindow
+
+            // ✅ 再生位置保存を指示
             if (bgmWindow) {
-                bgmWindow.postMessage({ type: "requestCurrentTime" }, "*");
+                bgmWindow.postMessage({ type: "saveCurrentTime" }, "*")
             }
-        };
 
-        window.addEventListener("DOMContentLoaded", () => {
-            const bgmFile = <?= json_encode($bgmFile) ?>;
+            setTimeout(() => {
+                const topParams = new URLSearchParams(window.top.location.search)
+                const chapter = topParams.get("chapter") || "1"
+                const newUrl = `/kiwiSisters/controller/story/StoryPlayController1.php?page=${page}&chapter=${chapter}`
 
-            const trySendBgmToIframe = () => {
-                const bgmFrame = window.top.document.getElementById("bgm-frame");
-                const bgmWindow = bgmFrame?.contentWindow;
-
-                if (!bgmWindow) {
-                    console.warn("BGM iframe not ready. Retrying...");
-                    if ((window._bgmRetryCount || 0) < 5) {
-                        window._bgmRetryCount = (window._bgmRetryCount || 0) + 1;
-                        setTimeout(trySendBgmToIframe, 300);
-                    }
-                    return;
+                const storyFrame = window.top.document.getElementById("story-frame")
+                if (storyFrame) {
+                    storyFrame.src = newUrl
                 }
 
-                const muted = localStorage.getItem("volumeMuted") === "true";
-
-                if (muted || bgmFile === null) {
-                    console.log("🔇 Sending null to BGM iframe");
-                    bgmWindow.postMessage({ bgm: null }, "*");
-                    sessionStorage.setItem("lastBgm", "");
-                    return;
-                }
-
-                const lastBgm = sessionStorage.getItem("lastBgm");
-                const lastTime = parseFloat(sessionStorage.getItem("bgmTime") || "0");
-                const currentTime = (lastBgm === bgmFile) ? lastTime : 0;
-
-                console.log("🎵 Sending BGM to iframe:", bgmFile, "at", currentTime, "sec");
-                bgmWindow.postMessage({ bgm: bgmFile, currentTime }, "*");
-                sessionStorage.setItem("lastBgm", bgmFile);
-            };
-
-            setTimeout(trySendBgmToIframe, 500);
-        });
-
-        const nextButton = document.getElementById("nextButton");
-        const nextForm = document.getElementById("nextForm");
-
-        if (nextButton && nextForm) {
-            nextButton.addEventListener("click", (e) => {
-                e.preventDefault();
-                saveBgmTime();
-                setTimeout(() => nextForm.submit(), 50);
-            });
+                window.top.history.replaceState(null, "", newUrl)
+            }, 50)
         }
 
+
+        // ✅ Enterキー対応
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" && nextForm) {
-                e.preventDefault();
-                saveBgmTime();
-                setTimeout(() => nextForm.submit(), 50);
+            if (e.key === "Enter") {
+                console.log("🧩 StoryPlayController1 で Enter 押下を検出");
+                goToPage(<?= $nextPage ?>);
             }
         });
+
+        window.addEventListener("message", (e) => {
+            if (e.data?.type === "enterPressed") {
+                console.log("🧩 StoryPlayController1 が MainWrapper 経由の Enter を受信");
+                goToPage(<?= $nextPage ?>);
+            }
+        });
+
+        window.onload = () => {
+            const bgmFile = <?= json_encode($bgmFile) ?>;
+            const lastBgm = sessionStorage.getItem("lastBgm");
+            const lastTime = parseFloat(sessionStorage.getItem("bgmTime") || "0");
+
+            const currentTime = (lastBgm != null && lastBgm === bgmFile) ? lastTime + 0.49 : 0;
+
+            const sendToBgm = () => {
+                const bgmFrame = window.top.document.getElementById("bgm-frame");
+                const bgmWindow = bgmFrame?.contentWindow;
+                if (!bgmWindow) return;
+
+                if (!bgmFile) {
+                    bgmWindow.postMessage({ type: "setBgm", bgm: null }, "*");
+                    return;
+                }
+
+                bgmWindow.postMessage({ type: "setBgm", bgm: bgmFile, currentTime }, "*");
+            };
+
+            setTimeout(sendToBgm, 300);
+        };
+
     </script>
 </body>
 
