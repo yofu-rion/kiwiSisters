@@ -12,6 +12,9 @@ if (!isset($_SESSION['login'])) {
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
 
+require '../vendor/autoload.php';
+use Hashids\Hashids;
+
 // データベース接続
 $pdo = new PDO(
     'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',
@@ -74,9 +77,13 @@ try {
               $timestamp = isset($data['timestamp']) ? htmlspecialchars($data['timestamp']) : '未保存';
               $pageNumber = isset($data['page']) ? htmlspecialchars((string) $data['page']) : '?';
               $chapterNumber = isset($data['chapter']) ? htmlspecialchars((string) $data['chapter']) : '?';
+
+              $hashids = new Hashids($username, 8);
+              $pageHash = $hashids->encode($data['page']);
+              $chapterHash = $hashids->encode($data['chapter']);
             ?>
             <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?> を保存済み</div>
-            <a class="save-button" href="/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $pageNumber ?>">ロード</a>
+            <a class="save-button" href="/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $pageHash ?>">ロード</a>
           <?php else: ?>
             <div class="slot-info">スロット<?= $i ?>：空</div>
             <span class="save-button disabled">ロード不可</span>

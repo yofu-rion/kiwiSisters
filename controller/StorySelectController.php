@@ -1,4 +1,21 @@
 <?php
+session_start();
+
+// ログイン確認
+if (!isset($_SESSION['login'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
+
+require '../vendor/autoload.php';
+use Hashids\Hashids;
+
+$hashids = new Hashids($username, 8);
+$pageHash = $hashids->encode(2);
+
 $uri = $_SERVER['REQUEST_URI'];
 $parts = explode('/', rtrim($uri, '/'));
 $pagePart = end($parts);
@@ -91,7 +108,8 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <script>
         const audioSelect = document.getElementById("select-sound");
         const chapterPage = <?= $page ?>;
-        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
+        const pageHash = "<?= $pageHash ?>";
+        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=" + pageHash;
         const modal = document.getElementById("modal-overlay");
         const okButton = document.getElementById("modal-ok");
         const cancelButton = document.getElementById("modal-cancel");

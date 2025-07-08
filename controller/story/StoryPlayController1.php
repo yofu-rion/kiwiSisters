@@ -2,18 +2,32 @@
 <html lang="en">
 
 <?php
+session_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// ログイン確認
+if (!isset($_SESSION['login'])) {
+    header('Location: ../../index.php');
+    exit;
+}
+
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
+
 require '../../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Hashids\Hashids;
 
 $inputFileName = '../../scenario/ScenarioPlay1.xlsx';
 $spreadsheet = IOFactory::load($inputFileName);
 $sheet = $spreadsheet->getActiveSheet();
 
-$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+
+$hashids = new Hashids($username, 8);
+// $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$page = $hashids->decode($_GET['page'])[0] ?? 1;
 $row = $sheet->getRowIterator($page, $page)->current();
 
 $cellIterator = $row->getCellIterator();
@@ -58,17 +72,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../StartMenu.php");
         exit;
     } elseif ($next_state == 1) {
-        header("Location: StoryPlayController1.php?page={$nextPage}");
+        $nextPageHash = $hashids->encode($nextPage);
+        header("Location: StoryPlayController1.php?page={$nextPageHash}");
         exit;
     } elseif ($next_state == 2) {
         if (isset($_POST['choice'])) {
             $targetPage = (int) $_POST['choice'];
-            header("Location: StoryPlayController1.php?page=$targetPage");
+            $targetPageHash = $hashids->encode($targetPage);
+            header("Location: StoryPlayController1.php?page=$targetPageHash");
             exit;
         }
     } elseif ($next_state == 3) {
         if (is_numeric($jumpTarget)) {
-            header("Location: StoryPlayController1.php?page=$jumpTarget");
+            $jumpTargetHash = $hashids->encode($jumpTarget);
+            header("Location: StoryPlayController1.php?page=$jumpTargetHash");
             exit;
         }
     } elseif ($next_state == 4) {
@@ -76,7 +93,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 }
+$correctjumpTargetHash = $hashids->encode($correctjumpTarget);
+$incorrectjumpTargetHash = $hashids->encode($incorrectjumpTarget);
 
+$pageHash = $hashids->encode($page);
+$chapterHash = $hashids->encode(1); // 章は1で固定
 ?>
 
 <head>
@@ -128,8 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>
                 <form action="upload1.php" method="post" enctype="multipart/form-data" class="file-upload">
                     <input type="file" name="uploaded_file" accept=".php" required>
-                    <input type="hidden" name="correctjumpTarget" value="<?php echo $correctjumpTarget; ?>">
-                    <input type="hidden" name="incorrectjumpTarget" value="<?php echo $incorrectjumpTarget; ?>">
+                    <input type="hidden" name="correctjumpTarget" value="<?php echo $correctjumpTargetHash; ?>">
+                    <input type="hidden" name="incorrectjumpTarget" value="<?php echo $incorrectjumpTargetHash; ?>">
                     <button type="submit">ファイルをアップロード</button>
                 </form>
             </div>
@@ -149,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
                 <div class="menu">
-                    <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $page ?>&chapter=1" class="save">セーブ</a>
+                    <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $pageHash ?>&chapter=<?= $chapterHash ?>" class="save">セーブ</a>
                     <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
                 </div>
 

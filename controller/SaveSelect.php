@@ -9,8 +9,8 @@ if (!isset($_SESSION['login'])) {
   exit;
 }
 
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$chapter = isset($_GET['chapter']) ? intval($_GET['chapter']) : 1;
+$page = $_GET['page'];
+$chapter = $_GET['chapter'];
 
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
