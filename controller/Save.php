@@ -9,11 +9,19 @@ if (!isset($_SESSION['login'])) {
 }
 
 $slot = isset($_GET['slot']) ? intval($_GET['slot']) : 0;
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$chapter = isset($_GET['chapter']) ? intval($_GET['chapter']) : 1;
+$pageHash = $_GET['page'];
+$chapterHash = $_GET['chapter'];
 
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
+
+require '../vendor/autoload.php';
+use Hashids\Hashids;
+
+$hashids = new Hashids($username, 8);
+$page = $hashids->decode($pageHash)[0] ?? 1;
+$chapter = $hashids->decode($chapterHash)[0] ?? 1;
+
 
 if ($slot < 1 || $slot > 4) {
     echo "スロット番号が不正です。";
@@ -51,7 +59,7 @@ try {
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="1;url=/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $page ?>">
+  <meta http-equiv="refresh" content="1;url=/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $pageHash ?>">
   <title>セーブ完了</title>
   <link rel="stylesheet" href="../css/save_select.css">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
