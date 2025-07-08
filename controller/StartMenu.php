@@ -52,6 +52,9 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
     <div id="fade-overlay"></div>
 
     <script>
+        sessionStorage.removeItem("lastBgm");
+        sessionStorage.removeItem("bgmTime");
+
         const items = document.querySelectorAll(".menu-item");
         const audio = document.getElementById("kettei-sound");
         const fadeOverlay = document.getElementById("fade-overlay");
@@ -70,6 +73,17 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
             });
         };
 
+        if (!sessionStorage.getItem("bgmFrameLoaded")) {
+            const iframe = document.createElement("iframe");
+            iframe.src = "/kiwiSisters/controller/story/bgm.html";
+            iframe.style.display = "none";
+            iframe.allow = "autoplay";
+            document.body.appendChild(iframe);
+            sessionStorage.setItem("bgmFrameLoaded", "true");
+        }
+
+        sessionStorage.removeItem('bgmTime');
+
         document.addEventListener("keydown", (e) => {
             if (e.key === "ArrowDown") {
                 index = (index + 1) % items.length;
@@ -85,7 +99,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
                 const activeItem = items[index];
                 const button = activeItem.querySelector("button");
                 if (button) {
-                    const targetUrl = button.dataset.href;
+                    let targetUrl = button.dataset.href;
                     audio.currentTime = 0;
                     audio.play().catch(() => { });
                     fadeOverlay.classList.add("fade-out");
@@ -95,12 +109,6 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
                 }
             }
         });
-
-        window.onpageshow = function (event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        };
 
         items.forEach((item, i) => {
             item.addEventListener("click", () => {
@@ -114,7 +122,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
             if (button) {
                 button.addEventListener("click", (e) => {
                     e.stopPropagation();
-                    const targetUrl = button.dataset.href;
+                    let targetUrl = button.dataset.href;
                     audio.currentTime = 0;
                     audio.play().catch(() => { });
                     fadeOverlay.classList.add("fade-out");
@@ -124,6 +132,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
                 });
             }
         });
+
         window.addEventListener("DOMContentLoaded", () => {
             const isMuted = localStorage.getItem("volumeMuted") === "true";
         });

@@ -15,7 +15,6 @@ if ($page < 1 || $page > 4) {
 }
 
 $isFinalChapter = $page === 4;
-// ここで4章をはじめられるか管理してるよう
 $unlockFinalChapter = false;
 
 $stories = [
@@ -24,7 +23,6 @@ $stories = [
     3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story.png"],
     4 => ["title" => "???????", "image" => "/kiwiSisters/img/story.png"],
 ];
-
 
 $current = $stories[$page];
 $prevPage = $page > 1 ? $page - 1 : null;
@@ -55,7 +53,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
         <div class="chapter-content">
             <h2>
                 <?php if ($isFinalChapter): ?>
-                    蝗帷ｫ?
+                    螗帷�?
                 <?php else: ?>
                     第<?= $page ?>章
                 <?php endif; ?>
@@ -91,12 +89,13 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <script>
         const audioSelect = document.getElementById("select-sound");
         const chapterPage = <?= $page ?>;
-        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
         const modal = document.getElementById("modal-overlay");
         const okButton = document.getElementById("modal-ok");
         const cancelButton = document.getElementById("modal-cancel");
         const fadeOverlay = document.getElementById("fade-overlay");
         const audioKettei = document.getElementById("kettei-sound");
+
+        sessionStorage.removeItem('bgmTime');
 
         const showModal = () => {
             modal.classList.remove("hidden");
@@ -107,6 +106,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
         };
 
         const startButton = document.getElementById("start-button");
+        const muted = localStorage.getItem("volumeMuted") === "true";
 
         if (startButton) {
             startButton.addEventListener("click", () => {
@@ -114,7 +114,9 @@ $nextPage = $page < 4 ? $page + 1 : null;
             });
         }
         document.addEventListener("keydown", (e) => {
-            if (!modal.classList.contains("hidden")) return;
+            if (!modal.classList.contains("hidden")) {
+                return;
+            }
 
             if (e.key === "ArrowLeft") {
                 <?php if ($prevPage): ?>
@@ -138,8 +140,9 @@ $nextPage = $page < 4 ? $page + 1 : null;
             audioKettei.play().catch(() => { });
             fadeOverlay.classList.add("fade-in");
             setTimeout(() => {
-                window.location.href = storyUrl;
+                window.location.href = `/kiwiSisters/controller/story/StoryPlayController1.php?page=2&chapter=${chapterPage}`;
             }, 2000);
+
         });
 
         cancelButton.addEventListener("click", () => {
