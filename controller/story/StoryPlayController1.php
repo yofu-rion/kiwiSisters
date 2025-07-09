@@ -29,9 +29,7 @@ session_start();
 
   <div class="full">
     <img id="charImage" class="char-stand" src="" alt="" style="display: none;">
-
     <div id="choiceArea" class="choices" style="display: none;"></div>
-
     <div class="kuuhaku">a</div>
     <div class="comment">
       <div class="hako">
@@ -71,6 +69,12 @@ session_start();
     ]); ?>;
 
     async function loadPage(page) {
+      const bgmFrame = document.getElementById("bgm-frame");
+      const bgmWindow = bgmFrame?.contentWindow;
+      if (bgmWindow) {
+        bgmWindow.postMessage({ type: "saveCurrentTime" }, "*");
+      }
+
       currentPage = page;
       const chapter = parseInt(sessionStorage.getItem("currentChapter") || "1");
       if (!sessionStorage.getItem("currentChapter")) {
@@ -78,7 +82,6 @@ session_start();
       }
       const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${chapter}&page=${page}`);
       const data = await res.json();
-      console.log("📸 illustration raw:", data.illustration);
 
       document.getElementById("charName").textContent = data.character;
       document.getElementById("textArea").textContent = data.text;
@@ -97,7 +100,6 @@ session_start();
         : (data.illustration || "").toString().trim();
 
       let imageSrc = charImageMap[rawIllustration];
-
       if (!imageSrc && rawIllustration) {
         const base = rawIllustration.split('_')[0].trim();
         imageSrc =
@@ -132,14 +134,30 @@ session_start();
         choiceArea.style.display = "none";
       }
 
-      const bgmFrame = document.getElementById("bgm-frame");
-      const bgmWindow = bgmFrame?.contentWindow;
       if (bgmWindow) {
-        const lastBgm = sessionStorage.getItem("lastBgm");
+        const rawBgm = (data.bgm || "").trim();
+        const lastBgm = sessionStorage.getItem("lastBgm") || "";
         const lastTime = parseFloat(sessionStorage.getItem("bgmTime") || "0");
-        const currentTime = (lastBgm && lastBgm === data.bgm) ? lastTime + 0.49 : 0;
-        bgmWindow.postMessage({ type: "setBgm", bgm: data.bgm, currentTime }, "*");
+
+        const effectiveBgm = rawBgm || lastBgm; // 空文字なら前回のBGMを使う
+        const isSameBgm = effectiveBgm === lastBgm;
+        const currentTime = isSameBgm ? lastTime : 0;
+        const firstSend = !sessionStorage.getItem("lastBgmSent");
+
+        // 条件を満たすときだけ postMessage 送信
+        if (
+          firstSend ||
+          !isSameBgm ||
+          Math.abs(currentTime - lastTime) > 1
+        ) {
+          bgmWindow.postMessage({ type: "setBgm", bgm: effectiveBgm, currentTime }, "*");
+          sessionStorage.setItem("lastBgm", effectiveBgm);
+          sessionStorage.setItem("bgmTime", currentTime.toString());
+          sessionStorage.setItem("lastBgmSent", "true");
+        }
       }
+
+
 
       document.getElementById("nextButton").onclick = () => loadPage(page + 1);
       sessionStorage.setItem("currentPage", page);
@@ -156,36 +174,11 @@ session_start();
       loadPage(initialPage);
     });
 
-
-
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        // const currentPage = parseInt(sessionStorage.getItem("currentPage") || "2");
         loadPage(currentPage + 1);
       }
     });
-
-    const rawIllustration = Array.isArray(data.illustration)
-      ? data.illustration[0]?.toString().trim()
-      : (data.illustration || "").toString().trim();
-
-    console.log("📦 illustration from server:", data.illustration);
-    console.log("🧹 trimmed illustration:", rawIllustration);
-
-    let imageSrc = charImageMap[rawIllustration];
-
-    if (!imageSrc && rawIllustration) {
-      const base = rawIllustration.split('_')[0].trim();
-      imageSrc =
-        charImageMap[`${base}_通常`] ||
-        Object.entries(charImageMap).find(([key]) =>
-          key.startsWith(base)
-        )?.[1];
-    }
-
-    console.log("🖼️ resolved image src:", imageSrc);
-    console.log("📚 charImageMap keys:", Object.keys(charImageMap));
-
   </script>
 </body>
 

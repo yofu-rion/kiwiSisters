@@ -1,4 +1,3 @@
-<!-- ✅ bgm.html のままで基本OKだが、送受信安定化のため一部改良 -->
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -10,6 +9,21 @@
     <script>
       const audio = document.getElementById('bgm');
 
+      const bgmMap = {
+        '探索': 'tansaku.mp3',
+        '探索_不穏': 'tansaku_fuon.mp3',
+        '決定': 'kettei.mp3',
+        '選択': 'select.mp3',
+        'プログラム': 'program.mp3',
+        '花子': 'hanako.mp3',
+        '怪しい': 'ayasii.mp3',
+        '怪しい2': 'ayasii2.mp3',
+        '静止': '',
+      };
+
+      let lastBgmName = null;
+      let lastFile = null;
+
       window.addEventListener('message', (e) => {
         const { bgm, currentTime, type } = e.data || {};
 
@@ -19,33 +33,63 @@
         }
 
         if (type === 'setBgm') {
-          if (!bgm) {
+          let targetBgmName = (typeof bgm === 'string') ? bgm.trim() : '';
+          let filename = '';
+
+          if (targetBgmName === '') {
+            if (lastFile) {
+              filename = lastFile;
+              targetBgmName = lastBgmName;
+              console.log('⏩ 空欄なので前回を継続:', filename);
+            } else {
+              console.log('⛔ 空欄かつ前回情報なし → 無音維持');
+              return;
+            }
+          } else {
+            filename = bgmMap[targetBgmName] || '';
+          }
+
+          if (targetBgmName === '静止' || filename === '') {
             audio.pause();
             audio.removeAttribute('src');
             audio.load();
+            lastBgmName = null;
+            lastFile = null;
+            sessionStorage.removeItem('bgmTime');
+            sessionStorage.removeItem('lastBgm');
+            console.log('🔇 BGM停止（静止）');
             return;
           }
 
-          const expectedSrc = `${location.origin}/kiwiSisters/music/${bgm}`;
-          const time = typeof currentTime === 'number' && !isNaN(currentTime) ? currentTime : 0;
+          const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`;
+          const savedTime = parseFloat(sessionStorage.getItem('bgmTime') || '0');
+          const savedBgm = sessionStorage.getItem('lastBgm') || '';
 
-          if (!audio.src.endsWith(bgm)) {
-            audio.src = expectedSrc;
-            audio.onloadedmetadata = () => {
-              audio.currentTime = time;
-              audio.play().catch(console.warn);
-            };
-          } else {
-            audio.currentTime = time;
+          // 🧠 すでに同じBGMが流れているなら再設定せず継続再生
+          if (lastFile === filename && audio.src.endsWith(filename)) {
+            console.log('🎵 BGM変更なし → 再生位置だけ更新');
+            audio.currentTime = savedTime;
             audio.play().catch(console.warn);
+            return;
           }
-          return;
+
+          // 🔄 BGM切り替え or 初回設定
+          audio.src = expectedSrc;
+          audio.onloadedmetadata = () => {
+            audio.currentTime = savedTime;
+            audio.play().catch(console.warn);
+            console.log(`🎵 BGM再生: ${filename} ⏱️ 再開位置: ${savedTime}`);
+          };
+
+          lastBgmName = targetBgmName;
+          lastFile = filename;
+          sessionStorage.setItem('lastBgm', filename);
         }
 
         if (type === 'saveCurrentTime') {
           if (!audio.paused) {
             sessionStorage.setItem('bgmTime', audio.currentTime);
-            sessionStorage.setItem('lastBgm', audio.src.split('/').pop());
+            sessionStorage.setItem('lastBgm', lastFile || '');
             console.log('💾 再生位置を保存しました:', audio.currentTime);
           }
         }
@@ -53,5 +97,3 @@
     </script>
   </body>
 </html>
-
-<!-- ✅ MainWrapper.php は不要になるので削除可能 -->
