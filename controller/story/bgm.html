@@ -1,3 +1,4 @@
+<!-- ✅ bgm.html のままで基本OKだが、送受信安定化のため一部改良 -->
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -13,10 +14,7 @@
         const { bgm, currentTime, type } = e.data || {};
 
         if (type === 'requestCurrentTime') {
-          e.source?.postMessage(
-            { type: 'responseCurrentTime', currentTime: audio.currentTime },
-            '*',
-          );
+          e.source?.postMessage({ type: 'responseCurrentTime', currentTime: audio.currentTime }, '*');
           return;
         }
 
@@ -28,12 +26,10 @@
             return;
           }
 
-          const expectedSrc = location.origin + '/kiwiSisters/music/' + bgm;
-          const time = typeof currentTime === 'number' && !isNaN(currentTime)
-            ? currentTime
-            : 0;
+          const expectedSrc = `${location.origin}/kiwiSisters/music/${bgm}`;
+          const time = typeof currentTime === 'number' && !isNaN(currentTime) ? currentTime : 0;
 
-          if (audio.src !== expectedSrc) {
+          if (!audio.src.endsWith(bgm)) {
             audio.src = expectedSrc;
             audio.onloadedmetadata = () => {
               audio.currentTime = time;
@@ -57,3 +53,5 @@
     </script>
   </body>
 </html>
+
+<!-- ✅ MainWrapper.php は不要になるので削除可能 -->
