@@ -7,93 +7,128 @@
   <body>
     <audio id="bgm" loop autoplay></audio>
     <script>
-      const audio = document.getElementById('bgm');
+      const audio = document.getElementById('bgm')
 
       const bgmMap = {
-        '探索': 'tansaku.mp3',
-        '探索_不穏': 'tansaku_fuon.mp3',
-        '決定': 'kettei.mp3',
-        '選択': 'select.mp3',
-        'プログラム': 'program.mp3',
-        '花子': 'hanako.mp3',
-        '怪しい': 'ayasii.mp3',
-        '怪しい2': 'ayasii2.mp3',
-        '静止': '',
-      };
+        探索: 'tansaku.mp3',
+        探索_不穏: 'tansaku_fuon.mp3',
+        決定: 'kettei.mp3',
+        選択: 'select.mp3',
+        プログラム: 'program.mp3',
+        花子: 'hanako.mp3',
+        怪しい: 'ayasii.mp3',
+        怪しい2: 'ayasii2.mp3',
+        静止: '',
+      }
 
-      let lastBgmName = null;
-      let lastFile = null;
+      let lastBgmName = null
+      let lastFile = null
 
-      window.addEventListener('message', (e) => {
-        const { bgm, currentTime, type } = e.data || {};
+      // 🔁 play() を安全に呼び出す共通関数
+      async function safePlay(currentTime) {
+        try {
+          audio.currentTime = currentTime
+          await audio.play()
+          console.log('✅ BGM再生成功')
+          sessionStorage.removeItem('bgmPlayFailed')
+        } catch (err) {
+          console.warn('🔇 BGM再生失敗（自動）:', err)
+          sessionStorage.setItem('bgmPlayFailed', 'true')
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const filename = sessionStorage.getItem('lastBgm')
+        const bgmTime = parseFloat(sessionStorage.getItem('bgmTime') || '0')
+
+        if (filename) {
+          const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`
+          audio.src = expectedSrc
+          audio.onloadedmetadata = () => {
+            // 再生はしない（ユーザー操作で再開させる）
+            console.log(
+              `📥 リロード時BGMプリロードのみ: ${filename} ⏱️ 位置: ${bgmTime}`,
+            )
+          }
+        }
+      })
+
+      window.addEventListener('message', async (e) => {
+        const { bgm, currentTime, type } = e.data || {}
 
         if (type === 'requestCurrentTime') {
-          e.source?.postMessage({ type: 'responseCurrentTime', currentTime: audio.currentTime }, '*');
-          return;
+          e.source?.postMessage(
+            { type: 'responseCurrentTime', currentTime: audio.currentTime },
+            '*',
+          )
+          return
+        }
+
+        if (type === 'retryPlay') {
+          console.log('🔁 クリック後に再生再試行')
+          const time = parseFloat(sessionStorage.getItem('bgmTime') || '0')
+          safePlay(time)
+          return
         }
 
         if (type === 'setBgm') {
-          let targetBgmName = (typeof bgm === 'string') ? bgm.trim() : '';
-          let filename = '';
+          let targetBgmName = typeof bgm === 'string' ? bgm.trim() : ''
+          let filename = ''
 
           if (targetBgmName === '') {
             if (lastFile) {
-              filename = lastFile;
-              targetBgmName = lastBgmName;
-              console.log('⏩ 空欄なので前回を継続:', filename);
+              filename = lastFile
+              targetBgmName = lastBgmName
+              console.log('⏩ 空欄なので前回を継続:', filename)
             } else {
-              console.log('⛔ 空欄かつ前回情報なし → 無音維持');
-              return;
+              console.log('⛔ 空欄かつ前回情報なし → 無音維持')
+              return
             }
           } else {
-            filename = bgmMap[targetBgmName] || '';
+            filename = bgmMap[targetBgmName] || ''
           }
 
           if (targetBgmName === '静止' || filename === '') {
-            audio.pause();
-            audio.removeAttribute('src');
-            audio.load();
-            lastBgmName = null;
-            lastFile = null;
-            sessionStorage.removeItem('bgmTime');
-            sessionStorage.removeItem('lastBgm');
-            console.log('🔇 BGM停止（静止）');
-            return;
+            audio.pause()
+            audio.removeAttribute('src')
+            audio.load()
+            lastBgmName = null
+            lastFile = null
+            sessionStorage.removeItem('bgmTime')
+            // sessionStorage.removeItem('lastBgm')
+            sessionStorage.removeItem('bgmPlayFailed')
+            console.log('🔇 BGM停止（静止）')
+            return
           }
 
-          const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`;
-          const savedTime = parseFloat(sessionStorage.getItem('bgmTime') || '0');
-          const savedBgm = sessionStorage.getItem('lastBgm') || '';
+          const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`
+          const savedTime = parseFloat(sessionStorage.getItem('bgmTime') || '0')
 
-          // 🧠 すでに同じBGMが流れているなら再設定せず継続再生
           if (lastFile === filename && audio.src.endsWith(filename)) {
-            console.log('🎵 BGM変更なし → 再生位置だけ更新');
-            audio.currentTime = savedTime;
-            audio.play().catch(console.warn);
-            return;
+            console.log('🎵 BGM変更なし → 再生位置だけ更新')
+            safePlay(savedTime)
+            return
           }
 
-          // 🔄 BGM切り替え or 初回設定
-          audio.src = expectedSrc;
+          audio.src = expectedSrc
           audio.onloadedmetadata = () => {
-            audio.currentTime = savedTime;
-            audio.play().catch(console.warn);
-            console.log(`🎵 BGM再生: ${filename} ⏱️ 再開位置: ${savedTime}`);
-          };
+            safePlay(savedTime)
+            console.log(`🎵 BGM再生: ${filename} ⏱️ 再開位置: ${savedTime}`)
+          }
 
-          lastBgmName = targetBgmName;
-          lastFile = filename;
-          sessionStorage.setItem('lastBgm', filename);
+          lastBgmName = targetBgmName
+          lastFile = filename
+          sessionStorage.setItem('lastBgm', filename)
         }
 
         if (type === 'saveCurrentTime') {
           if (!audio.paused) {
-            sessionStorage.setItem('bgmTime', audio.currentTime);
-            sessionStorage.setItem('lastBgm', lastFile || '');
-            console.log('💾 再生位置を保存しました:', audio.currentTime);
+            sessionStorage.setItem('bgmTime', audio.currentTime)
+            sessionStorage.setItem('lastBgm', lastFile || '')
+            console.log('💾 再生位置を保存しました:', audio.currentTime)
           }
         }
-      });
+      })
     </script>
   </body>
 </html>

@@ -17,9 +17,9 @@ $username = $_SESSION['login']['name'];
 
 // データベース接続
 $pdo = new PDO(
-    'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',
-    'staff',
-    'password'
+  'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',
+  'staff',
+  'password'
 );
 
 function loadSlotData($slotNumber, $pdo, $username)
@@ -28,7 +28,7 @@ function loadSlotData($slotNumber, $pdo, $username)
     $sql = $pdo->prepare('SELECT page, chapter, timestamp FROM save_data WHERE user_name = ? AND slot_num = ?');
     $sql->execute([$username, $slotNumber]);
     $result = $sql->fetch(PDO::FETCH_ASSOC);
-    
+
     if ($result) {
       return [
         'page' => $result['page'],
@@ -69,17 +69,32 @@ function loadSlotData($slotNumber, $pdo, $username)
             $pageNumber = isset($data['page']) ? htmlspecialchars((string) $data['page']) : '?';
             $chapterNumber = isset($data['chapter']) ? htmlspecialchars((string) $data['chapter']) : '?';
             ?>
-            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?> を保存済み</div>
+            <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?>
+              を保存済み</div>
           <?php else: ?>
             <div class="slot-info">スロット<?= $i ?>：空</div>
           <?php endif; ?>
 
-          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>&chapter=<?= $chapter ?>">セーブ</a>
+          <a class="save-button" href="Save.php?slot=<?= $i ?>&page=<?= $page ?>&chapter=<?= $chapter ?>"
+            data-slot="<?= $i ?>">セーブ</a>
         </li>
       <?php endfor; ?>
     </ul>
     <a class="back" href="javascript:history.back()">戻る</a>
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const buttons = document.querySelectorAll(".save-button");
+      const bgm = sessionStorage.getItem("lastBgm") || "";
+
+      buttons.forEach(btn => {
+        const url = new URL(btn.href);
+        url.searchParams.set("bgm", bgm);
+        btn.href = url.toString();
+      });
+    });
+  </script>
+
 </body>
 
 </html>
