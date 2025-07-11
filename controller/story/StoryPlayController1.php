@@ -60,7 +60,11 @@ session_start();
       '雉真_真顔': '/kiwiSisters/img/kijima_nomal.png',
       '雉真_笑顔': '/kiwiSisters/img/kijima_smile.png',
       '雉真_考察': '/kiwiSisters/img/kijima_thinking.png',
-      '鷹森': '/kiwiSisters/img/takamori_nomal.png',
+      '鷹森_通常': '/kiwiSisters/img/takamori_nomal.png',
+      '鷹森_驚き': '/kiwiSisters/img/takamori_bikkuri.png',
+      '鷹森_江永ピンチ': '/kiwiSisters/img/takamori_enagapinch.png',
+      '鷹森_戦闘': '/kiwiSisters/img/takamori_kamae.png',
+      '鷹森_落胆': '/kiwiSisters/img/takamori_syonbori.png',
       '江永': '/kiwiSisters/img/enaga_standard.png',
       '花子': '/kiwiSisters/img/hanakosan_smile.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
@@ -69,17 +73,20 @@ session_start();
     let isInitialLoad = true;
     let lastSentBgm = null;
     let lastSentPage = null;
+    let allowEnterKey = true;
+    let currentData = null;
 
     async function loadPage(page) {
       currentPage = page;
-      if (!isInitialLoad) {
-        sessionStorage.setItem("currentPage", page);
-      }
-      isInitialLoad = false;
+      // if (!isInitialLoad) {
+      //   sessionStorage.setItem("currentPage", page);
+      // }
+      // isInitialLoad = false;
 
       const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 1}&page=${page}`);
       const data = await res.json();
       console.log("🎯 fetch結果 =", data);
+      currentData = data;
 
       const bgmFrame = document.getElementById("bgm-frame");
       const bgmWindow = bgmFrame?.contentWindow;
@@ -143,28 +150,44 @@ session_start();
 
       const choiceArea = document.getElementById("choiceArea");
       choiceArea.innerHTML = "";
+      const nextButton = document.getElementById("nextButton");
+
       if (data.next_state == 2) {
+        allowEnterKey = false;
+        nextButton.disabled = true;
+        nextButton.style.display = "none";
+        choiceArea.innerHTML = "";
+
         [data.choice1, data.choice2, data.jumpTarget].forEach(choice => {
           if (choice && /(.+?)\((\d+)\)/.test(choice)) {
             const [, label, pageNum] = choice.match(/(.+?)\((\d+)\)/);
             const btn = document.createElement("button");
             btn.textContent = label;
-            btn.onclick = () => loadPage(pageNum);
+            btn.onclick = () => loadPage(parseInt(pageNum, 10));
             choiceArea.appendChild(btn);
           }
         });
         choiceArea.style.display = "block";
       } else {
+        allowEnterKey = true;
         choiceArea.style.display = "none";
+        nextButton.disabled = false;
+        nextButton.style.display = "inline-block";
       }
-
-      document.getElementById("nextButton").onclick = () => {
-        sessionStorage.setItem("currentPage", currentPage + 1);
-        loadPage(currentPage + 1);
-      };
-
-      history.replaceState(null, "", `StoryPlayController1.php`);
     }
+
+    function handleNext() {
+      if (currentData.next_state == 0) {
+        window.location.href = "/kiwiSisters/controller/StartMenu.php";
+      } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
+        const targetPage = parseInt(currentData.jumpTarget, 10);
+        loadPage(targetPage);
+      } else {
+        loadPage(currentPage + 1);
+      }
+    }
+
+    document.getElementById("nextButton").onclick = handleNext;
 
     window.addEventListener("DOMContentLoaded", () => {
       const chapter = sessionStorage.getItem("currentChapter");
@@ -189,8 +212,8 @@ session_start();
     });
 
     document.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        loadPage(currentPage + 1);
+      if (e.key === "Enter" && allowEnterKey) {
+        handleNext();
       }
     });
   </script>
