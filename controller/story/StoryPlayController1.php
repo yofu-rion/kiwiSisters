@@ -38,7 +38,7 @@ session_start();
           <button id="nextButton" class="next">></button>
         </div>
         <div class="menu">
-          <a href="/kiwiSisters/controller/SaveSelect.php" class="save">セーブ</a>
+          <a href="#" class="save" id="saveButton">セーブ</a>
           <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
         </div>
       </div>
@@ -187,29 +187,45 @@ session_start();
       }
     }
 
+    document.getElementById("saveButton").onclick = () => {
+      console.log("[StoryPlayController1.php] セーブボタン押下: currentPage=", currentPage);
+      sessionStorage.setItem("currentPage", currentPage);
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
+      window.location.href = "/kiwiSisters/controller/SaveSelect.php";
+    };
+
+
     document.getElementById("nextButton").onclick = handleNext;
 
     window.addEventListener("DOMContentLoaded", () => {
       const chapter = sessionStorage.getItem("currentChapter");
+      const page = sessionStorage.getItem("currentPage");
+
+      console.log("[StoryPlayController1.php] DOMContentLoaded");
+      console.log("[StoryPlayController1.php] currentChapter from sessionStorage:", chapter);
+      console.log("[StoryPlayController1.php] currentPage from sessionStorage:", page);
+
       if (!chapter) {
         alert("章の選択情報（currentChapter）がありません。章選択画面からやり直してください。");
         return;
       }
 
-      let initialPage = parseInt(sessionStorage.getItem("currentPage"), 10);
+      let initialPage = parseInt(page, 10);
       if (isNaN(initialPage) || initialPage < 2) {
         initialPage = 2;
         sessionStorage.setItem("currentPage", "2");
       }
+
       currentPage = initialPage;
-      console.log("✅ currentPage 確定:", currentPage);
+      console.log("[StoryPlayController1.php] currentPage 確定:", currentPage);
 
       requestAnimationFrame(() => {
         loadPage(currentPage).then(() => {
-          console.log("✅ loadPage 完了 - page:", currentPage);
+          console.log("[StoryPlayController1.php] loadPage 完了 - page:", currentPage);
         });
       });
     });
+
 
     document.addEventListener("keydown", e => {
       if (e.key === "Enter" && allowEnterKey) {

@@ -85,15 +85,28 @@ function loadSlotData($slotNumber, $pdo, $username)
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const buttons = document.querySelectorAll(".save-button");
+
       const bgm = sessionStorage.getItem("lastBgm") || "";
+      const chapter = sessionStorage.getItem("currentChapter") || "1";
+      const page = sessionStorage.getItem("currentPage") || "2";
+
+      console.log("[SaveSelect.php] sessionStorage page=", page);
+      console.log("[SaveSelect.php] sessionStorage chapter=", chapter);
+      console.log("[SaveSelect.php] sessionStorage bgm=", bgm);
 
       buttons.forEach(btn => {
-        const url = new URL(btn.href);
+        const url = new URL(btn.href, window.location.origin);
         url.searchParams.set("bgm", bgm);
+        url.searchParams.set("chapter", chapter);
+        url.searchParams.set("page", page);
         btn.href = url.toString();
+
+        console.log("[SaveSelect.php] href for slot", btn.dataset.slot, "=", btn.href);
       });
     });
   </script>
+
+
 
 </body>
 
