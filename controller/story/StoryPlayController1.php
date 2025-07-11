@@ -48,30 +48,30 @@ session_start();
   <script>
     let currentPage = parseInt(sessionStorage.getItem("currentPage") || "2");
     const charImageMap = {
-      '白鷺_通常' :  '/kiwiSisters/img/shirasagi_standard.png',
-      '白鷺_恐怖' :  '/kiwiSisters/img/shirasagi_scared.png',
-      '白鷺_笑顔' :  '/kiwiSisters/img/shirasagi_smile.png',
-      '白鷺_驚き' :  '/kiwiSisters/img/shirasagi_surprise.png',
-      '白鷺_考察' :  '/kiwiSisters/img/shirasagi_thinking.png',
-      '白鷺_怒る' :  '/kiwiSisters/img/shirasagi_ungry.png',
-      '雉真_通常' :  '/kiwiSisters/img/kijima_chotosmile.png',
-      '雉真_怒る' :  '/kiwiSisters/img/kijima_angry.png',
-      '雉真_焦り' :  '/kiwiSisters/img/kijima_aseri.png',
-      '雉真_真顔' :  '/kiwiSisters/img/kijima_nomal.png',
-      '雉真_笑顔' :  '/kiwiSisters/img/kijima_smile.png',
-      '雉真_考察' :  '/kiwiSisters/img/kijima_thinking.png',
-      '鷹森' :  '/kiwiSisters/img/takamori_nomal.png',
-      '江永' :  '/kiwiSisters/img/enaga_standard.png',
-      '花子' :  '/kiwiSisters/img/hanakosan_smile.png',
-      'キーウィ・キウイ' :  '/kiwiSisters/img/kiwi.png',
+      '白鷺_通常': '/kiwiSisters/img/shirasagi_standard.png',
+      '白鷺_恐怖': '/kiwiSisters/img/shirasagi_scared.png',
+      '白鷺_笑顔': '/kiwiSisters/img/shirasagi_smile.png',
+      '白鷺_驚き': '/kiwiSisters/img/shirasagi_surprise.png',
+      '白鷺_考察': '/kiwiSisters/img/shirasagi_thinking.png',
+      '白鷺_怒る': '/kiwiSisters/img/shirasagi_ungry.png',
+      '雉真_通常': '/kiwiSisters/img/kijima_chotosmile.png',
+      '雉真_怒る': '/kiwiSisters/img/kijima_angry.png',
+      '雉真_焦り': '/kiwiSisters/img/kijima_aseri.png',
+      '雉真_真顔': '/kiwiSisters/img/kijima_nomal.png',
+      '雉真_笑顔': '/kiwiSisters/img/kijima_smile.png',
+      '雉真_考察': '/kiwiSisters/img/kijima_thinking.png',
+      '鷹森': '/kiwiSisters/img/takamori_nomal.png',
+      '江永': '/kiwiSisters/img/enaga_standard.png',
+      '花子': '/kiwiSisters/img/hanakosan_smile.png',
+      'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
     };
 
     let isInitialLoad = true;
+    let lastSentBgm = null;
+    let lastSentPage = null;
 
     async function loadPage(page) {
       currentPage = page;
-      console.log("📥 loadPage() 呼び出し - page:", page);
-
       if (!isInitialLoad) {
         sessionStorage.setItem("currentPage", page);
       }
@@ -86,41 +86,38 @@ session_start();
 
       let lastTime = 0;
       if (bgmWindow) {
-        const currentTimePromise = new Promise((resolve) => {
-          function handler(e) {
-            if (e.data?.type === "responseCurrentTime") {
-              window.removeEventListener("message", handler);
-              resolve(e.data.currentTime);
-            }
-          }
-          window.addEventListener("message", handler);
-          bgmWindow.postMessage({ type: "requestCurrentTime" }, "*");
-        });
-
-        lastTime = parseFloat(await currentTimePromise) || 0;
-        sessionStorage.setItem("bgmTime", lastTime.toString());
-        console.log("💾 現在の再生位置取得:", lastTime);
-
         let effectiveBgm = (data.bgm || "").trim();
-        if (effectiveBgm) {
-          const lastBgm = sessionStorage.getItem("lastBgm") || "";
-          const lastPage = parseInt(sessionStorage.getItem("currentPage"), 10);
-          const isSameBgm = effectiveBgm === lastBgm && page === lastPage;
 
-          const currentTime = isSameBgm ? lastTime : 0;
+        // BGM が変わらなければ送信しない
+        const isSameBgm = effectiveBgm === lastSentBgm;
 
-          console.log(`🎶 BGM送信: ${effectiveBgm}, 前回: ${lastBgm}, 再開位置: ${currentTime}`);
+        if (!isSameBgm) {
+          const currentTimePromise = new Promise((resolve) => {
+            function handler(e) {
+              if (e.data?.type === "responseCurrentTime") {
+                window.removeEventListener("message", handler);
+                resolve(e.data.currentTime);
+              }
+            }
+            window.addEventListener("message", handler);
+            bgmWindow.postMessage({ type: "requestCurrentTime" }, "*");
+          });
+
+          const lastTime = parseFloat(await currentTimePromise) || 0;
+
+          const currentTime = 0;  // 新しいBGMなら 0 から
+
+          console.log(`🎶 BGM送信: ${effectiveBgm}, 前回送信: ${lastSentBgm}`);
 
           bgmWindow.postMessage(
             { type: "setBgm", bgm: effectiveBgm, currentTime },
             "*"
           );
 
-          sessionStorage.setItem("lastBgm", effectiveBgm);
-          sessionStorage.setItem("bgmTime", currentTime.toString());
-          sessionStorage.setItem("lastBgmSent", "true");
+          lastSentBgm = effectiveBgm;  // 状態を変数に保存
+          lastSentPage = page;
         } else {
-          console.log("🛑 BGMが空なので送信しません");
+          console.log(`⏭️ 同じBGMなので送信省略: ${effectiveBgm}`);
         }
       }
 

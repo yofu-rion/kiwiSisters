@@ -75,29 +75,30 @@
           let targetBgmName = typeof bgm === 'string' ? bgm.trim() : ''
           let filename = ''
 
-          if (targetBgmName === '') {
-            if (lastFile) {
-              filename = lastFile
-              targetBgmName = lastBgmName
-              console.log('⏩ 空欄なので前回を継続:', filename)
-            } else {
-              console.log('⛔ 空欄かつ前回情報なし → 無音維持')
-              return
-            }
-          } else {
-            filename = bgmMap[targetBgmName] || ''
-          }
-
-          if (targetBgmName === '静止' || filename === '') {
+          if (targetBgmName === '' || targetBgmName === '静止') {
+            // 🔇 空欄 or 静止なら即停止
             audio.pause()
             audio.removeAttribute('src')
             audio.load()
             lastBgmName = null
             lastFile = null
             sessionStorage.removeItem('bgmTime')
-            // sessionStorage.removeItem('lastBgm')
             sessionStorage.removeItem('bgmPlayFailed')
-            console.log('🔇 BGM停止（静止）')
+            console.log('🔇 BGM停止（空欄/静止）')
+            return
+          }
+
+          filename = bgmMap[targetBgmName] || ''
+
+          if (filename === '') {
+            console.log(`⚠️ bgmMap に '${targetBgmName}' が未定義 → 無音化`)
+            audio.pause()
+            audio.removeAttribute('src')
+            audio.load()
+            lastBgmName = null
+            lastFile = null
+            sessionStorage.removeItem('bgmTime')
+            sessionStorage.removeItem('bgmPlayFailed')
             return
           }
 
