@@ -181,3 +181,13 @@ body {
 .file-section input[type='file'] {
   margin-top: 10px;
 }
+
+.program {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+

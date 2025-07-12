@@ -168,7 +168,65 @@ session_start();
           }
         });
         choiceArea.style.display = "block";
-      } else {
+      } else if (data.next_state == 4) {
+        allowEnterKey = false;
+        nextButton.disabled = true;
+        nextButton.style.display = "none";
+
+        choiceArea.innerHTML = "";
+        choiceArea.style.display = "block";  // 表示だけ JS で制御
+        choiceArea.className = "program";   // program クラスだけ指定
+
+        const correct = data.correctjumpTarget || "1";
+        const incorrect = data.incorrectjumpTarget || "1";
+
+        const downloadForm = document.createElement("form");
+        downloadForm.action = "/kiwiSisters/controller/story/download1.php";
+        downloadForm.method = "get";
+        downloadForm.className = "file-download";
+
+        const downloadButton = document.createElement("button");
+        downloadButton.type = "submit";
+        downloadButton.textContent = "ファイルをダウンロード";
+        downloadForm.appendChild(downloadButton);
+
+        const uploadForm = document.createElement("form");
+        uploadForm.action = "/kiwiSisters/controller/story/upload1.php";
+        uploadForm.method = "post";
+        uploadForm.enctype = "multipart/form-data";
+        uploadForm.className = "file-upload";
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.name = "uploaded_file";
+        fileInput.accept = ".php";
+        fileInput.required = true;
+
+        const hiddenCorrect = document.createElement("input");
+        hiddenCorrect.type = "hidden";
+        hiddenCorrect.name = "correctjumpTarget";
+        hiddenCorrect.value = correct;
+
+        const hiddenIncorrect = document.createElement("input");
+        hiddenIncorrect.type = "hidden";
+        hiddenIncorrect.name = "incorrectjumpTarget";
+        hiddenIncorrect.value = incorrect;
+
+        const uploadButton = document.createElement("button");
+        uploadButton.type = "submit";
+        uploadButton.textContent = "ファイルをアップロード";
+
+        uploadForm.appendChild(fileInput);
+        uploadForm.appendChild(hiddenCorrect);
+        uploadForm.appendChild(hiddenIncorrect);
+        uploadForm.appendChild(uploadButton);
+
+        choiceArea.appendChild(downloadForm);
+        choiceArea.appendChild(uploadForm);
+      }
+
+
+      else {
         allowEnterKey = true;
         choiceArea.style.display = "none";
         nextButton.disabled = false;
@@ -198,6 +256,12 @@ session_start();
     document.getElementById("nextButton").onclick = handleNext;
 
     window.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("fromUpload") === "1" && urlParams.has("nextPage")) {
+        const nextPage = parseInt(urlParams.get("nextPage"), 10);
+        sessionStorage.setItem("currentPage", nextPage);
+      }
+
       const chapter = sessionStorage.getItem("currentChapter");
       const page = sessionStorage.getItem("currentPage");
 
@@ -225,6 +289,8 @@ session_start();
         });
       });
     });
+
+
 
 
     document.addEventListener("keydown", e => {
