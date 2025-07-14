@@ -31,8 +31,8 @@ $unlockFinalChapter = false;
 $stories = [
   1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
   2 => ["title" => "雉の話", "image" => "/kiwiSisters/img/story2.png"],
-  3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story.png"],
-  4 => ["title" => "???????", "image" => "/kiwiSisters/img/story.png"],
+  3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story3.png"],
+  4 => ["title" => "???????", "image" => "/kiwiSisters/img/story4.png"],
 ];
 
 $current = $stories[$page];
