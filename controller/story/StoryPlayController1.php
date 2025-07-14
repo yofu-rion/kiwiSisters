@@ -41,6 +41,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
   <iframe id="bgm-frame" src="/kiwiSisters/controller/story/bgm.html" allow="autoplay" style="display:none;"></iframe>
 
   <div class="full">
+    <div id="charImagesContainer" class="char-stand-container"></div>
     <img id="charImage" class="char-stand" src="" alt="" style="display: none;">
     <div id="choiceArea" class="choices" style="display: none;"></div>
     <div class="kuuhaku">a</div>
@@ -166,15 +167,42 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       const bg = bgMap[data.background] || '';
       document.body.style.backgroundImage = `url('${bg}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
 
-      const charImg = document.getElementById("charImage");
-      let imageSrc = charImageMap[data.illustration?.trim()] || "";
-      if (!imageSrc && data.illustration) {
-        const base = data.illustration.split('_')[0].trim();
-        imageSrc = charImageMap[`${base}_通常`] || Object.entries(charImageMap).find(([key]) => key.startsWith(base))?.[1];
+      const charImagesContainer = document.getElementById("charImagesContainer");
+      charImagesContainer.innerHTML = "";  // 前のキャラを削除
+
+      const illustrations = [
+        data.illustration,
+        data.illustration2,
+        data.illustration3,
+        data.illustration4,
+        data.illustration5,
+      ].filter(Boolean).map(s => s.trim());
+
+      charImagesContainer.innerHTML = "";
+
+      if (illustrations.length === 1) {
+        charImagesContainer.style.justifyContent = "center";
+      } else if (illustrations.length > 1) {
+        charImagesContainer.style.justifyContent = "space-around";
+      } else {
+        charImagesContainer.style.justifyContent = "center";  // fallback
       }
-      charImg.style.display = imageSrc ? "block" : "none";
-      charImg.src = imageSrc || "";
-      charImg.alt = data.illustration || "";
+
+      illustrations.forEach((illust, index) => {
+        let imageSrc = charImageMap[illust] || "";
+        if (!imageSrc && illust) {
+          const base = illust.split('_')[0].trim();
+          imageSrc = charImageMap[`${base}_通常`] || Object.entries(charImageMap).find(([key]) => key.startsWith(base))?.[1];
+        }
+
+        if (imageSrc) {
+          const img = document.createElement("img");
+          img.src = imageSrc;
+          img.alt = illust;
+          img.className = `char-stand`;
+          charImagesContainer.appendChild(img);
+        }
+      });
 
       const choiceArea = document.getElementById("choiceArea");
       choiceArea.innerHTML = "";
