@@ -100,7 +100,7 @@ body {
 }
 
 .next {
-  font-size:48px;
+  font-size: 48px;
   color: #273c26;
   margin-top: 40px;
   margin-right: 20px;
@@ -187,9 +187,12 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 80px;
-  margin-bottom: -80px;
-  /* gap: 8px; */
+  position: fixed; /* ← 画面中央に固定配置 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100; /* ← 他要素より前面に */
+  gap: 12px; /* ボタン間の隙間 */
 }
 
 .choice-button {
@@ -206,5 +209,3 @@ body {
 .choice-button:hover {
   background-color: #eee;
 }
-
-

@@ -95,14 +95,16 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '攻撃': 'kougeki.mp3',
       'ツッコミ': 'tukkomi.mp3',
       'チリン': 'chirin.mp3',
-      '打撃': 'naguru.mp3',
+      'パキッ': 'paki.mp3',
+      '打撃鷹森': 'takamori_panchi.mp3',
+      '打撃白鷺': 'takamori_panchi.mp3',
       '花子帰還': 'hanako_house.mp3',
       '倒れる': 'batan.mp3',
+      'ドアオープン': 'openDoor.mp3',
+      '発見効果音': 'hakken.mp3',
       'ドアガチャ': 'doagacya.mp3',
-      'アンゴラ': 'kiwi.mp3',
       // 必要に応じて追加
     };
-
 
     let isInitialLoad = true;
     let lastSentBgm = null;
@@ -285,8 +287,13 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       console.log("[StoryPlayController1.php] セーブボタン押下: currentPage=", currentPage);
       sessionStorage.setItem("currentPage", currentPage);
       sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
-      window.location.href = "/kiwiSisters/controller/SaveSelect.php";
+
+      const chapter = sessionStorage.getItem("currentChapter") || "1";
+      const page = sessionStorage.getItem("currentPage") || "2";
+
+      window.location.href = `/kiwiSisters/controller/SaveSelect.php?page=${page}&chapter=${chapter}`;
     };
+
 
 
     document.getElementById("nextButton").onclick = handleNext;
