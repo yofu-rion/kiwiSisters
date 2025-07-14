@@ -340,10 +340,18 @@ if (isset($_SESSION['chapterAfterUpload'])) {
 
 
     document.addEventListener("keydown", e => {
-      if (e.key === "Enter" && allowEnterKey) {
-        handleNext();
+      if (e.key === "Enter") {
+        if (currentData && currentData.next_state == 2) {
+          console.log("🔒 Enter 無効化: next_state == 2");
+          return;
+        }
+
+        if (allowEnterKey) {
+          handleNext();
+        }
       }
     });
+
   </script>
 
 </body>
