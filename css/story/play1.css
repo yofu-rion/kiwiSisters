@@ -181,3 +181,30 @@ body {
 .file-section input[type='file'] {
   margin-top: 10px;
 }
+
+.program {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 80px;
+  margin-bottom: -80px;
+  /* gap: 8px; */
+}
+
+.choice-button {
+  width: 100%;
+  padding: 8px 16px;
+  margin: 4px;
+  font-size: 16px;
+  border: 2px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.choice-button:hover {
+  background-color: #eee;
+}
+
+

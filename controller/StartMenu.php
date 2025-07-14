@@ -31,7 +31,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
     <div class="choice">
         <div class="title-place">
             <div class="user">ようこそ<?php echo $user; ?>さん</div>
-            <h1 class="title">タイトル</h1>
+            <h1 class="title">飛べない鳥</h1>
         </div>
         <div class="menu" id="menu">
             <div class="menu-item active"><span class="indicator">▶</span>
@@ -44,15 +44,17 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
                 <button type="button" class="button" data-href="Setting.php">オプション</button>
             </div>
         </div>
-    </div>
 
+    </div>
     <div class="illust">
-        <h1 class="h1">イラストが乗る予定</h1>
+        <img src="../img/school.png" alt="school" />
     </div>
-
     <div id="fade-overlay"></div>
 
     <script>
+        sessionStorage.removeItem("lastBgm");
+        sessionStorage.removeItem("bgmTime");
+
         const items = document.querySelectorAll(".menu-item");
         const audio = document.getElementById("kettei-sound");
         const fadeOverlay = document.getElementById("fade-overlay");
@@ -71,6 +73,17 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
             });
         };
 
+        if (!sessionStorage.getItem("bgmFrameLoaded")) {
+            const iframe = document.createElement("iframe");
+            iframe.src = "/kiwiSisters/controller/story/bgm.html";
+            iframe.style.display = "none";
+            iframe.allow = "autoplay";
+            document.body.appendChild(iframe);
+            sessionStorage.setItem("bgmFrameLoaded", "true");
+        }
+
+        sessionStorage.removeItem('bgmTime');
+
         document.addEventListener("keydown", (e) => {
             if (e.key === "ArrowDown") {
                 index = (index + 1) % items.length;
@@ -86,7 +99,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
                 const activeItem = items[index];
                 const button = activeItem.querySelector("button");
                 if (button) {
-                    const targetUrl = button.dataset.href;
+                    let targetUrl = button.dataset.href;
                     audio.currentTime = 0;
                     audio.play().catch(() => { });
                     fadeOverlay.classList.add("fade-out");
@@ -97,41 +110,33 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
             }
         });
 
-        window.onpageshow = function (event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        };
-
         items.forEach((item, i) => {
-    item.addEventListener("click", () => {
-        index = i;
-        updateActive();
-        audioSelect.currentTime = 0;
-        audioSelect.play().catch(() => { });
-    });
+            item.addEventListener("click", () => {
+                index = i;
+                updateActive();
+                audioSelect.currentTime = 0;
+                audioSelect.play().catch(() => { });
+            });
 
-    const button = item.querySelector("button");
-    if (button) {
-        button.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const targetUrl = button.dataset.href;
-            audio.currentTime = 0;
-            audio.play().catch(() => {});
-            fadeOverlay.classList.add("fade-out");
-            setTimeout(() => {
-                location.href = targetUrl;
-            }, 2000);
+            const button = item.querySelector("button");
+            if (button) {
+                button.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    let targetUrl = button.dataset.href;
+                    audio.currentTime = 0;
+                    audio.play().catch(() => { });
+                    fadeOverlay.classList.add("fade-out");
+                    setTimeout(() => {
+                        location.href = targetUrl;
+                    }, 2000);
+                });
+            }
         });
-    }
-});
 
+        window.addEventListener("DOMContentLoaded", () => {
+            const isMuted = localStorage.getItem("volumeMuted") === "true";
+        });
     </script>
-
-
-    <div class="illust">
-        <h1 class="h1">イラストが乗る予定</h1>
-    </div>
 </body>
 
 </html>

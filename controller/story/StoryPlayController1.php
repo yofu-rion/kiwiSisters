@@ -1,194 +1,386 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <?php
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-// ログイン確認
-if (!isset($_SESSION['login'])) {
-    header('Location: ../../index.php');
-    exit;
+$sessionStorageJS = "";
+if (isset($_SESSION['nextPageAfterUpload'])) {
+  $sessionStorageJS .= "sessionStorage.setItem('currentPage', '" . $_SESSION['nextPageAfterUpload'] . "');";
+  unset($_SESSION['nextPageAfterUpload']);
 }
-
-// ログイン中のユーザー名を取得
-$username = $_SESSION['login']['name'];
-
-require '../../vendor/autoload.php';
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use Hashids\Hashids;
-
-$inputFileName = '../../scenario/ScenarioPlay1.xlsx';
-$spreadsheet = IOFactory::load($inputFileName);
-$sheet = $spreadsheet->getActiveSheet();
-
-
-$hashids = new Hashids($username, 8);
-// $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$page = $hashids->decode($_GET['page'])[0] ?? 1;
-$row = $sheet->getRowIterator($page, $page)->current();
-
-$cellIterator = $row->getCellIterator();
-$cellIterator->setIterateOnlyExistingCells(false);
-
-$values = [];
-foreach ($cellIterator as $cell) {
-    $values[] = $cell->getValue();
+if (isset($_SESSION['chapterAfterUpload'])) {
+  $sessionStorageJS .= "sessionStorage.setItem('currentChapter', '" . $_SESSION['chapterAfterUpload'] . "');";
+  unset($_SESSION['chapterAfterUpload']);
 }
-
-$background = $values[0] ?? '';
-$talkingCharacter = $values[1] ?? '';
-$text = $values[2] ?? '';
-$next_state = $values[3] ?? '';
-$illustration = $values[4] ?? '';
-$choice1 = $values[9] ?? '';
-$choice2 = $values[10] ?? '';
-$jumpTarget = $values[11] ?? '';
-$correctjumpTarget = $values[12] ?? '';
-$incorrectjumpTarget = $values[13] ?? '';
-
-if ($background === '廊下') {
-    $backgroundImage = '../../img/rouka.png';
-} elseif ($background === 'トイレ') {
-    $backgroundImage = '../../img/toire.png';
-}
-
-$charImageMap = [
-    '白鷺' => '/kiwiSisters/img/shirasagi_standard.png',
-    '雉真' => '/kiwiSisters/img/kijima_chotosmile.png',
-    '鷹森' => '/kiwiSisters/img/takamori_standard.png',
-    '江永' => '/kiwiSisters/img/enaga_standard.png',
-    '花子' => '/kiwiSisters/img/hanakosan_smile.png',
-    'キーウィ・キウイ' => '/kiwiSisters/img/kiwi.png',
-];
-
-$charImageFile = $charImageMap[$illustration] ?? null;
-$nextPage = $page + 1;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($next_state == 0) {
-        header("Location: ../StartMenu.php");
-        exit;
-    } elseif ($next_state == 1) {
-        $nextPageHash = $hashids->encode($nextPage);
-        header("Location: StoryPlayController1.php?page={$nextPageHash}");
-        exit;
-    } elseif ($next_state == 2) {
-        if (isset($_POST['choice'])) {
-            $targetPage = (int) $_POST['choice'];
-            $targetPageHash = $hashids->encode($targetPage);
-            header("Location: StoryPlayController1.php?page=$targetPageHash");
-            exit;
-        }
-    } elseif ($next_state == 3) {
-        if (is_numeric($jumpTarget)) {
-            $jumpTargetHash = $hashids->encode($jumpTarget);
-            header("Location: StoryPlayController1.php?page=$jumpTargetHash");
-            exit;
-        }
-    } elseif ($next_state == 4) {
-        // ファイルアップロード・ダウンロード画面を表示（分岐なしで止まる）
-    }
-
-}
-$correctjumpTargetHash = $hashids->encode($correctjumpTarget);
-$incorrectjumpTargetHash = $hashids->encode($incorrectjumpTarget);
-
-$pageHash = $hashids->encode($page);
-$chapterHash = $hashids->encode(1); // 章は1で固定
 ?>
 
+<!DOCTYPE html>
+<html lang="ja">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../css/story/play1.css">
-    <style>
-        body {
-            background-image: url('<?php echo $backgroundImage; ?>'),
-                linear-gradient(180deg,
-                    rgba(98, 9, 20, 0.97) 77.49%,
-                    rgba(200, 19, 40, 0.97) 100%);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    <?php echo $sessionStorageJS; ?>
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/story/play1.css">
+  <title>Kiwi Sisters</title>
+  <style>
+    body {
+      background: black;
+      margin: 0;
+      font-family: 'Kiwi Maru', sans-serif;
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="full">
-        <?php if ($charImageFile): ?>
-            <img class="char-stand" src="<?= htmlspecialchars($charImageFile) ?>"
-                alt="<?= htmlspecialchars($illustration) ?>">
-        <?php endif; ?>
-        <?php if ($next_state == 2): ?>
-            <form method="post" class="choices">
-                <?php if ($choice1 && preg_match('/(.+?)\((\d+)\)/', $choice1, $match1)): ?>
-                    <button type="submit" name="choice" value="<?= $match1[2] ?>">
-                        <?= htmlspecialchars($match1[1]) ?>
-                    </button>
-                <?php endif; ?>
-                <?php if ($choice2 && preg_match('/(.+?)\((\d+)\)/', $choice2, $match2)): ?>
-                    <button type="submit" name="choice" value="<?= $match2[2] ?>">
-                        <?= htmlspecialchars($match2[1]) ?>
-                    </button>
-                <?php endif; ?>
-                <?php if ($jumpTarget && preg_match('/(.+?)\((\d+)\)/', $jumpTarget, $match3)): ?>
-                    <button type="submit" name="choice" value="<?= $match3[2] ?>">
-                        <?= htmlspecialchars($match3[1]) ?>
-                    </button>
-                <?php endif; ?>
+  <iframe id="bgm-frame" src="/kiwiSisters/controller/story/bgm.html" allow="autoplay" style="display:none;"></iframe>
 
-            </form>
-        <?php elseif ($next_state == 4): ?>
-            <div class="file-section">
-                <form action="download1.php" method="get" class="file-download">
-                    <button type="submit">ファイルをダウンロード</button>
-                </form>
-                <form action="upload1.php" method="post" enctype="multipart/form-data" class="file-upload">
-                    <input type="file" name="uploaded_file" accept=".php" required>
-                    <input type="hidden" name="correctjumpTarget" value="<?php echo $correctjumpTargetHash; ?>">
-                    <input type="hidden" name="incorrectjumpTarget" value="<?php echo $incorrectjumpTargetHash; ?>">
-                    <button type="submit">ファイルをアップロード</button>
-                </form>
-            </div>
-        <?php else: ?>
-            <!-- 通常のセリフ表示と次へボタン -->
-        <?php endif; ?>
-
-
-        <div class="kuuhaku">a</div>
-        <div class="comment">
-            <div class="hako">
-                <div class="name"><?php echo htmlspecialchars($talkingCharacter); ?></div>
-                <div class="text">
-                    <div><?php echo htmlspecialchars($text); ?></div>
-                    <form method="post">
-                        <button class="next">></button>
-                    </form>
-                </div>
-                <div class="menu">
-                    <a href="/kiwiSisters/controller/SaveSelect.php?page=<?= $pageHash ?>&chapter=<?= $chapterHash ?>" class="save">セーブ</a>
-                    <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
-                </div>
-
-            </div>
+  <div class="full">
+    <img id="charImage" class="char-stand" src="" alt="" style="display: none;">
+    <div id="choiceArea" class="choices" style="display: none;"></div>
+    <div class="kuuhaku">a</div>
+    <div class="comment">
+      <div class="hako">
+        <div class="name" id="charName"></div>
+        <div class="text">
+          <div id="textArea"></div>
+          <button id="nextButton" class="next">></button>
         </div>
+        <div class="menu">
+          <a href="#" class="save" id="saveButton">セーブ</a>
+          <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const form = document.querySelector("form");
-            document.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" && form) {
-                    e.preventDefault();
-                    form.submit();
-                }
-            });
+  <script>
+    let currentPage = parseInt(sessionStorage.getItem("currentPage") || "2");
+    const charImageMap = {
+      '白鷺_通常': '/kiwiSisters/img/shirasagi_standard.png',
+      '白鷺_恐怖': '/kiwiSisters/img/shirasagi_scared.png',
+      '白鷺_笑顔': '/kiwiSisters/img/shirasagi_smile.png',
+      '白鷺_驚き': '/kiwiSisters/img/shirasagi_surprise.png',
+      '白鷺_考察': '/kiwiSisters/img/shirasagi_thinking.png',
+      '白鷺_怒る': '/kiwiSisters/img/shirasagi_ungry.png',
+      '雉真_通常': '/kiwiSisters/img/kijima_chotosmile.png',
+      '雉真_怒る': '/kiwiSisters/img/kijima_angry.png',
+      '雉真_焦り': '/kiwiSisters/img/kijima_aseri.png',
+      '雉真_真顔': '/kiwiSisters/img/kijima_nomal.png',
+      '雉真_笑顔': '/kiwiSisters/img/kijima_smile.png',
+      '雉真_考察': '/kiwiSisters/img/kijima_thinking.png',
+      '鷹森_通常': '/kiwiSisters/img/takamori_nomal.png',
+      '鷹森_驚き': '/kiwiSisters/img/takamori_bikkuri.png',
+      '鷹森_江永ピンチ': '/kiwiSisters/img/takamori_enagapinch.png',
+      '鷹森_戦闘': '/kiwiSisters/img/takamori_kamae.png',
+      '鷹森_落胆': '/kiwiSisters/img/takamori_syonbori.png',
+      '江永_通常': '/kiwiSisters/img/enaga_nomal.png',
+      '江永_どや': '/kiwiSisters/img/enaga_doya.png',
+      '江永_笑顔': '/kiwiSisters/img/enaga_smile.png',
+      '江永_おこ': '/kiwiSisters/img/enaga_ungry.png',
+      '花子_通常': '/kiwiSisters/img/hanakosan_nomal.png',
+      '花子_笑顔': '/kiwiSisters/img/hanakosan_smile.png',
+      'テケ': '/kiwiSisters/img/teketeke.png',
+      'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
+    };
+
+    const seMap = {
+      '歩行': 'hokou.mp3',
+      '走る': 'hasiru.mp3',
+      '攻撃': 'kougeki.mp3',
+      'ツッコミ': 'tukkomi.mp3',
+      'チリン': 'chirin.mp3',
+      '打撃': 'naguru.mp3',
+      '花子帰還': 'hanako_house.mp3',
+      '倒れる': 'batan.mp3',
+      'ドアガチャ': 'doagacya.mp3',
+      'アンゴラ': 'kiwi.mp3',
+      // 必要に応じて追加
+    };
+
+
+    let isInitialLoad = true;
+    let lastSentBgm = null;
+    let lastSentPage = null;
+    let allowEnterKey = true;
+    let currentData = null;
+    let shouldRetryPlay = sessionStorage.getItem("bgmPlayFailed") === "true";
+
+    async function loadPage(page) {
+      currentPage = page;
+      sessionStorage.setItem("currentPage", String(currentPage));
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
+
+      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 1}&page=${page}`);
+      const data = await res.json();
+      console.log("🎯 fetch結果 =", data);
+      currentData = data;
+
+      const bgmFrame = document.getElementById("bgm-frame");
+      const bgmWindow = bgmFrame?.contentWindow;
+
+      let lastTime = 0;
+      if (bgmWindow) {
+        let effectiveBgm = (data.bgm || "").trim();
+
+        // 現在再生中の BGM を sessionStorage に保存する
+        if (effectiveBgm) {
+          sessionStorage.setItem("currentBgm", effectiveBgm);
+        } else {
+          sessionStorage.removeItem("currentBgm"); // BGM が空なら消す
+        }
+
+        // BGM が変わらなければ送信しない
+        const isSameBgm = effectiveBgm === lastSentBgm;
+
+        if (!isSameBgm) {
+          console.log(`🎶 BGM送信: ${effectiveBgm}, 前回送信: ${lastSentBgm}`);
+
+          bgmWindow.postMessage(
+            { type: "setBgm", bgm: effectiveBgm, currentTime: 0 },
+            "*"
+          );
+
+          lastSentBgm = effectiveBgm;
+          lastSentPage = page;
+        } else {
+          console.log(`⏭️ 同じBGMなので送信省略: ${effectiveBgm}`);
+        }
+      }
+
+
+      const charNameEl = document.getElementById("charName");
+      const textAreaEl = document.getElementById("textArea");
+
+      charNameEl.innerText = data.character;
+      textAreaEl.innerText = data.text;
+
+      const bgMap = { '廊下': '../../img/rouka.png', 'トイレ': '../../img/toire.png', '学校': '../../img/school.png' };
+      const bg = bgMap[data.background] || '';
+      document.body.style.backgroundImage = `url('${bg}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
+
+      const charImg = document.getElementById("charImage");
+      let imageSrc = charImageMap[data.illustration?.trim()] || "";
+      if (!imageSrc && data.illustration) {
+        const base = data.illustration.split('_')[0].trim();
+        imageSrc = charImageMap[`${base}_通常`] || Object.entries(charImageMap).find(([key]) => key.startsWith(base))?.[1];
+      }
+      charImg.style.display = imageSrc ? "block" : "none";
+      charImg.src = imageSrc || "";
+      charImg.alt = data.illustration || "";
+
+      const choiceArea = document.getElementById("choiceArea");
+      choiceArea.innerHTML = "";
+      const nextButton = document.getElementById("nextButton");
+
+      if (data.next_state == 2) {
+        allowEnterKey = false;
+        nextButton.disabled = true;
+        nextButton.style.display = "none";
+        choiceArea.innerHTML = "";
+
+        [data.choice1, data.choice2, data.jumpTarget].forEach(choice => {
+          if (choice && /(.+?)\((\d+)\)/.test(choice)) {
+            const [, label, pageNum] = choice.match(/(.+?)\((\d+)\)/);
+            const btn = document.createElement("button");
+            btn.textContent = label;
+            btn.className = "choice-button";
+            btn.onclick = () => loadPage(parseInt(pageNum, 10));
+            choiceArea.appendChild(btn);
+          }
         });
-    </script>
+        choiceArea.style.display = "flex";
+      } else if (data.next_state == 4) {
+        allowEnterKey = false;
+        nextButton.disabled = true;
+        nextButton.style.display = "none";
+
+        choiceArea.innerHTML = "";
+        choiceArea.style.display = "block";
+        choiceArea.className = "program";
+
+        const correct = data.correctjumpTarget || "1";
+        const incorrect = data.incorrectjumpTarget || "1";
+
+        const downloadForm = document.createElement("form");
+        downloadForm.action = "/kiwiSisters/controller/story/download1.php";
+        downloadForm.method = "get";
+        downloadForm.className = "file-download";
+
+        const downloadButton = document.createElement("button");
+        downloadButton.type = "submit";
+        downloadButton.textContent = "ファイルをダウンロード";
+        downloadForm.appendChild(downloadButton);
+
+        const uploadForm = document.createElement("form");
+        uploadForm.action = "/kiwiSisters/controller/story/upload1.php";
+        uploadForm.method = "post";
+        uploadForm.enctype = "multipart/form-data";
+        uploadForm.className = "file-upload";
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.name = "uploaded_file";
+        fileInput.accept = ".php";
+        fileInput.required = true;
+
+        const hiddenCorrect = document.createElement("input");
+        hiddenCorrect.type = "hidden";
+        hiddenCorrect.name = "correctjumpTarget";
+        hiddenCorrect.value = correct;
+
+        const hiddenIncorrect = document.createElement("input");
+        hiddenIncorrect.type = "hidden";
+        hiddenIncorrect.name = "incorrectjumpTarget";
+        hiddenIncorrect.value = incorrect;
+
+        // ⭐️ ここに hidden chapter input を追加
+        const hiddenChapter = document.createElement("input");
+        hiddenChapter.type = "hidden";
+        hiddenChapter.name = "chapter";
+        hiddenChapter.value = sessionStorage.getItem("currentChapter") || "1";
+
+        const uploadButton = document.createElement("button");
+        uploadButton.type = "submit";
+        uploadButton.textContent = "ファイルをアップロード";
+
+        uploadForm.appendChild(fileInput);
+        uploadForm.appendChild(hiddenCorrect);
+        uploadForm.appendChild(hiddenIncorrect);
+        uploadForm.appendChild(hiddenChapter);  // ⭐️ ここ！
+        uploadForm.appendChild(uploadButton);
+
+        choiceArea.appendChild(downloadForm);
+        choiceArea.appendChild(uploadForm);
+      }
+
+
+
+      else {
+        allowEnterKey = true;
+        choiceArea.style.display = "none";
+        nextButton.disabled = false;
+        nextButton.style.display = "inline-block";
+      }
+
+      // SE があれば一回だけ再生
+      if (data.se && data.se.trim() !== "") {
+        const seKey = data.se.trim();
+        const seFile = seMap[seKey];
+        if (seFile) {
+          const seAudio = new Audio(`/kiwiSisters/se/${seFile}`);
+          seAudio.play().catch(e => console.warn("SE 再生失敗:", e));
+        } else {
+          console.warn(`⚠️ 未登録のSE: ${seKey}`);
+        }
+      }
+    }
+
+    document.getElementById("saveButton").onclick = () => {
+      console.log("[StoryPlayController1.php] セーブボタン押下: currentPage=", currentPage);
+      sessionStorage.setItem("currentPage", currentPage);
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
+      window.location.href = "/kiwiSisters/controller/SaveSelect.php";
+    };
+
+
+    document.getElementById("nextButton").onclick = handleNext;
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      sessionStorage.removeItem("bgmPlayFailed");
+      console.log("🌟 DOMContentLoaded START");
+
+      const chapter = sessionStorage.getItem("currentChapter");
+      const page = sessionStorage.getItem("currentPage");
+
+      if (!chapter) {
+        alert("章の選択情報（currentChapter）がありません。章選択画面からやり直してください。");
+        return;
+      }
+
+      let initialPage = parseInt(page, 10);
+      if (isNaN(initialPage) || initialPage < 2) {
+        initialPage = 2;
+        sessionStorage.setItem("currentPage", "2");
+      }
+
+      currentPage = initialPage;
+      await loadPage(currentPage);
+
+      const bgmFrame = document.getElementById("bgm-frame");
+      const bgmWindow = bgmFrame?.contentWindow;
+
+      const currentBgm = sessionStorage.getItem("currentBgm");
+
+      const navEntries = performance.getEntriesByType("navigation");
+      const navType = navEntries[0]?.type || "navigate";
+      console.log(`🔎 Navigation type: ${navType}`);
+
+      if (navType === "reload" && bgmWindow && currentBgm) {
+        console.log("🔔 本当にリロード時だけ BGM 復元:", currentBgm);
+        bgmWindow.postMessage(
+          { type: "setBgm", bgm: currentBgm, currentTime: 0 },
+          "*"
+        );
+        shouldRetryPlay = true;
+      }
+
+      console.log("[StoryPlayController1.php] loadPage 完了 - page:", currentPage);
+
+
+
+      if (bgmWindow && lastSentBgm) {
+        console.log("🔔 iframe 初期化直後の BGM 再送:", lastSentBgm);
+        bgmWindow.postMessage(
+          { type: "setBgm", bgm: lastSentBgm, currentTime: 0 },
+          "*"
+        );
+      }
+    });
+
+    function handleNext() {
+      const bgmFrame = document.getElementById("bgm-frame");
+      const bgmWindow = bgmFrame?.contentWindow;
+
+      if (bgmWindow && shouldRetryPlay) {
+        console.log("🔁 retryPlay 送信（リロード後）");
+        bgmWindow.postMessage({ type: "retryPlay" }, "*");
+        shouldRetryPlay = false;
+        sessionStorage.removeItem("bgmPlayFailed");
+      }
+
+      if (currentData.next_state == 0) {
+        window.location.href = "/kiwiSisters/controller/StartMenu.php";
+      } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
+        const targetPage = parseInt(currentData.jumpTarget, 10);
+        loadPage(targetPage);
+      } else {
+        loadPage(currentPage + 1);
+      }
+    }
+
+
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        if (currentData && currentData.next_state == 2) {
+          console.log("🔒 Enter 無効化: next_state == 2");
+          return;
+        }
+
+        if (allowEnterKey) {
+          handleNext();
+        }
+      }
+    });
+
+  </script>
+
 </body>
 
 </html>
