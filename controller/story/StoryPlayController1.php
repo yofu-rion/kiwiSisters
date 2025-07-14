@@ -81,8 +81,21 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '鷹森_落胆': '/kiwiSisters/img/takamori_syonbori.png',
       '江永': '/kiwiSisters/img/enaga_standard.png',
       '花子': '/kiwiSisters/img/hanakosan_smile.png',
+      'テケ': '/kiwiSisters/img/teketeke.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
     };
+
+    const seMap = {
+      '歩行': 'hokou.mp3',
+      '攻撃': 'kougeki.mp3',
+      'ツッコミ': 'tukkomi.mp3',
+      'チリン': 'chirin.mp3',
+      '驚き': 'odoroki.mp3',
+      'エラー': 'error.mp3',
+      'ドア': 'door.mp3',
+      // 必要に応じて追加
+    };
+
 
     let isInitialLoad = true;
     let lastSentBgm = null;
@@ -95,11 +108,6 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       currentPage = page;
       sessionStorage.setItem("currentPage", String(currentPage));
       sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
-
-      // if (!isInitialLoad) {
-      //   sessionStorage.setItem("currentPage", page);
-      // }
-      // isInitialLoad = false;
 
       const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 1}&page=${page}`);
       const data = await res.json();
@@ -251,6 +259,18 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         choiceArea.style.display = "none";
         nextButton.disabled = false;
         nextButton.style.display = "inline-block";
+      }
+
+      // SE があれば一回だけ再生
+      if (data.se && data.se.trim() !== "") {
+        const seKey = data.se.trim();
+        const seFile = seMap[seKey];
+        if (seFile) {
+          const seAudio = new Audio(`/kiwiSisters/se/${seFile}`);
+          seAudio.play().catch(e => console.warn("SE 再生失敗:", e));
+        } else {
+          console.warn(`⚠️ 未登録のSE: ${seKey}`);
+        }
       }
     }
 

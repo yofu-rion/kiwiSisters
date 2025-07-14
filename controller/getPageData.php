@@ -61,6 +61,7 @@ try {
         'correctjumpTarget' => $values[12] ?? '',
         'incorrectjumpTarget' => $values[13] ?? '',
         'bgm' => $values[14] ?? '',
+        'se' => $values[15] ?? '',
     ];
 
     error_log("✅ Response JSON: " . json_encode($response));
