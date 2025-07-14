@@ -3,8 +3,8 @@ session_start();
 
 // ログイン確認
 if (!isset($_SESSION['login'])) {
-    header('Location: ../index.php');
-    exit;
+  header('Location: ../index.php');
+  exit;
 }
 
 // ログイン中のユーザー名を取得
@@ -32,7 +32,10 @@ $stories = [
   1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
   2 => ["title" => "雉の話", "image" => "/kiwiSisters/img/story2.png"],
   3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story3.png"],
-  4 => ["title" => "???????", "image" => "/kiwiSisters/img/story4.png"],
+  4 => [
+    "title" => $unlockFinalChapter ? "飛べない鳥の話" : "?????",
+    "image" => $unlockFinalChapter ? "/kiwiSisters/img/story4.png" : "/kiwiSisters/img/story.png"
+  ],
 ];
 
 $current = $stories[$page];
@@ -79,33 +82,33 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <a href="/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>" class="arrow right">▶</a>
   <?php endif; ?>
 
-    <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="modal-content">
-            <p>この章を始めますか？</p>
-            <div class="modal-buttons">
-                <button id="modal-ok">はい</button>
-                <button id="modal-cancel">いいえ</button>
-            </div>
-        </div>
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <p>この章を始めますか？</p>
+      <div class="modal-buttons">
+        <button id="modal-ok">はい</button>
+        <button id="modal-cancel">いいえ</button>
+      </div>
     </div>
-    <div id="fade-overlay" class="fade-overlay"></div>
-    <script>
-        const audioSelect = document.getElementById("select-sound");
-        const chapterPage = <?= $page ?>;
-        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
-        const modal = document.getElementById("modal-overlay");
-        const okButton = document.getElementById("modal-ok");
-        const cancelButton = document.getElementById("modal-cancel");
-        const fadeOverlay = document.getElementById("fade-overlay");
-        const audioKettei = document.getElementById("kettei-sound");
+  </div>
+  <div id="fade-overlay" class="fade-overlay"></div>
+  <script>
+    const audioSelect = document.getElementById("select-sound");
+    const chapterPage = <?= $page ?>;
+    const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
+    const modal = document.getElementById("modal-overlay");
+    const okButton = document.getElementById("modal-ok");
+    const cancelButton = document.getElementById("modal-cancel");
+    const fadeOverlay = document.getElementById("fade-overlay");
+    const audioKettei = document.getElementById("kettei-sound");
 
-        const showModal = () => {
-            modal.classList.remove("hidden");
-        };
+    const showModal = () => {
+      modal.classList.remove("hidden");
+    };
 
-        const hideModal = () => {
-            modal.classList.add("hidden");
-        };
+    const hideModal = () => {
+      modal.classList.add("hidden");
+    };
 
     document.getElementById("start-button")?.addEventListener("click", showModal);
     document.getElementById("modal-cancel")?.addEventListener("click", hideModal);
