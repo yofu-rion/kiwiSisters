@@ -1,12 +1,26 @@
 <?php
 session_start();
+
+$sessionStorageJS = "";
+if (isset($_SESSION['nextPageAfterUpload'])) {
+  $sessionStorageJS .= "sessionStorage.setItem('currentPage', '" . $_SESSION['nextPageAfterUpload'] . "');";
+  unset($_SESSION['nextPageAfterUpload']);
+}
+if (isset($_SESSION['chapterAfterUpload'])) {
+  $sessionStorageJS .= "sessionStorage.setItem('currentChapter', '" . $_SESSION['chapterAfterUpload'] . "');";
+  unset($_SESSION['chapterAfterUpload']);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    <?php echo $sessionStorageJS; ?>
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
@@ -75,9 +89,13 @@ session_start();
     let lastSentPage = null;
     let allowEnterKey = true;
     let currentData = null;
+    let shouldRetryPlay = sessionStorage.getItem("bgmPlayFailed") === "true";
 
     async function loadPage(page) {
       currentPage = page;
+      sessionStorage.setItem("currentPage", String(currentPage));
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
+
       // if (!isInitialLoad) {
       //   sessionStorage.setItem("currentPage", page);
       // }
@@ -95,38 +113,31 @@ session_start();
       if (bgmWindow) {
         let effectiveBgm = (data.bgm || "").trim();
 
+        // 現在再生中の BGM を sessionStorage に保存する
+        if (effectiveBgm) {
+          sessionStorage.setItem("currentBgm", effectiveBgm);
+        } else {
+          sessionStorage.removeItem("currentBgm"); // BGM が空なら消す
+        }
+
         // BGM が変わらなければ送信しない
         const isSameBgm = effectiveBgm === lastSentBgm;
 
         if (!isSameBgm) {
-          const currentTimePromise = new Promise((resolve) => {
-            function handler(e) {
-              if (e.data?.type === "responseCurrentTime") {
-                window.removeEventListener("message", handler);
-                resolve(e.data.currentTime);
-              }
-            }
-            window.addEventListener("message", handler);
-            bgmWindow.postMessage({ type: "requestCurrentTime" }, "*");
-          });
-
-          const lastTime = parseFloat(await currentTimePromise) || 0;
-
-          const currentTime = 0;  // 新しいBGMなら 0 から
-
           console.log(`🎶 BGM送信: ${effectiveBgm}, 前回送信: ${lastSentBgm}`);
 
           bgmWindow.postMessage(
-            { type: "setBgm", bgm: effectiveBgm, currentTime },
+            { type: "setBgm", bgm: effectiveBgm, currentTime: 0 },
             "*"
           );
 
-          lastSentBgm = effectiveBgm;  // 状態を変数に保存
+          lastSentBgm = effectiveBgm;
           lastSentPage = page;
         } else {
           console.log(`⏭️ 同じBGMなので送信省略: ${effectiveBgm}`);
         }
       }
+
 
       const charNameEl = document.getElementById("charName");
       const textAreaEl = document.getElementById("textArea");
@@ -163,19 +174,20 @@ session_start();
             const [, label, pageNum] = choice.match(/(.+?)\((\d+)\)/);
             const btn = document.createElement("button");
             btn.textContent = label;
+            btn.className = "choice-button";
             btn.onclick = () => loadPage(parseInt(pageNum, 10));
             choiceArea.appendChild(btn);
           }
         });
-        choiceArea.style.display = "block";
+        choiceArea.style.display = "flex";
       } else if (data.next_state == 4) {
         allowEnterKey = false;
         nextButton.disabled = true;
         nextButton.style.display = "none";
 
         choiceArea.innerHTML = "";
-        choiceArea.style.display = "block";  // 表示だけ JS で制御
-        choiceArea.className = "program";   // program クラスだけ指定
+        choiceArea.style.display = "block";
+        choiceArea.className = "program";
 
         const correct = data.correctjumpTarget || "1";
         const incorrect = data.incorrectjumpTarget || "1";
@@ -212,6 +224,12 @@ session_start();
         hiddenIncorrect.name = "incorrectjumpTarget";
         hiddenIncorrect.value = incorrect;
 
+        // ⭐️ ここに hidden chapter input を追加
+        const hiddenChapter = document.createElement("input");
+        hiddenChapter.type = "hidden";
+        hiddenChapter.name = "chapter";
+        hiddenChapter.value = sessionStorage.getItem("currentChapter") || "1";
+
         const uploadButton = document.createElement("button");
         uploadButton.type = "submit";
         uploadButton.textContent = "ファイルをアップロード";
@@ -219,6 +237,7 @@ session_start();
         uploadForm.appendChild(fileInput);
         uploadForm.appendChild(hiddenCorrect);
         uploadForm.appendChild(hiddenIncorrect);
+        uploadForm.appendChild(hiddenChapter);  // ⭐️ ここ！
         uploadForm.appendChild(uploadButton);
 
         choiceArea.appendChild(downloadForm);
@@ -226,22 +245,12 @@ session_start();
       }
 
 
+
       else {
         allowEnterKey = true;
         choiceArea.style.display = "none";
         nextButton.disabled = false;
         nextButton.style.display = "inline-block";
-      }
-    }
-
-    function handleNext() {
-      if (currentData.next_state == 0) {
-        window.location.href = "/kiwiSisters/controller/StartMenu.php";
-      } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
-        const targetPage = parseInt(currentData.jumpTarget, 10);
-        loadPage(targetPage);
-      } else {
-        loadPage(currentPage + 1);
       }
     }
 
@@ -255,19 +264,12 @@ session_start();
 
     document.getElementById("nextButton").onclick = handleNext;
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("fromUpload") === "1" && urlParams.has("nextPage")) {
-        const nextPage = parseInt(urlParams.get("nextPage"), 10);
-        sessionStorage.setItem("currentPage", nextPage);
-      }
+    window.addEventListener("DOMContentLoaded", async () => {
+      sessionStorage.removeItem("bgmPlayFailed");
+      console.log("🌟 DOMContentLoaded START");
 
       const chapter = sessionStorage.getItem("currentChapter");
       const page = sessionStorage.getItem("currentPage");
-
-      console.log("[StoryPlayController1.php] DOMContentLoaded");
-      console.log("[StoryPlayController1.php] currentChapter from sessionStorage:", chapter);
-      console.log("[StoryPlayController1.php] currentPage from sessionStorage:", page);
 
       if (!chapter) {
         alert("章の選択情報（currentChapter）がありません。章選択画面からやり直してください。");
@@ -281,15 +283,59 @@ session_start();
       }
 
       currentPage = initialPage;
-      console.log("[StoryPlayController1.php] currentPage 確定:", currentPage);
+      await loadPage(currentPage);
 
-      requestAnimationFrame(() => {
-        loadPage(currentPage).then(() => {
-          console.log("[StoryPlayController1.php] loadPage 完了 - page:", currentPage);
-        });
-      });
+      const bgmFrame = document.getElementById("bgm-frame");
+      const bgmWindow = bgmFrame?.contentWindow;
+
+      const currentBgm = sessionStorage.getItem("currentBgm");
+
+      const navEntries = performance.getEntriesByType("navigation");
+      const navType = navEntries[0]?.type || "navigate";
+      console.log(`🔎 Navigation type: ${navType}`);
+
+      if (navType === "reload" && bgmWindow && currentBgm) {
+        console.log("🔔 本当にリロード時だけ BGM 復元:", currentBgm);
+        bgmWindow.postMessage(
+          { type: "setBgm", bgm: currentBgm, currentTime: 0 },
+          "*"
+        );
+        shouldRetryPlay = true;
+      }
+
+      console.log("[StoryPlayController1.php] loadPage 完了 - page:", currentPage);
+
+
+
+      if (bgmWindow && lastSentBgm) {
+        console.log("🔔 iframe 初期化直後の BGM 再送:", lastSentBgm);
+        bgmWindow.postMessage(
+          { type: "setBgm", bgm: lastSentBgm, currentTime: 0 },
+          "*"
+        );
+      }
     });
 
+    function handleNext() {
+      const bgmFrame = document.getElementById("bgm-frame");
+      const bgmWindow = bgmFrame?.contentWindow;
+
+      if (bgmWindow && shouldRetryPlay) {
+        console.log("🔁 retryPlay 送信（リロード後）");
+        bgmWindow.postMessage({ type: "retryPlay" }, "*");
+        shouldRetryPlay = false;
+        sessionStorage.removeItem("bgmPlayFailed");
+      }
+
+      if (currentData.next_state == 0) {
+        window.location.href = "/kiwiSisters/controller/StartMenu.php";
+      } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
+        const targetPage = parseInt(currentData.jumpTarget, 10);
+        loadPage(targetPage);
+      } else {
+        loadPage(currentPage + 1);
+      }
+    }
 
 
 

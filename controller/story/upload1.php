@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $file = $_FILES['uploaded_file'];
@@ -11,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
 
     $correctjumpTarget = $_POST['correctjumpTarget'] ?? 1;
     $incorrectjumpTarget = $_POST['incorrectjumpTarget'] ?? 1;
-    $chapter = $_POST['chapter'] ?? 1;  // ← chapter も hidden input から受け取る想定
+    $chapter = $_POST['chapter'] ?? 1;
 
     $code = file_get_contents($file['tmp_name']);
     $code = '?>' . $code . '<?php ';
@@ -23,10 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
         $nextPage = $incorrectjumpTarget;
     }
 
-    header("Location: /kiwiSisters/controller/story/StoryPlayController1.php?fromUpload=1&nextPage={$nextPage}");
+    // ⭐️ sessionStorage に反映するため session に保存
+    $_SESSION['nextPageAfterUpload'] = $nextPage;
+    $_SESSION['chapterAfterUpload'] = $chapter;
+
+    header("Location: /kiwiSisters/controller/story/StoryPlayController1.php?fromUpload=1");
     exit;
-
-
 } else {
     echo "ファイルが選択されていません。";
 }

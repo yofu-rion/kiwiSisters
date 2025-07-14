@@ -78,9 +78,12 @@ try {
             ?>
             <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?>
               を保存済み</div>
-            <a class="save-button"
-              href="/kiwiSisters/controller/story/StoryPlayController1.php?page=<?= $pageNumber ?>&chapter=<?= $chapterNumber ?>&bgm=<?= urlencode($data['bgm']) ?>">
-              ロード</a>
+            <form method="post" action="/kiwiSisters/controller/story/LoadHandler.php" style="display:inline;">
+              <input type="hidden" name="page" value="<?= $pageNumber ?>">
+              <input type="hidden" name="chapter" value="<?= $chapterNumber ?>">
+              <input type="hidden" name="bgm" value="<?= htmlspecialchars($data['bgm']) ?>">
+              <button type="submit" class="save-button">ロード</button>
+            </form>
           <?php else: ?>
             <div class="slot-info">スロット<?= $i ?>：空</div>
             <span class="save-button disabled">ロード不可</span>
