@@ -12,6 +12,9 @@ if (!isset($_SESSION['login'])) {
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
 
+require '../vendor/autoload.php';
+use Hashids\Hashids;
+
 // データベース接続
 $pdo = new PDO(
   'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',

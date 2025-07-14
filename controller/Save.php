@@ -11,17 +11,24 @@ if (!isset($_SESSION['login'])) {
 
 // パラメータ取得
 $slot = isset($_GET['slot']) ? intval($_GET['slot']) : 0;
-$page = isset($_GET['page']) ? intval($_GET['page']) : 2;  // デフォルト2
-$chapter = isset($_GET['chapter']) ? intval($_GET['chapter']) : 1;  // デフォルト1
+$pageHash = $_GET['page'] ?? '';
+$chapterHash = $_GET['chapter'] ?? '';
 $bgm = isset($_GET['bgm']) ? trim($_GET['bgm']) : '';
+
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
+
+require '../vendor/autoload.php';
+use Hashids\Hashids;
+
+$hashids = new Hashids($username, 8);
+$page = $hashids->decode($pageHash)[0] ?? 2;
+$chapter = $hashids->decode($chapterHash)[0] ?? 1;
 
 if ($slot < 1 || $slot > 4) {
   echo "スロット番号が不正です。";
   exit;
 }
-
-// ログイン中のユーザー名
-$username = $_SESSION['login']['name'];
 
 // DB接続
 $pdo = new PDO(
@@ -48,10 +55,8 @@ try {
   error_log('セーブエラー: ' . $e->getMessage());
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
   <meta charset="UTF-8">
   <title>セーブ完了</title>
@@ -60,7 +65,6 @@ try {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet" />
 </head>
-
 <body>
   <div class="container">
     <?php if ($saveSuccess): ?>
@@ -75,26 +79,13 @@ try {
     const savedChapter = "<?= htmlspecialchars($chapter) ?>";
     const savedBgm = "<?= htmlspecialchars($bgm) ?>";
 
-    console.log("[Save.php] セーブ直後 sessionStorage 設定開始");
-    console.log("[Save.php] savedPage:", savedPage);
-    console.log("[Save.php] savedChapter:", savedChapter);
-    console.log("[Save.php] savedBgm:", savedBgm);
-
     sessionStorage.setItem("currentPage", savedPage);
     sessionStorage.setItem("currentChapter", savedChapter);
     sessionStorage.setItem("lastBgm", savedBgm);
 
-    console.log("[Save.php] sessionStorage 設定完了");
-    console.log("[Save.php] currentPage in sessionStorage:", sessionStorage.getItem("currentPage"));
-    console.log("[Save.php] currentChapter in sessionStorage:", sessionStorage.getItem("currentChapter"));
-    console.log("[Save.php] lastBgm in sessionStorage:", sessionStorage.getItem("lastBgm"));
-
     setTimeout(() => {
-      console.log("[Save.php] StoryPlayController1.php にリダイレクトします");
       window.location.href = "/kiwiSisters/controller/story/StoryPlayController1.php";
     }, 1000);
   </script>
-
 </body>
-
 </html>

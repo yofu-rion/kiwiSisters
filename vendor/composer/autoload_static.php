@@ -23,6 +23,10 @@ class ComposerStaticInit62e10e6c8df9afc192311b196c75bb33
             'MyCLabs\\Enum\\' => 13,
             'Matrix\\' => 7,
         ),
+        'H' => 
+        array (
+            'Hashids\\' => 8,
+        ),
         'C' => 
         array (
             'Composer\\Pcre\\' => 14,
@@ -59,6 +63,10 @@ class ComposerStaticInit62e10e6c8df9afc192311b196c75bb33
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Hashids\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hashids/hashids/src',
         ),
         'Composer\\Pcre\\' => 
         array (

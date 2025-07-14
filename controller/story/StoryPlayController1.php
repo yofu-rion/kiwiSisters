@@ -79,20 +79,27 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '鷹森_江永ピンチ': '/kiwiSisters/img/takamori_enagapinch.png',
       '鷹森_戦闘': '/kiwiSisters/img/takamori_kamae.png',
       '鷹森_落胆': '/kiwiSisters/img/takamori_syonbori.png',
-      '江永': '/kiwiSisters/img/enaga_standard.png',
-      '花子': '/kiwiSisters/img/hanakosan_smile.png',
+      '江永_通常': '/kiwiSisters/img/enaga_nomal.png',
+      '江永_どや': '/kiwiSisters/img/enaga_doya.png',
+      '江永_笑顔': '/kiwiSisters/img/enaga_smile.png',
+      '江永_おこ': '/kiwiSisters/img/enaga_ungry.png',
+      '花子_通常': '/kiwiSisters/img/hanakosan_nomal.png',
+      '花子_笑顔': '/kiwiSisters/img/hanakosan_smile.png',
       'テケ': '/kiwiSisters/img/teketeke.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
     };
 
     const seMap = {
       '歩行': 'hokou.mp3',
+      '走る': 'hasiru.mp3',
       '攻撃': 'kougeki.mp3',
       'ツッコミ': 'tukkomi.mp3',
       'チリン': 'chirin.mp3',
-      '驚き': 'odoroki.mp3',
-      'エラー': 'error.mp3',
-      'ドア': 'door.mp3',
+      '打撃': 'naguru.mp3',
+      '花子帰還': 'hanako_house.mp3',
+      '倒れる': 'batan.mp3',
+      'ドアガチャ': 'doagacya.mp3',
+      'アンゴラ': 'kiwi.mp3',
       // 必要に応じて追加
     };
 

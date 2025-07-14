@@ -1,4 +1,15 @@
 <?php
+session_start();
+
+// ログイン確認
+if (!isset($_SESSION['login'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
+
 $uri = $_SERVER['REQUEST_URI'];
 $parts = explode('/', rtrim($uri, '/'));
 $pagePart = end($parts);
@@ -28,6 +39,7 @@ $current = $stories[$page];
 $prevPage = $page > 1 ? $page - 1 : null;
 $nextPage = $page < 4 ? $page + 1 : null;
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -67,26 +79,33 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <a href="/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>" class="arrow right">▶</a>
   <?php endif; ?>
 
-  <div id="modal-overlay" class="modal-overlay hidden">
-    <div class="modal-content">
-      <p>この章を始めますか？</p>
-      <div class="modal-buttons">
-        <button id="modal-ok">はい</button>
-        <button id="modal-cancel">いいえ</button>
-      </div>
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p>この章を始めますか？</p>
+            <div class="modal-buttons">
+                <button id="modal-ok">はい</button>
+                <button id="modal-cancel">いいえ</button>
+            </div>
+        </div>
     </div>
-  </div>
-  <div id="fade-overlay" class="fade-overlay"></div>
+    <div id="fade-overlay" class="fade-overlay"></div>
+    <script>
+        const audioSelect = document.getElementById("select-sound");
+        const chapterPage = <?= $page ?>;
+        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
+        const modal = document.getElementById("modal-overlay");
+        const okButton = document.getElementById("modal-ok");
+        const cancelButton = document.getElementById("modal-cancel");
+        const fadeOverlay = document.getElementById("fade-overlay");
+        const audioKettei = document.getElementById("kettei-sound");
 
-  <script>
-    const chapterPage = <?= $page ?>;
-    const audioSelect = document.getElementById("select-sound");
-    const audioKettei = document.getElementById("kettei-sound");
-    const modal = document.getElementById("modal-overlay");
-    const fadeOverlay = document.getElementById("fade-overlay");
+        const showModal = () => {
+            modal.classList.remove("hidden");
+        };
 
-    const showModal = () => modal.classList.remove("hidden");
-    const hideModal = () => modal.classList.add("hidden");
+        const hideModal = () => {
+            modal.classList.add("hidden");
+        };
 
     document.getElementById("start-button")?.addEventListener("click", showModal);
     document.getElementById("modal-cancel")?.addEventListener("click", hideModal);
