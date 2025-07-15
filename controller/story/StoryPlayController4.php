@@ -24,7 +24,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/story/play1.css">
+  <link rel="stylesheet" href="../../css/story/play4.css">
   <title>Kiwi Sisters</title>
   <style>
     body {
@@ -117,7 +117,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     async function loadPage(page) {
       currentPage = page;
       sessionStorage.setItem("currentPage", String(currentPage));
-      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "4");
 
       const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 1}&page=${page}`);
       const data = await res.json();
@@ -394,15 +394,54 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
         const targetPage = parseInt(currentData.jumpTarget, 10);
         loadPage(targetPage);
+      } else if (currentData.next_state == 5) {
+        allowEnterKey = false;
+        // ⭐️ 暗転処理
+        const overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.backgroundColor = "black";
+        overlay.style.opacity = "0";
+        overlay.style.transition = "opacity 0.5s";
+        overlay.style.zIndex = "999";
+        document.body.appendChild(overlay);
+
+        // 暗転開始
+        requestAnimationFrame(() => {
+          overlay.style.opacity = "1";
+        });
+
+        // 500ms後に次のページに進んで暗転解除
+        setTimeout(async () => {
+          await loadPage(currentPage + 1);
+
+          overlay.style.opacity = "0";
+          setTimeout(() => {
+            document.body.removeChild(overlay);
+            allowEnterKey = true;
+          }, 500);
+        }, 500);
+
       } else {
         loadPage(currentPage + 1);
       }
     }
 
-
+    let lastEnterTime = 0;
+    const enterDelay = 200;
 
     document.addEventListener("keydown", e => {
       if (e.key === "Enter") {
+        const now = Date.now();
+        if (now - lastEnterTime < enterDelay) {
+          console.log("⏸️ Enter key ignored due to delay");
+          return;
+        }
+        lastEnterTime = now;
+
         if (currentData && currentData.next_state == 2) {
           console.log("🔒 Enter 無効化: next_state == 2");
           return;
@@ -413,6 +452,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         }
       }
     });
+
 
   </script>
 

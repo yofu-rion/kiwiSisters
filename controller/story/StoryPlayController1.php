@@ -394,15 +394,54 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
         const targetPage = parseInt(currentData.jumpTarget, 10);
         loadPage(targetPage);
+      } else if (currentData.next_state == 5) {
+        allowEnterKey = false;
+        // ⭐️ 暗転処理
+        const overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.backgroundColor = "black";
+        overlay.style.opacity = "0";
+        overlay.style.transition = "opacity 0.5s";
+        overlay.style.zIndex = "999";
+        document.body.appendChild(overlay);
+
+        // 暗転開始
+        requestAnimationFrame(() => {
+          overlay.style.opacity = "1";
+        });
+
+        // 500ms後に次のページに進んで暗転解除
+        setTimeout(async () => {
+          await loadPage(currentPage + 1);
+
+          overlay.style.opacity = "0";
+          setTimeout(() => {
+            document.body.removeChild(overlay);
+            allowEnterKey = true;
+          }, 500);
+        }, 500);
+
       } else {
         loadPage(currentPage + 1);
       }
     }
 
-
+    let lastEnterTime = 0;
+    const enterDelay = 200;
 
     document.addEventListener("keydown", e => {
       if (e.key === "Enter") {
+        const now = Date.now();
+        if (now - lastEnterTime < enterDelay) {
+          console.log("⏸️ Enter key ignored due to delay");
+          return;
+        }
+        lastEnterTime = now;
+
         if (currentData && currentData.next_state == 2) {
           console.log("🔒 Enter 無効化: next_state == 2");
           return;
@@ -413,6 +452,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         }
       }
     });
+
 
   </script>
 

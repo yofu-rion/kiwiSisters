@@ -1,0 +1,216 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  font-family: 'Kiwi Maru', serif;
+  /* 背景画像はPHP側で設定 */
+  background-size: cover, 100% 100%;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  overflow: hidden;
+}
+
+.full {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  font-family: 'Kiwi Maru', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.kuuhaku {
+  width: 100%;
+  height: 60%;
+  opacity: 0;
+}
+
+.comment {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hako {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 220px;
+  background-color: #d9d9d9;
+  opacity: 80%;
+}
+
+.name {
+  position: relative;
+  z-index: 2;
+  width: 30%;
+  height: 25%;
+  font-size: 28px;
+  background-color: #273c26;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text {
+  position: relative;
+  border-bottom: thick double #ffffff;
+  z-index: 2;
+  width: auto;
+  height: 55%;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.menu {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 20%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 24px;
+}
+
+.save {
+  width: 80px;
+  height: 60%;
+  text-align: center;
+  background-color: #273c26;
+  margin: 0 8px;
+  font-weight: 700;
+  color: #ffffff;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.next {
+  font-size: 48px;
+  color: #273c26;
+  margin-top: 40px;
+  margin-right: 20px;
+  font-family: 'Kiwi Maru', serif;
+  border: none;
+  background: none;
+}
+
+.title {
+  width: 80px;
+  height: 60%;
+  text-align: center;
+  background-color: #273c26;
+  margin: 0 8px;
+  font-weight: 700;
+  color: #ffffff;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.char-stand-container {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+.char-stand {
+  max-height: 180vh;
+  object-fit: contain;
+  transform: translateY(44%);
+}
+
+.choices {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 10;
+  color: #000000;
+}
+
+.choices button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background-color: #fefefe;
+  border: 2px solid #333;
+  cursor: pointer;
+  color: #000000;
+}
+
+.file-section {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.file-download {
+  width: 100%;
+}
+
+.file-upload {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.file-section button {
+  width: 100%;
+  border-radius: 12px;
+  margin: 10px;
+  padding: 8px 16px;
+  font-size: 1rem;
+}
+
+.file-section input[type='file'] {
+  margin-top: 10px;
+}
+
+.program {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed; /* ← 画面中央に固定配置 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100; /* ← 他要素より前面に */
+  gap: 12px; /* ボタン間の隙間 */
+}
+
+.choice-button {
+  width: 100%;
+  padding: 8px 16px;
+  margin: 4px;
+  font-size: 16px;
+  border: 2px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.choice-button:hover {
+  background-color: #eee;
+}
