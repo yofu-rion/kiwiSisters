@@ -119,7 +119,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       sessionStorage.setItem("currentPage", String(currentPage));
       sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "2");
 
-      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 1}&page=${page}`);
+      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 2}&page=${page}`);
       const data = await res.json();
       console.log("🎯 fetch結果 =", data);
       currentData = data;
@@ -238,7 +238,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         const incorrect = data.incorrectjumpTarget || "1";
 
         const downloadForm = document.createElement("form");
-        downloadForm.action = "/kiwiSisters/controller/story/download1.php";
+        downloadForm.action = "/kiwiSisters/controller/story/download2.php";
         downloadForm.method = "get";
         downloadForm.className = "file-download";
 
@@ -248,7 +248,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         downloadForm.appendChild(downloadButton);
 
         const uploadForm = document.createElement("form");
-        uploadForm.action = "/kiwiSisters/controller/story/upload1.php";
+        uploadForm.action = "/kiwiSisters/controller/story/upload2.php";
         uploadForm.method = "post";
         uploadForm.enctype = "multipart/form-data";
         uploadForm.className = "file-upload";
@@ -273,7 +273,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         const hiddenChapter = document.createElement("input");
         hiddenChapter.type = "hidden";
         hiddenChapter.name = "chapter";
-        hiddenChapter.value = sessionStorage.getItem("currentChapter") || "1";
+        hiddenChapter.value = sessionStorage.getItem("currentChapter") || "2";
 
         const uploadButton = document.createElement("button");
         uploadButton.type = "submit";
@@ -312,11 +312,11 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     }
 
     document.getElementById("saveButton").onclick = () => {
-      console.log("[StoryPlayController1.php] セーブボタン押下: currentPage=", currentPage);
+      console.log("[StoryPlayController2.php] セーブボタン押下: currentPage=", currentPage);
       sessionStorage.setItem("currentPage", currentPage);
-      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "2");
 
-      const chapter = sessionStorage.getItem("currentChapter") || "1";
+      const chapter = sessionStorage.getItem("currentChapter") || "2";
       const page = sessionStorage.getItem("currentPage") || "2";
 
       window.location.href = `/kiwiSisters/controller/SaveSelect.php?page=${page}&chapter=${chapter}`;
@@ -365,7 +365,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         shouldRetryPlay = true;
       }
 
-      console.log("[StoryPlayController1.php] loadPage 完了 - page:", currentPage);
+      console.log("[StoryPlayController2.php] loadPage 完了 - page:", currentPage);
 
 
 

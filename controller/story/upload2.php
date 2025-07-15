@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
 
     $correctjumpTarget = $_POST['correctjumpTarget'] ?? 1;
     $incorrectjumpTarget = $_POST['incorrectjumpTarget'] ?? 1;
-    $chapter = $_POST['chapter'] ?? 3;
+    $chapter = $_POST['chapter'] ?? 2;
 
     $status = null;
     $code = file_get_contents($file['tmp_name']);
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $_SESSION['nextPageAfterUpload'] = $nextPage;
     $_SESSION['chapterAfterUpload'] = $chapter;
 
-    header("Location: /kiwiSisters/controller/story/StoryPlayController1.php?fromUpload=1");
+    header("Location: /kiwiSisters/controller/story/StoryPlayController2.php?fromUpload=1");
     exit;
 } else {
     echo "ファイルが選択されていません。";

@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
 
     $correctjumpTarget = $_POST['correctjumpTarget'] ?? 1;
     $incorrectjumpTarget = $_POST['incorrectjumpTarget'] ?? 1;
-    $chapter = $_POST['chapter'] ?? 2;
+    $chapter = $_POST['chapter'] ?? 3;
 
     ob_start(); // eval の標準出力キャプチャ
     $code = file_get_contents($file['tmp_name']);

@@ -119,8 +119,9 @@ $nextPage = $page < 4 ? $page + 1 : null;
       audioKettei.play().catch(() => { });
       fadeOverlay.classList.add("fade-in");
       setTimeout(() => {
-        window.location.href = `/kiwiSisters/controller/story/StoryPlayController1.php`;
+        window.location.href = `/kiwiSisters/controller/story/StoryPlayController${chapterPage}.php`;
       }, 2000);
+
     });
 
 
