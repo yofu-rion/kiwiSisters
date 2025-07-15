@@ -26,7 +26,7 @@ if ($page < 1 || $page > 4) {
 }
 
 $isFinalChapter = $page === 4;
-$unlockFinalChapter = false;
+$unlockFinalChapter = true;
 
 $stories = [
   1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
