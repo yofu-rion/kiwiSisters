@@ -114,6 +114,24 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     let currentData = null;
     let shouldRetryPlay = sessionStorage.getItem("bgmPlayFailed") === "true";
 
+    // 🆙 Audio オブジェクトは loadPage 外（グローバル）で作成する
+    const hoverSound = new Audio("/kiwiSisters/se/hover.mp3");
+    const sentakuSound = new Audio("/kiwiSisters/se/sentaku.mp3");
+
+    // 🆙 setupChoiceButtonSE もグローバルで定義
+    function setupChoiceButtonSE(button) {
+      button.addEventListener("mouseenter", () => {
+        hoverSound.currentTime = 0;
+        hoverSound.play().catch((e) => console.warn("hover.mp3 再生失敗", e));
+      });
+
+      button.addEventListener("click", () => {
+        sentakuSound.currentTime = 0;
+        sentakuSound.play().catch((e) => console.warn("sentaku.mp3 再生失敗", e));
+      });
+    }
+
+
     async function loadPage(page) {
       currentPage = page;
       sessionStorage.setItem("currentPage", String(currentPage));
@@ -155,7 +173,6 @@ if (isset($_SESSION['chapterAfterUpload'])) {
           console.log(`⏭️ 同じBGMなので送信省略: ${effectiveBgm}`);
         }
       }
-
 
       const charNameEl = document.getElementById("charName");
       const textAreaEl = document.getElementById("textArea");
@@ -221,6 +238,8 @@ if (isset($_SESSION['chapterAfterUpload'])) {
             btn.textContent = label;
             btn.className = "choice-button";
             btn.onclick = () => loadPage(parseInt(pageNum, 10));
+
+            setupChoiceButtonSE(btn);
             choiceArea.appendChild(btn);
           }
         });

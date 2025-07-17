@@ -26,7 +26,7 @@ if ($page < 1 || $page > 4) {
 }
 
 $isFinalChapter = $page === 4;
-$unlockFinalChapter = true;
+$unlockFinalChapter = false;
 
 $stories = [
   1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
@@ -85,12 +85,14 @@ $nextPage = $page < 4 ? $page + 1 : null;
   <div id="modal-overlay" class="modal-overlay hidden">
     <div class="modal-content">
       <p>この章を始めますか？</p>
+      <small>(Enterで始まります)</small>
       <div class="modal-buttons">
         <button id="modal-ok">はい</button>
         <button id="modal-cancel">いいえ</button>
       </div>
     </div>
   </div>
+  <div id="chapter-title"></div>
   <div id="fade-overlay" class="fade-overlay"></div>
   <script>
     const audioSelect = document.getElementById("select-sound");
@@ -114,18 +116,44 @@ $nextPage = $page < 4 ? $page + 1 : null;
     document.getElementById("modal-cancel")?.addEventListener("click", hideModal);
     document.getElementById("modal-ok")?.addEventListener("click", () => {
       sessionStorage.setItem("currentChapter", chapterPage);
-      sessionStorage.setItem("currentPage", 1); // 各章の初期ページに変更するならここ
+      sessionStorage.setItem("currentPage", 1);
+
       audioKettei.currentTime = 0;
       audioKettei.play().catch(() => { });
+
+      const chapterTitle = document.getElementById("chapter-title");
+      chapterTitle.textContent = `第${chapterPage}章 ${"<?= htmlspecialchars($current["title"]) ?>"}`;
+
       fadeOverlay.classList.add("fade-in");
+
+      setTimeout(() => {
+        chapterTitle.style.opacity = "1";
+      }, 500);
+
+      setTimeout(() => {
+        chapterTitle.style.opacity = "0";
+      }, 2500);
+
       setTimeout(() => {
         window.location.href = `/kiwiSisters/controller/story/StoryPlayController${chapterPage}.php`;
-      }, 2000);
-
+      }, 3500);
     });
 
 
+
     document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        if (!modal.classList.contains("hidden")) {
+          okButton.click();
+          return;
+        }
+
+        const startButton = document.getElementById("start-button");
+        if (startButton) {
+          startButton.click();
+        }
+      }
+
       if (!modal.classList.contains("hidden")) return;
 
       if (e.key === "ArrowLeft") {
@@ -140,10 +168,9 @@ $nextPage = $page < 4 ? $page + 1 : null;
           audioSelect.currentTime = 0;
           audioSelect.play().catch(() => { });
         <?php endif; ?>
-      } else if (e.key === "Enter") {
-        showModal();
       }
     });
+
   </script>
 </body>
 

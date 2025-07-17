@@ -14,10 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $incorrectjumpTarget = $_POST['incorrectjumpTarget'] ?? 1;
     $chapter = $_POST['chapter'] ?? 3;
 
-    ob_start(); // eval の標準出力キャプチャ
+    ob_start();
     $code = file_get_contents($file['tmp_name']);
-    $code = '?>' . $code . '<?php ';
-    eval($code);
+    $code = preg_replace('/^\s*<\?php\s*/', '', $code);
+    $code = preg_replace('/\s*\?>\s*$/', '', $code);
+    eval ($code);
     $output = ob_get_clean();
 
     // 判定: UTF-8に正常変換された「もっと下においで～キャラクター」を含んでいるか
@@ -32,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $_SESSION['nextPageAfterUpload'] = $nextPage;
     $_SESSION['chapterAfterUpload'] = $chapter;
 
-    header("Location: /kiwiSisters/controller/story/StoryPlayController1.php?fromUpload=1");
+    header("Location: /kiwiSisters/controller/story/StoryPlayController3.php?fromUpload=1");
     exit;
 } else {
     echo "ファイルが選択されていません。";
