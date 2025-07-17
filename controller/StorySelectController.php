@@ -92,6 +92,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
       </div>
     </div>
   </div>
+  <div>
   <div id="chapter-title"></div>
   <div id="fade-overlay" class="fade-overlay"></div>
   <script>
@@ -122,7 +123,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
       audioKettei.play().catch(() => { });
 
       const chapterTitle = document.getElementById("chapter-title");
-      chapterTitle.textContent = `第${chapterPage}章 ${"<?= htmlspecialchars($current["title"]) ?>"}`;
+      chapterTitle.textContent = `第${chapterPage}章　　${"<?= htmlspecialchars($current["title"]) ?>"}`;
 
       fadeOverlay.classList.add("fade-in");
 
