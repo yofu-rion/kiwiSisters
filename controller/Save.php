@@ -17,13 +17,14 @@ $bgm = isset($_GET['bgm']) ? trim($_GET['bgm']) : '';
 
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
+error_log("DEBUG: Save.php username=$username");
 
 require '../vendor/autoload.php';
 use Hashids\Hashids;
 
 $hashids = new Hashids($username, 8);
-$page = $hashids->decode($pageHash)[0] ?? 2;
-$chapter = $hashids->decode($chapterHash)[0] ?? 1;
+error_log("DEBUG: Save.php pageHash=" . ($_GET['page'] ?? 'null'));
+error_log("DEBUG: Save.php chapterHash=" . ($_GET['chapter'] ?? 'null'));
 
 if ($slot < 1 || $slot > 4) {
   echo "スロット番号が不正です。";
@@ -37,10 +38,24 @@ $pdo = new PDO(
   'password'
 );
 
+$pageDecoded = $hashids->decode($pageHash);
+$chapterDecoded = $hashids->decode($chapterHash);
+
+error_log("DEBUG: Save.php decoded page=" . var_export($pageDecoded, true));
+error_log("DEBUG: Save.php decoded chapter=" . var_export($chapterDecoded, true));
+
+$page = $pageDecoded[0] ?? 2;
+$chapter = $chapterDecoded[0] ?? 1;
+
+
 try {
   // 既存データ削除
   $deleteSql = $pdo->prepare('DELETE FROM save_data WHERE user_name = ? AND slot_num = ?');
   $deleteSql->execute([$username, $slot]);
+
+  error_log("DEBUG: Save.php decoded page=" . var_export($pageDecoded, true));
+  error_log("DEBUG: Save.php decoded chapter=" . var_export($chapterDecoded, true));
+
 
   // 新規セーブ
   $insertSql = $pdo->prepare('
@@ -57,6 +72,7 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <title>セーブ完了</title>
@@ -65,6 +81,7 @@ try {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet" />
 </head>
+
 <body>
   <div class="container">
     <?php if ($saveSuccess): ?>
@@ -88,4 +105,5 @@ try {
     }, 1000);
   </script>
 </body>
+
 </html>

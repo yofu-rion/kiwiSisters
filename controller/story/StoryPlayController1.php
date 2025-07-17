@@ -41,6 +41,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
   <iframe id="bgm-frame" src="/kiwiSisters/controller/story/bgm.html" allow="autoplay" style="display:none;"></iframe>
 
   <div class="full">
+    <div id="charImagesContainer" class="char-stand-container"></div>
     <img id="charImage" class="char-stand" src="" alt="" style="display: none;">
     <div id="choiceArea" class="choices" style="display: none;"></div>
     <div class="kuuhaku">a</div>
@@ -95,14 +96,16 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '攻撃': 'kougeki.mp3',
       'ツッコミ': 'tukkomi.mp3',
       'チリン': 'chirin.mp3',
-      '打撃': 'naguru.mp3',
+      'パキッ': 'paki.mp3',
+      '打撃鷹森': 'takamori_panchi.mp3',
+      '打撃白鷺': 'takamori_panchi.mp3',
       '花子帰還': 'hanako_house.mp3',
       '倒れる': 'batan.mp3',
+      'ドアオープン': 'openDoor.mp3',
+      '発見効果音': 'hakken.mp3',
       'ドアガチャ': 'doagacya.mp3',
-      'アンゴラ': 'kiwi.mp3',
       // 必要に応じて追加
     };
-
 
     let isInitialLoad = true;
     let lastSentBgm = null;
@@ -110,6 +113,24 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     let allowEnterKey = true;
     let currentData = null;
     let shouldRetryPlay = sessionStorage.getItem("bgmPlayFailed") === "true";
+
+    // 🆙 Audio オブジェクトは loadPage 外（グローバル）で作成する
+    const hoverSound = new Audio("/kiwiSisters/se/hover.mp3");
+    const sentakuSound = new Audio("/kiwiSisters/se/sentaku.mp3");
+
+    // 🆙 setupChoiceButtonSE もグローバルで定義
+    function setupChoiceButtonSE(button) {
+      button.addEventListener("mouseenter", () => {
+        hoverSound.currentTime = 0;
+        hoverSound.play().catch((e) => console.warn("hover.mp3 再生失敗", e));
+      });
+
+      button.addEventListener("click", () => {
+        sentakuSound.currentTime = 0;
+        sentakuSound.play().catch((e) => console.warn("sentaku.mp3 再生失敗", e));
+      });
+    }
+
 
     async function loadPage(page) {
       currentPage = page;
@@ -153,7 +174,6 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         }
       }
 
-
       const charNameEl = document.getElementById("charName");
       const textAreaEl = document.getElementById("textArea");
 
@@ -164,15 +184,42 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       const bg = bgMap[data.background] || '';
       document.body.style.backgroundImage = `url('${bg}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
 
-      const charImg = document.getElementById("charImage");
-      let imageSrc = charImageMap[data.illustration?.trim()] || "";
-      if (!imageSrc && data.illustration) {
-        const base = data.illustration.split('_')[0].trim();
-        imageSrc = charImageMap[`${base}_通常`] || Object.entries(charImageMap).find(([key]) => key.startsWith(base))?.[1];
+      const charImagesContainer = document.getElementById("charImagesContainer");
+      charImagesContainer.innerHTML = "";  // 前のキャラを削除
+
+      const illustrations = [
+        data.illustration,
+        data.illustration2,
+        data.illustration3,
+        data.illustration4,
+        data.illustration5,
+      ].filter(Boolean).map(s => s.trim());
+
+      charImagesContainer.innerHTML = "";
+
+      if (illustrations.length === 1) {
+        charImagesContainer.style.justifyContent = "center";
+      } else if (illustrations.length > 1) {
+        charImagesContainer.style.justifyContent = "space-around";
+      } else {
+        charImagesContainer.style.justifyContent = "center";  // fallback
       }
-      charImg.style.display = imageSrc ? "block" : "none";
-      charImg.src = imageSrc || "";
-      charImg.alt = data.illustration || "";
+
+      illustrations.forEach((illust, index) => {
+        let imageSrc = charImageMap[illust] || "";
+        if (!imageSrc && illust) {
+          const base = illust.split('_')[0].trim();
+          imageSrc = charImageMap[`${base}_通常`] || Object.entries(charImageMap).find(([key]) => key.startsWith(base))?.[1];
+        }
+
+        if (imageSrc) {
+          const img = document.createElement("img");
+          img.src = imageSrc;
+          img.alt = illust;
+          img.className = `char-stand`;
+          charImagesContainer.appendChild(img);
+        }
+      });
 
       const choiceArea = document.getElementById("choiceArea");
       choiceArea.innerHTML = "";
@@ -191,6 +238,8 @@ if (isset($_SESSION['chapterAfterUpload'])) {
             btn.textContent = label;
             btn.className = "choice-button";
             btn.onclick = () => loadPage(parseInt(pageNum, 10));
+
+            setupChoiceButtonSE(btn);
             choiceArea.appendChild(btn);
           }
         });
@@ -285,8 +334,13 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       console.log("[StoryPlayController1.php] セーブボタン押下: currentPage=", currentPage);
       sessionStorage.setItem("currentPage", currentPage);
       sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
-      window.location.href = "/kiwiSisters/controller/SaveSelect.php";
+
+      const chapter = sessionStorage.getItem("currentChapter") || "1";
+      const page = sessionStorage.getItem("currentPage") || "2";
+
+      window.location.href = `/kiwiSisters/controller/SaveSelect.php?page=${page}&chapter=${chapter}`;
     };
+
 
 
     document.getElementById("nextButton").onclick = handleNext;
@@ -359,15 +413,54 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
         const targetPage = parseInt(currentData.jumpTarget, 10);
         loadPage(targetPage);
+      } else if (currentData.next_state == 5) {
+        allowEnterKey = false;
+        // ⭐️ 暗転処理
+        const overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.backgroundColor = "black";
+        overlay.style.opacity = "0";
+        overlay.style.transition = "opacity 0.5s";
+        overlay.style.zIndex = "999";
+        document.body.appendChild(overlay);
+
+        // 暗転開始
+        requestAnimationFrame(() => {
+          overlay.style.opacity = "1";
+        });
+
+        // 500ms後に次のページに進んで暗転解除
+        setTimeout(async () => {
+          await loadPage(currentPage + 1);
+
+          overlay.style.opacity = "0";
+          setTimeout(() => {
+            document.body.removeChild(overlay);
+            allowEnterKey = true;
+          }, 500);
+        }, 500);
+
       } else {
         loadPage(currentPage + 1);
       }
     }
 
-
+    let lastEnterTime = 0;
+    const enterDelay = 200;
 
     document.addEventListener("keydown", e => {
       if (e.key === "Enter") {
+        const now = Date.now();
+        if (now - lastEnterTime < enterDelay) {
+          console.log("⏸️ Enter key ignored due to delay");
+          return;
+        }
+        lastEnterTime = now;
+
         if (currentData && currentData.next_state == 2) {
           console.log("🔒 Enter 無効化: next_state == 2");
           return;
@@ -378,6 +471,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         }
       }
     });
+
 
   </script>
 

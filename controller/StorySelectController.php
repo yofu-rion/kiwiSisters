@@ -3,8 +3,8 @@ session_start();
 
 // ログイン確認
 if (!isset($_SESSION['login'])) {
-    header('Location: ../index.php');
-    exit;
+  header('Location: ../index.php');
+  exit;
 }
 
 // ログイン中のユーザー名を取得
@@ -31,8 +31,11 @@ $unlockFinalChapter = false;
 $stories = [
   1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
   2 => ["title" => "雉の話", "image" => "/kiwiSisters/img/story2.png"],
-  3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story.png"],
-  4 => ["title" => "???????", "image" => "/kiwiSisters/img/story.png"],
+  3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story3.png"],
+  4 => [
+    "title" => $unlockFinalChapter ? "飛べない鳥の話" : "?????",
+    "image" => $unlockFinalChapter ? "/kiwiSisters/img/story4.png" : "/kiwiSisters/img/story.png"
+  ],
 ];
 
 $current = $stories[$page];
@@ -79,49 +82,79 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <a href="/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>" class="arrow right">▶</a>
   <?php endif; ?>
 
-    <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="modal-content">
-            <p>この章を始めますか？</p>
-            <div class="modal-buttons">
-                <button id="modal-ok">はい</button>
-                <button id="modal-cancel">いいえ</button>
-            </div>
-        </div>
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <p>この章を始めますか？</p>
+      <small>(Enterで始まります)</small>
+      <div class="modal-buttons">
+        <button id="modal-ok">はい</button>
+        <button id="modal-cancel">いいえ</button>
+      </div>
     </div>
-    <div id="fade-overlay" class="fade-overlay"></div>
-    <script>
-        const audioSelect = document.getElementById("select-sound");
-        const chapterPage = <?= $page ?>;
-        const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
-        const modal = document.getElementById("modal-overlay");
-        const okButton = document.getElementById("modal-ok");
-        const cancelButton = document.getElementById("modal-cancel");
-        const fadeOverlay = document.getElementById("fade-overlay");
-        const audioKettei = document.getElementById("kettei-sound");
+  </div>
+  <div>
+  <div id="chapter-title"></div>
+  <div id="fade-overlay" class="fade-overlay"></div>
+  <script>
+    const audioSelect = document.getElementById("select-sound");
+    const chapterPage = <?= $page ?>;
+    const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
+    const modal = document.getElementById("modal-overlay");
+    const okButton = document.getElementById("modal-ok");
+    const cancelButton = document.getElementById("modal-cancel");
+    const fadeOverlay = document.getElementById("fade-overlay");
+    const audioKettei = document.getElementById("kettei-sound");
 
-        const showModal = () => {
-            modal.classList.remove("hidden");
-        };
+    const showModal = () => {
+      modal.classList.remove("hidden");
+    };
 
-        const hideModal = () => {
-            modal.classList.add("hidden");
-        };
+    const hideModal = () => {
+      modal.classList.add("hidden");
+    };
 
     document.getElementById("start-button")?.addEventListener("click", showModal);
     document.getElementById("modal-cancel")?.addEventListener("click", hideModal);
     document.getElementById("modal-ok")?.addEventListener("click", () => {
       sessionStorage.setItem("currentChapter", chapterPage);
-      sessionStorage.setItem("currentPage", 1); // 各章の初期ページに変更するならここ
+      sessionStorage.setItem("currentPage", 1);
+
       audioKettei.currentTime = 0;
       audioKettei.play().catch(() => { });
+
+      const chapterTitle = document.getElementById("chapter-title");
+      chapterTitle.textContent = `第${chapterPage}章　　${"<?= htmlspecialchars($current["title"]) ?>"}`;
+
       fadeOverlay.classList.add("fade-in");
+
       setTimeout(() => {
-        window.location.href = `/kiwiSisters/controller/story/StoryPlayController1.php`;
-      }, 2000);
+        chapterTitle.style.opacity = "1";
+      }, 500);
+
+      setTimeout(() => {
+        chapterTitle.style.opacity = "0";
+      }, 2500);
+
+      setTimeout(() => {
+        window.location.href = `/kiwiSisters/controller/story/StoryPlayController${chapterPage}.php`;
+      }, 3500);
     });
 
 
+
     document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        if (!modal.classList.contains("hidden")) {
+          okButton.click();
+          return;
+        }
+
+        const startButton = document.getElementById("start-button");
+        if (startButton) {
+          startButton.click();
+        }
+      }
+
       if (!modal.classList.contains("hidden")) return;
 
       if (e.key === "ArrowLeft") {
@@ -136,10 +169,9 @@ $nextPage = $page < 4 ? $page + 1 : null;
           audioSelect.currentTime = 0;
           audioSelect.play().catch(() => { });
         <?php endif; ?>
-      } else if (e.key === "Enter") {
-        showModal();
       }
     });
+
   </script>
 </body>
 
