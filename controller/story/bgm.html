@@ -16,17 +16,30 @@
         選択: 'select.mp3',
         プログラム: 'program.mp3',
         花子: 'hanako.mp3',
+        ベトモツ: 'betomotu.mp3',
+        ビジュツ: 'bijyutu.mp3',
+        ワルツ: 'warutu.mp3',
         怪しい: 'ayasii.mp3',
         危機: 'kiki.mp3',
         発見: 'hakken.mp3',
         アンゴラ: 'kiwi.mp3',
+        立ち向かう: 'tachimukau.mp3',
+        ふりふり: 'kawaii?.mp3',
+        おとぼけ: 'otoboke.mp3',
         静止: '',
       }
 
       let lastBgmName = null
       let lastFile = null
 
-      // 🔁 play() を安全に呼び出す共通関数
+      // 🔧 追加: 正規化関数
+      function normalizeBgmName(str) {
+        return str
+          .replace(/[\u200B-\u200D\uFEFF]/g, '')  // ゼロ幅スペース削除
+          .replace(/\s+/g, '')                   // 半角/全角空白削除
+          .trim()
+      }
+
       async function safePlay(currentTime) {
         try {
           audio.currentTime = currentTime
@@ -47,10 +60,7 @@
           const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`
           audio.src = expectedSrc
           audio.onloadedmetadata = () => {
-            // 再生はしない（ユーザー操作で再開させる）
-            console.log(
-              `📥 リロード時BGMプリロードのみ: ${filename} ⏱️ 位置: ${bgmTime}`,
-            )
+            console.log(`📥 リロード時BGMプリロードのみ: ${filename} ⏱️ 位置: ${bgmTime}`)
           }
         }
       })
@@ -61,7 +71,7 @@
         if (type === 'requestCurrentTime') {
           e.source?.postMessage(
             { type: 'responseCurrentTime', currentTime: audio.currentTime },
-            '*',
+            '*'
           )
           return
         }
@@ -74,11 +84,12 @@
         }
 
         if (type === 'setBgm') {
-          let targetBgmName = typeof bgm === 'string' ? bgm.trim() : ''
+          let targetBgmName = typeof bgm === 'string' ? normalizeBgmName(bgm) : ''
           let filename = ''
 
+          console.log(`🎯 正規化後 targetBgmName='${targetBgmName}'`)
+
           if (targetBgmName === '' || targetBgmName === '静止') {
-            // 🔇 空欄 or 静止なら即停止
             audio.pause()
             audio.removeAttribute('src')
             audio.load()

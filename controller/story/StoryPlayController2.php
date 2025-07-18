@@ -84,8 +84,6 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '江永_どや': '/kiwiSisters/img/enaga_doya.png',
       '江永_笑顔': '/kiwiSisters/img/enaga_smile.png',
       '江永_おこ': '/kiwiSisters/img/enaga_ungry.png',
-      '花子_通常': '/kiwiSisters/img/hanakosan_nomal.png',
-      '花子_笑顔': '/kiwiSisters/img/hanakosan_smile.png',
       'テケ': '/kiwiSisters/img/teketeke.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
     };
@@ -101,9 +99,14 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '打撃白鷺': 'takamori_panchi.mp3',
       '花子帰還': 'hanako_house.mp3',
       '倒れる': 'batan.mp3',
+      'どどん': 'dodon.mp3',
       'ドアオープン': 'openDoor.mp3',
       '発見効果音': 'hakken.mp3',
       'ドアガチャ': 'doagacya.mp3',
+      'ひゅーん': 'hyu-n.mp3',
+      'ひざ'　:'hiza.mp3',
+      'チャイム開始': 'chimeStart.mp3',
+      'チャイム終わり':'chimeEnd.mp3',
       // 必要に応じて追加
     };
 
@@ -163,7 +166,16 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       charNameEl.innerText = data.character;
       textAreaEl.innerText = data.text;
 
-      const bgMap = { '廊下': '../../img/rouka.png', 'トイレ': '../../img/toire.png', '学校': '../../img/school.png' };
+      const bgMap = {
+        '廊下': '../../img/rouka.png',
+        'トイレ': '../../img/toire.png',
+        '学校': '../../img/school.png',
+        '階段': '../../img/kaidan.png',
+        '音楽室': '../../img/ongakusitu.png',
+        '美術室': '../../img/bijyutu.png',
+        '理科室': '../../img/rika.png',
+        '放送室': '../../img/hoso.png',
+       };
       const bg = bgMap[data.background] || '';
       document.body.style.backgroundImage = `url('${bg}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
 
