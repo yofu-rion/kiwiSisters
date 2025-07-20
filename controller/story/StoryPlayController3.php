@@ -84,9 +84,12 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '江永_どや': '/kiwiSisters/img/enaga_doya.png',
       '江永_笑顔': '/kiwiSisters/img/enaga_smile.png',
       '江永_おこ': '/kiwiSisters/img/enaga_ungry.png',
-      '花子_通常': '/kiwiSisters/img/hanakosan_nomal.png',
-      '花子_笑顔': '/kiwiSisters/img/hanakosan_smile.png',
       'テケ': '/kiwiSisters/img/teketeke.png',
+      '先生_通常': '/kiwiSisters/img/sensei_normal.png',
+      '先生_激怒': '/kiwiSisters/img/sensei_angry.png',
+      '志乃_通常': '/kiwiSisters/img/sino_normal.png',
+      '志乃_笑顔': '/kiwiSisters/img/sino_smile.png',
+      '志乃_未知': '/kiwiSisters/img/sino_kowai.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
     };
 
@@ -101,9 +104,20 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '打撃白鷺': 'takamori_panchi.mp3',
       '花子帰還': 'hanako_house.mp3',
       '倒れる': 'batan.mp3',
+      'どどん': 'dodon.mp3',
       'ドアオープン': 'openDoor.mp3',
       '発見効果音': 'hakken.mp3',
       'ドアガチャ': 'doagacya.mp3',
+      'ひゅーん': 'hyu-n.mp3',
+      'ひざ': 'hiza.mp3',
+      'ガラス': 'garasu.mp3',
+      '投げる': 'nageru.mp3',
+      '学校': 'gakkou.mp3',
+      'チャイム開始': 'chimeStart.mp3',
+      'チャイム終わり': 'chimeEnd.mp3',
+      '敵': 'teki.mp3',
+      'かまえ': 'kamae.mp3',
+      '解放': 'kaihou.mp3',
       // 必要に応じて追加
     };
 
@@ -117,9 +131,10 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     async function loadPage(page) {
       currentPage = page;
       sessionStorage.setItem("currentPage", String(currentPage));
-      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "3");
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "2");
 
-      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 3}&page=${page}`);
+
+      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 2}&page=${page}`);
       const data = await res.json();
       console.log("🎯 fetch結果 =", data);
       currentData = data;
@@ -156,6 +171,26 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         }
       }
 
+      document.body.classList.remove("character-special");
+
+      const specialCharacters = [
+        "先生_通常",
+        "先生_激怒",
+        "志乃_通常",
+        "志乃_笑顔",
+        "志乃_未知"
+      ];
+
+      const hasSpecialCharacter = [data.illustration, data.illustration2, data.illustration3, data.illustration4, data.illustration5]
+        .filter(Boolean)
+        .some(illust => specialCharacters.includes(illust.trim()));
+
+      if (hasSpecialCharacter) {
+        document.body.classList.add("character-special");
+      }
+
+
+
 
       const charNameEl = document.getElementById("charName");
       const textAreaEl = document.getElementById("textArea");
@@ -163,7 +198,18 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       charNameEl.innerText = data.character;
       textAreaEl.innerText = data.text;
 
-      const bgMap = { '廊下': '../../img/rouka.png', 'トイレ': '../../img/toire.png', '学校': '../../img/school.png' };
+      const bgMap = {
+        '廊下': '../../img/rouka.png',
+        'トイレ': '../../img/toire.png',
+        '学校': '../../img/school.png',
+        '階段': '../../img/kaidan.png',
+        '音楽室': '../../img/ongakusitu.png',
+        '美術室': '../../img/bijyutu.png',
+        '理科室': '../../img/rika.png',
+        '放送室': '../../img/hoso.png',
+        '教室': '../../img/kyousitu.png',
+        '回想': '../../img/kaisou.png',
+      };
       const bg = bgMap[data.background] || '';
       document.body.style.backgroundImage = `url('${bg}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
 
@@ -214,18 +260,20 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         nextButton.style.display = "none";
         choiceArea.innerHTML = "";
 
-        [data.choice1, data.choice2, data.jumpTarget].forEach(choice => {
+        [data.choice1, data.choice2, data.choice3].forEach(choice => {
           if (choice && /(.+?)\((\d+)\)/.test(choice)) {
             const [, label, pageNum] = choice.match(/(.+?)\((\d+)\)/);
             const btn = document.createElement("button");
             btn.textContent = label;
             btn.className = "choice-button";
+            setupChoiceButtonSE(btn);
             btn.onclick = () => loadPage(parseInt(pageNum, 10));
             choiceArea.appendChild(btn);
           }
         });
         choiceArea.style.display = "flex";
-      } else if (data.next_state == 4) {
+      }
+      else if (data.next_state == 4) {
         allowEnterKey = false;
         nextButton.disabled = true;
         nextButton.style.display = "none";
@@ -269,7 +317,6 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         hiddenIncorrect.name = "incorrectjumpTarget";
         hiddenIncorrect.value = incorrect;
 
-        // ⭐️ ここに hidden chapter input を追加
         const hiddenChapter = document.createElement("input");
         hiddenChapter.type = "hidden";
         hiddenChapter.name = "chapter";
@@ -282,7 +329,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         uploadForm.appendChild(fileInput);
         uploadForm.appendChild(hiddenCorrect);
         uploadForm.appendChild(hiddenIncorrect);
-        uploadForm.appendChild(hiddenChapter);  // ⭐️ ここ！
+        uploadForm.appendChild(hiddenChapter);
         uploadForm.appendChild(uploadButton);
 
         choiceArea.appendChild(downloadForm);
@@ -306,7 +353,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
           const seAudio = new Audio(`/kiwiSisters/se/${seFile}`);
           seAudio.play().catch(e => console.warn("SE 再生失敗:", e));
         } else {
-          console.warn(`⚠️ 未登録のSE: ${seKey}`);
+          console.warn(`未登録のSE: ${seKey}`);
         }
       }
     }
@@ -316,11 +363,26 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       sessionStorage.setItem("currentPage", currentPage);
       sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "3");
 
-      const chapter = sessionStorage.getItem("currentChapter") || "3";
+      const chapter = sessionStorage.getItem("currentChapter") || "2";
       const page = sessionStorage.getItem("currentPage") || "2";
 
       window.location.href = `/kiwiSisters/controller/SaveSelect.php?page=${page}&chapter=${chapter}`;
     };
+
+    const hoverSound = new Audio("/kiwiSisters/se/hover.mp3");
+    const sentakuSound = new Audio("/kiwiSisters/se/sentaku.mp3");
+
+    function setupChoiceButtonSE(button) {
+      button.addEventListener("mouseenter", () => {
+        hoverSound.currentTime = 0;
+        hoverSound.play().catch((e) => console.warn("hover.mp3 再生失敗", e));
+      });
+
+      button.addEventListener("click", () => {
+        sentakuSound.currentTime = 0;
+        sentakuSound.play().catch((e) => console.warn("sentaku.mp3 再生失敗", e));
+      });
+    }
 
 
 
@@ -328,10 +390,20 @@ if (isset($_SESSION['chapterAfterUpload'])) {
 
     window.addEventListener("DOMContentLoaded", async () => {
       sessionStorage.removeItem("bgmPlayFailed");
-      console.log("🌟 DOMContentLoaded START");
+      console.log("DOMContentLoaded START");
 
       const chapter = sessionStorage.getItem("currentChapter");
       const page = sessionStorage.getItem("currentPage");
+      const bg = sessionStorage.getItem("currentBackground");
+      console.log("[StoryPlay] currentBackground from sessionStorage =", bg);
+
+      if (bg) {
+        const bgMap = { '廊下': '../../img/rouka.png', 'トイレ': '../../img/toire.png', '学校': '../../img/school.png', '階段': '../../img/kaidan.png' };
+        const bgUrl = bgMap[bg] || '';
+        document.body.style.backgroundImage = `url('${bgUrl}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
+        console.log(`[StoryPlay] 初期背景適用: ${bg} → ${bgUrl}`);
+      }
+
 
       if (!chapter) {
         alert("章の選択情報（currentChapter）がありません。章選択画面からやり直してください。");
@@ -365,7 +437,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         shouldRetryPlay = true;
       }
 
-      console.log("[StoryPlayController3.php] loadPage 完了 - page:", currentPage);
+      console.log("[StoryPlayController2.php] loadPage 完了 - page:", currentPage);
 
 
 
@@ -452,8 +524,6 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         }
       }
     });
-
-
   </script>
 
 </body>

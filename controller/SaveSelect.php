@@ -1,3 +1,4 @@
+<!-- SaveSelectだよ -->
 <?php
 session_start();
 ini_set('display_errors', 1);
@@ -92,12 +93,14 @@ function loadSlotData($slotNumber, $pdo, $username)
     document.addEventListener("DOMContentLoaded", () => {
       const buttons = document.querySelectorAll(".save-button");
       const bgm = sessionStorage.getItem("lastBgm") || "";
+      const background = sessionStorage.getItem("lastBackground") || "";
 
       console.log("[SaveSelect.php] sessionStorage bgm=", bgm);
 
       buttons.forEach(btn => {
         const url = new URL(btn.href, window.location.origin);
         url.searchParams.set("bgm", bgm);
+        url.searchParams.set("background", background);
         btn.href = url.toString();
 
         console.log("[SaveSelect.php] href for slot", btn.dataset.slot, "=", btn.href);

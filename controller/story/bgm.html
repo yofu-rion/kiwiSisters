@@ -24,10 +24,16 @@
         発見: 'hakken.mp3',
         アンゴラ: 'kiwi.mp3',
         立ち向かう: 'tachimukau.mp3',
-        ふりふり: 'kawaii?.mp3',
-        おとぼけ: 'otoboke.mp3',
+        ふりふり: 'kawaii.mp3',
+        おふざけ: 'otoboke.mp3',
+        回想: 'kaisou.mp3',
+        先生: 'teacher.mp3',
+        志乃:'sino.mp3',
         静止: '',
       }
+
+
+
 
       let lastBgmName = null
       let lastFile = null
@@ -35,8 +41,8 @@
       // 🔧 追加: 正規化関数
       function normalizeBgmName(str) {
         return str
-          .replace(/[\u200B-\u200D\uFEFF]/g, '')  // ゼロ幅スペース削除
-          .replace(/\s+/g, '')                   // 半角/全角空白削除
+          .replace(/[\u200B-\u200D\uFEFF]/g, '') // ゼロ幅スペース削除
+          .replace(/\s+/g, '') // 半角/全角空白削除
           .trim()
       }
 
@@ -58,9 +64,11 @@
 
         if (filename) {
           const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`
-          audio.src = expectedSrc
+          audio.src = `${expectedSrc}?v=${Date.now()}`
           audio.onloadedmetadata = () => {
-            console.log(`📥 リロード時BGMプリロードのみ: ${filename} ⏱️ 位置: ${bgmTime}`)
+            console.log(
+              `📥 リロード時BGMプリロードのみ: ${filename} ⏱️ 位置: ${bgmTime}`,
+            )
           }
         }
       })
@@ -71,7 +79,7 @@
         if (type === 'requestCurrentTime') {
           e.source?.postMessage(
             { type: 'responseCurrentTime', currentTime: audio.currentTime },
-            '*'
+            '*',
           )
           return
         }
@@ -84,7 +92,8 @@
         }
 
         if (type === 'setBgm') {
-          let targetBgmName = typeof bgm === 'string' ? normalizeBgmName(bgm) : ''
+          let targetBgmName =
+            typeof bgm === 'string' ? normalizeBgmName(bgm) : ''
           let filename = ''
 
           console.log(`🎯 正規化後 targetBgmName='${targetBgmName}'`)
@@ -119,12 +128,14 @@
           const savedTime = parseFloat(sessionStorage.getItem('bgmTime') || '0')
 
           if (lastFile === filename && audio.src.endsWith(filename)) {
+            console.log('🔍 audio.src =', audio.src)
+            console.log('🔍 lastFile =', lastFile)
             console.log('🎵 BGM変更なし → 再生位置だけ更新')
             safePlay(savedTime)
             return
           }
 
-          audio.src = expectedSrc
+          audio.src = `${expectedSrc}?v=${Date.now()}`
           audio.onloadedmetadata = () => {
             safePlay(savedTime)
             console.log(`🎵 BGM再生: ${filename} ⏱️ 再開位置: ${savedTime}`)

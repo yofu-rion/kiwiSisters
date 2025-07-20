@@ -57,6 +57,13 @@ $nextPage = $page < 4 ? $page + 1 : null;
 </head>
 
 <body class="<?= $isFinalChapter ? 'final-page' : '' ?>">
+  <script>
+    // fallback: currentChapter が存在しなければセット
+    if (!sessionStorage.getItem('currentChapter')) {
+      sessionStorage.setItem('currentChapter', <?= $page ?>);
+    }
+  </script>
+
   <audio id="select-sound" src="/kiwiSisters/music/select.mp3" preload="auto"></audio>
   <audio id="kettei-sound" src="/kiwiSisters/music/kettei.mp3" preload="auto"></audio>
 
@@ -93,86 +100,86 @@ $nextPage = $page < 4 ? $page + 1 : null;
     </div>
   </div>
   <div>
-  <div id="chapter-title"></div>
-  <div id="fade-overlay" class="fade-overlay"></div>
-  <script>
-    const audioSelect = document.getElementById("select-sound");
-    const chapterPage = <?= $page ?>;
-    const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
-    const modal = document.getElementById("modal-overlay");
-    const okButton = document.getElementById("modal-ok");
-    const cancelButton = document.getElementById("modal-cancel");
-    const fadeOverlay = document.getElementById("fade-overlay");
-    const audioKettei = document.getElementById("kettei-sound");
+    <div id="chapter-title"></div>
+    <div id="fade-overlay" class="fade-overlay"></div>
+    <script>
+      const audioSelect = document.getElementById("select-sound");
+      const chapterPage = <?= $page ?>;
+      const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
+      const modal = document.getElementById("modal-overlay");
+      const okButton = document.getElementById("modal-ok");
+      const cancelButton = document.getElementById("modal-cancel");
+      const fadeOverlay = document.getElementById("fade-overlay");
+      const audioKettei = document.getElementById("kettei-sound");
 
-    const showModal = () => {
-      modal.classList.remove("hidden");
-    };
+      const showModal = () => {
+        modal.classList.remove("hidden");
+      };
 
-    const hideModal = () => {
-      modal.classList.add("hidden");
-    };
+      const hideModal = () => {
+        modal.classList.add("hidden");
+      };
 
-    document.getElementById("start-button")?.addEventListener("click", showModal);
-    document.getElementById("modal-cancel")?.addEventListener("click", hideModal);
-    document.getElementById("modal-ok")?.addEventListener("click", () => {
-      sessionStorage.setItem("currentChapter", chapterPage);
-      sessionStorage.setItem("currentPage", 1);
+      document.getElementById("start-button")?.addEventListener("click", showModal);
+      document.getElementById("modal-cancel")?.addEventListener("click", hideModal);
+      document.getElementById("modal-ok")?.addEventListener("click", () => {
+        sessionStorage.setItem("currentChapter", chapterPage);
+        sessionStorage.setItem("currentPage", 1);
 
-      audioKettei.currentTime = 0;
-      audioKettei.play().catch(() => { });
+        audioKettei.currentTime = 0;
+        audioKettei.play().catch(() => { });
 
-      const chapterTitle = document.getElementById("chapter-title");
-      chapterTitle.textContent = `第${chapterPage}章　　${"<?= htmlspecialchars($current["title"]) ?>"}`;
+        const chapterTitle = document.getElementById("chapter-title");
+        chapterTitle.textContent = `第${chapterPage}章　　${"<?= htmlspecialchars($current["title"]) ?>"}`;
 
-      fadeOverlay.classList.add("fade-in");
+        fadeOverlay.classList.add("fade-in");
 
-      setTimeout(() => {
-        chapterTitle.style.opacity = "1";
-      }, 500);
+        setTimeout(() => {
+          chapterTitle.style.opacity = "1";
+        }, 500);
 
-      setTimeout(() => {
-        chapterTitle.style.opacity = "0";
-      }, 2500);
+        setTimeout(() => {
+          chapterTitle.style.opacity = "0";
+        }, 2500);
 
-      setTimeout(() => {
-        window.location.href = `/kiwiSisters/controller/story/StoryPlayController${chapterPage}.php`;
-      }, 3500);
-    });
+        setTimeout(() => {
+          window.location.href = `/kiwiSisters/controller/story/StoryPlayController${chapterPage}.php`;
+        }, 3500);
+      });
 
 
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        if (!modal.classList.contains("hidden")) {
-          okButton.click();
-          return;
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          if (!modal.classList.contains("hidden")) {
+            okButton.click();
+            return;
+          }
+
+          const startButton = document.getElementById("start-button");
+          if (startButton) {
+            startButton.click();
+          }
         }
 
-        const startButton = document.getElementById("start-button");
-        if (startButton) {
-          startButton.click();
+        if (!modal.classList.contains("hidden")) return;
+
+        if (e.key === "ArrowLeft") {
+          <?php if ($prevPage): ?>
+            window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>";
+            audioSelect.currentTime = 0;
+            audioSelect.play().catch(() => { });
+          <?php endif; ?>
+        } else if (e.key === "ArrowRight") {
+          <?php if ($nextPage): ?>
+            window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>";
+            audioSelect.currentTime = 0;
+            audioSelect.play().catch(() => { });
+          <?php endif; ?>
         }
-      }
+      });
 
-      if (!modal.classList.contains("hidden")) return;
-
-      if (e.key === "ArrowLeft") {
-        <?php if ($prevPage): ?>
-          window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>";
-          audioSelect.currentTime = 0;
-          audioSelect.play().catch(() => { });
-        <?php endif; ?>
-      } else if (e.key === "ArrowRight") {
-        <?php if ($nextPage): ?>
-          window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>";
-          audioSelect.currentTime = 0;
-          audioSelect.play().catch(() => { });
-        <?php endif; ?>
-      }
-    });
-
-  </script>
+    </script>
 </body>
 
 </html>

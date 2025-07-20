@@ -168,7 +168,6 @@ body {
 
 .choice-button:hover {
   background: linear-gradient(145deg, #eabda8ff, #5c4033);
-  transform: translateY(-2px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.6);
 }
 
@@ -228,4 +227,10 @@ body {
 
 .choice-button:hover {
   background-color: #eee;
+}
+
+
+.character-special .char-stand {
+  max-height: 140vh;
+  transform: translateY(28%);
 }
