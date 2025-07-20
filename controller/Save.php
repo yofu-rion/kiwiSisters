@@ -1,3 +1,4 @@
+<!-- Saveだよ -->
 <?php
 session_start();
 ini_set('display_errors', 1);
@@ -14,6 +15,8 @@ $slot = isset($_GET['slot']) ? intval($_GET['slot']) : 0;
 $pageHash = $_GET['page'] ?? '';
 $chapterHash = $_GET['chapter'] ?? '';
 $bgm = isset($_GET['bgm']) ? trim($_GET['bgm']) : '';
+$background = isset($_GET['background']) ? trim($_GET['background']) : '';
+
 
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
@@ -59,10 +62,11 @@ try {
 
   // 新規セーブ
   $insertSql = $pdo->prepare('
-    INSERT INTO save_data (user_name, slot_num, page, chapter, bgm, timestamp)
-    VALUES (?, ?, ?, ?, ?, NOW())
-  ');
-  $insertSql->execute([$username, $slot, $page, $chapter, $bgm]);
+  INSERT INTO save_data (user_name, slot_num, page, chapter, bgm, background, timestamp)
+  VALUES (?, ?, ?, ?, ?, ?, NOW())
+');
+  $insertSql->execute([$username, $slot, $page, $chapter, $bgm, $background]);
+
 
   $saveSuccess = true;
 } catch (PDOException $e) {
@@ -99,10 +103,13 @@ try {
     sessionStorage.setItem("currentPage", savedPage);
     sessionStorage.setItem("currentChapter", savedChapter);
     sessionStorage.setItem("lastBgm", savedBgm);
+    const savedBackground = "<?= htmlspecialchars($background) ?>";
+    sessionStorage.setItem("currentBackground", savedBackground);
 
     setTimeout(() => {
-      window.location.href = "/kiwiSisters/controller/story/StoryPlayController1.php";
+      window.location.href = `/kiwiSisters/controller/story/StoryPlayController${savedChapter}.php`;
     }, 1000);
+
   </script>
 </body>
 

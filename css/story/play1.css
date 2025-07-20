@@ -126,6 +126,7 @@ body {
   align-items: flex-end;
   height: 100%;
   position: absolute;
+  /* pointer-events: none; */
   width: 100%;
   bottom: 0;
 }
@@ -134,6 +135,7 @@ body {
   max-height: 180vh;
   object-fit: contain;
   transform: translateY(44%);
+  /* pointer-events: none; */
 }
 
 .choices {
@@ -168,7 +170,6 @@ body {
 
 .choice-button:hover {
   background: linear-gradient(145deg, #eabda8ff, #5c4033);
-  transform: translateY(-2px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.6);
 }
 

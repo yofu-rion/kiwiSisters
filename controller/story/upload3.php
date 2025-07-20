@@ -1,9 +1,14 @@
 <?php
 session_start();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $file = $_FILES['uploaded_file'];
     $filename = basename($file['name']);
+    error_log("uploaded filename: $filename");
 
     if (pathinfo($filename, PATHINFO_EXTENSION) !== 'php') {
         echo "PHPファイルのみアップロード可能です。";
@@ -14,21 +19,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $incorrectjumpTarget = $_POST['incorrectjumpTarget'] ?? 1;
     $chapter = $_POST['chapter'] ?? 3;
 
-    ob_start();
+    $status = null;
     $code = file_get_contents($file['tmp_name']);
     $code = preg_replace('/^\s*<\?php\s*/', '', $code);
     $code = preg_replace('/\s*\?>\s*$/', '', $code);
-    eval ($code);
-    $output = ob_get_clean();
 
-    // 判定: UTF-8に正常変換された「もっと下においで～キャラクター」を含んでいるか
-    $expected = "もっと下においで～キャラクター";
+    try {
+        eval ($code);
+    } catch (Throwable $e) {
+        error_log("🔥 Eval error: " . $e->getMessage());
+        echo "Eval error: " . $e->getMessage();
+        exit;
+    }
 
-    if (strpos($output, $expected) !== false) {
+    error_log("eval result status: $status");
+
+    if ($status === "ok") {
+        error_log("✅ 判定: 正解と判断。次のページ = $correctjumpTarget");
         $nextPage = $correctjumpTarget;
     } else {
+        error_log("❌ 判定: 不正解と判断。次のページ = $incorrectjumpTarget");
         $nextPage = $incorrectjumpTarget;
     }
+
 
     $_SESSION['nextPageAfterUpload'] = $nextPage;
     $_SESSION['chapterAfterUpload'] = $chapter;

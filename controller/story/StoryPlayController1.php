@@ -135,9 +135,18 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     async function loadPage(page) {
       currentPage = page;
       sessionStorage.setItem("currentPage", String(currentPage));
-      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
+      // sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "1");
 
-      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 1}&page=${page}`);
+      let chapter = sessionStorage.getItem("currentChapter");
+      if (!chapter || chapter === "undefined" || chapter === "") {
+        console.warn("⚠️ fallback: currentChapter undefined → 1 に修正");
+        chapter = "1";
+        sessionStorage.setItem("currentChapter", "1");
+      }
+
+      console.log(`[DEBUG] fetch前: chapter=${chapter}, page=${page}`);
+
+      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${chapter}&page=${page}`);
       const data = await res.json();
       console.log("🎯 fetch結果 =", data);
       currentData = data;
@@ -180,7 +189,16 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       charNameEl.innerText = data.character;
       textAreaEl.innerText = data.text;
 
-      const bgMap = { '廊下': '../../img/rouka.png', 'トイレ': '../../img/toire.png', '学校': '../../img/school.png' };
+      const bgMap = {
+        '廊下': '../../img/rouka.png',
+        'トイレ': '../../img/toire.png',
+        '学校': '../../img/school.png',
+        '階段': '../../img/kaidan.png',
+        '音楽室': '../../img/ongakusitu.png',
+        '美術室': '../../img/bijyutu.png',
+        '理科室': '../../img/rika.png',
+        '放送室': '../../img/hoso.png',
+      };
       const bg = bgMap[data.background] || '';
       document.body.style.backgroundImage = `url('${bg}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
 
@@ -346,6 +364,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     document.getElementById("nextButton").onclick = handleNext;
 
     window.addEventListener("DOMContentLoaded", async () => {
+      console.log("✅ DOMContentLoaded 発火確認");
       sessionStorage.removeItem("bgmPlayFailed");
       console.log("🌟 DOMContentLoaded START");
 
@@ -353,8 +372,9 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       const page = sessionStorage.getItem("currentPage");
 
       if (!chapter) {
-        alert("章の選択情報（currentChapter）がありません。章選択画面からやり直してください。");
-        return;
+        console.warn("⚠️ currentChapter が null。強制的に 1 を設定。");
+        chapter = "1";
+        sessionStorage.setItem("currentChapter", "1");
       }
 
       let initialPage = parseInt(page, 10);
