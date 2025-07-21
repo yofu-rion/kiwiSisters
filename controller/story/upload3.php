@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     if ($status === "ok") {
         error_log("✅ 判定: 正解と判断。次のページ = $correctjumpTarget");
         $nextPage = $correctjumpTarget;
+        $_SESSION['cleared_program_3'] = true;
     } else {
         error_log("❌ 判定: 不正解と判断。次のページ = $incorrectjumpTarget");
         $nextPage = $incorrectjumpTarget;

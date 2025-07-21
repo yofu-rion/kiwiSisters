@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
 
     if ($status === "ok") {
         $nextPage = $correctjumpTarget;
+        $_SESSION['cleared_program_2'] = true;
     } else {
         $nextPage = $incorrectjumpTarget;
     }

@@ -86,6 +86,8 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '江永_おこ': '/kiwiSisters/img/enaga_ungry.png',
       'テケ': '/kiwiSisters/img/teketeke.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
+      'べと': '/kiwiSisters/img/beto.png',
+      'もつ': '/kiwiSisters/img/motu.png',
     };
 
     const seMap = {
@@ -160,6 +162,21 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         } else {
           console.log(`⏭️ 同じBGMなので送信省略: ${effectiveBgm}`);
         }
+      }
+
+      document.body.classList.remove("character-special");
+
+      const specialCharacters = [
+        "べと",
+        "もつ",
+      ];
+
+      const hasSpecialCharacter = [data.illustration, data.illustration2, data.illustration3, data.illustration4, data.illustration5]
+        .filter(Boolean)
+        .some(illust => specialCharacters.includes(illust.trim()));
+
+      if (hasSpecialCharacter) {
+        document.body.classList.add("character-special");
       }
 
 
