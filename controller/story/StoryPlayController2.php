@@ -88,6 +88,8 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
       'べと': '/kiwiSisters/img/beto.png',
       'もつ': '/kiwiSisters/img/motu.png',
+      '女子生徒A':'/kiwiSisters/img/A.png',
+      '女子生徒B':'/kiwiSisters/img/B.png',
     };
 
     const seMap = {

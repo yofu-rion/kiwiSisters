@@ -131,10 +131,10 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     async function loadPage(page) {
       currentPage = page;
       sessionStorage.setItem("currentPage", String(currentPage));
-      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "2");
+      sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "3");
 
 
-      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 2}&page=${page}`);
+      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 3}&page=${page}`);
       const data = await res.json();
       console.log("🎯 fetch結果 =", data);
       currentData = data;
