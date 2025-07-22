@@ -6,12 +6,10 @@ if (!isset($_SESSION['login'])) {
   exit;
 }
 
-// POST からデータを取得
 $page = isset($_POST['page']) ? (int)$_POST['page'] : 2;
 $chapter = isset($_POST['chapter']) ? (int)$_POST['chapter'] : 1;
 $bgm = isset($_POST['bgm']) ? $_POST['bgm'] : '';
 
-// $_SESSION に保存してからリダイレクト
 $_SESSION['nextPageAfterUpload'] = $page;
 $_SESSION['chapterAfterUpload'] = $chapter;
 // BGM を使う場合はここで bgm も保存してよい
