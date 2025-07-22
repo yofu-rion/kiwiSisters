@@ -90,7 +90,14 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '志乃_通常': '/kiwiSisters/img/sino_normal.png',
       '志乃_笑顔': '/kiwiSisters/img/sino_smile.png',
       '志乃_未知': '/kiwiSisters/img/sino_kowai.png',
+      '花子_通常': '/kiwiSisters/img/hanakosan_nomal.png',
+      '花子_笑顔': '/kiwiSisters/img/hanakosan_smile.png',
+      'テケ': '/kiwiSisters/img/teketeke.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
+      'べと': '/kiwiSisters/img/beto.png',
+      'もつ': '/kiwiSisters/img/motu.png',
+      '女子生徒A':'/kiwiSisters/img/A.png',
+      '女子生徒B':'/kiwiSisters/img/B.png',
     };
 
     const seMap = {
@@ -124,7 +131,10 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       'きゅぴん': 'kyupin.mp3',
       'ごごご': 'gogogo.mp3',
       'かぎ壊し': 'kagi_broken.mp3',
-      'ナイフ': 'naifu.mp3'
+      'ナイフ': 'naifu.mp3',
+      'キック': 'kikku.mp3',
+      'ちーん': 'chi-n.mp3',
+      'どーん': 'do-n.mp3',
       // 必要に応じて追加黒背景
     };
 
@@ -192,7 +202,9 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         "先生_激怒",
         "志乃_通常",
         "志乃_笑顔",
-        "志乃_未知"
+        "志乃_未知",
+        "べと",
+        "もつ",
       ];
 
       const hasSpecialCharacter = [data.illustration, data.illustration2, data.illustration3, data.illustration4, data.illustration5]
