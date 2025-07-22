@@ -26,7 +26,27 @@ if ($page < 1 || $page > 4) {
 }
 
 $isFinalChapter = $page === 4;
-$unlockFinalChapter = false;
+
+// データベース接続してprogressを確認
+try {
+    $pdo = new PDO(
+        'mysql:host=127.0.0.1;dbname=kiwi_datas;charset=utf8',
+        'staff',
+        'password'
+    );
+    
+    // 現在のprogressを取得
+    $sql = $pdo->prepare('SELECT progress FROM login WHERE name = ?');
+    $sql->execute([$username]);
+    $progress = $sql->fetchColumn();
+    
+    // progressが2、3、5全ての倍数かチェック
+    $unlockFinalChapter = ($progress % 2 === 0) && ($progress % 3 === 0) && ($progress % 5 === 0);
+    
+} catch (PDOException $e) {
+    error_log('Progress取得エラー: ' . $e->getMessage());
+    $unlockFinalChapter = false;
+}
 
 $stories = [
   1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
