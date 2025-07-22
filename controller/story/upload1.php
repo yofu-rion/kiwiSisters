@@ -1,6 +1,15 @@
 <?php
 session_start();
 
+// ログイン確認
+if (!isset($_SESSION['login'])) {
+    header('Location: ../../index.php');
+    exit;
+}
+
+// ログイン中のユーザー名を取得
+$username = $_SESSION['login']['name'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $file = $_FILES['uploaded_file'];
     $filename = basename($file['name']);
@@ -20,6 +29,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
 
     if ($doorState === "open") {
         $nextPage = $correctjumpTarget;
+        
+        // データベース接続してprogressを更新
+        try {
+            $pdo = new PDO(
+                'mysql:host=127.0.0.1;dbname=kiwi_datas;charset=utf8',
+                'staff',
+                'password'
+            );
+            
+            // 現在のprogressを取得
+            $selectSql = $pdo->prepare('SELECT progress FROM login WHERE name = ?');
+            $selectSql->execute([$username]);
+            $currentProgress = $selectSql->fetchColumn();
+            
+            // progressが2の倍数でなければ2を掛ける
+            if ($currentProgress % 2 !== 0) {
+                $newProgress = $currentProgress * 2;
+                $updateSql = $pdo->prepare('UPDATE login SET progress = ? WHERE name = ?');
+                $updateSql->execute([$newProgress, $username]);
+            }
+            
+        } catch (PDOException $e) {
+            error_log('Progress更新エラー: ' . $e->getMessage());
+        }
     } else {
         $nextPage = $incorrectjumpTarget;
     }
