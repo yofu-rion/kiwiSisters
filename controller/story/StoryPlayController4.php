@@ -106,6 +106,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '倒れる': 'batan.mp3',
       'どどん': 'dodon.mp3',
       'ドアオープン': 'openDoor.mp3',
+      'ドアしまーる': 'kagi.mp3',
       '発見効果音': 'hakken.mp3',
       'ドアガチャ': 'doagacya.mp3',
       'ひゅーん': 'hyu-n.mp3',
@@ -118,7 +119,13 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '敵': 'teki.mp3',
       'かまえ': 'kamae.mp3',
       '解放': 'kaihou.mp3',
-      // 必要に応じて追加
+      '風': 'kaze.mp3',
+      'きーん': 'ki-n.mp3',
+      'きゅぴん': 'kyupin.mp3',
+      'ごごご': 'gogogo.mp3',
+      'かぎ壊し': 'kagi_broken.mp3',
+      'ナイフ': 'naifu.mp3'
+      // 必要に応じて追加黒背景
     };
 
     let isInitialLoad = true;
@@ -139,6 +146,11 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       console.log("🎯 fetch結果 =", data);
       currentData = data;
 
+      if (data.end === "true") {
+        allowEnterKey = false;
+        triggerTrueEndSequence();
+        return;
+      }
       const bgmFrame = document.getElementById("bgm-frame");
       const bgmWindow = bgmFrame?.contentWindow;
 
@@ -170,6 +182,8 @@ if (isset($_SESSION['chapterAfterUpload'])) {
           console.log(`⏭️ 同じBGMなので送信省略: ${effectiveBgm}`);
         }
       }
+
+
 
       document.body.classList.remove("character-special");
 
@@ -209,6 +223,10 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         '放送室': '../../img/hoso.png',
         '教室': '../../img/kyousitu.png',
         '回想': '../../img/kaisou.png',
+        '更衣室': '../../img/kouisitu.png',
+        '白背景': '../../img/siro.png',
+        '黒背景': '../../img/kuro.png',
+        '倒壊した校舎': '../../img/hokai.png',
       };
       const bg = bgMap[data.background] || '';
       document.body.style.backgroundImage = `url('${bg}'), linear-gradient(180deg, rgba(98,9,20,0.97) 77.49%, rgba(200,19,40,0.97) 100%)`;
@@ -384,6 +402,36 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       });
     }
 
+    function triggerTrueEndSequence() {
+      allowEnterKey = false;
+
+      const overlay = document.createElement("div");
+      overlay.className = "end-roll-overlay";
+      document.body.appendChild(overlay);
+
+      const credits = [
+        "飛べない鳥 END",
+        "　　　",
+        "制作：1班",
+        "イラスト：岡田京香、緒方釉、中村ひなた",
+        "シナリオ：岡田京香、緒方釉、中村ひなた",
+        "プログラム・演出：長山千穂、養父里穏",
+        "　　　",
+        "プレイしてくれてありがとう",
+      ];
+
+      credits.forEach((line, i) => {
+        const el = document.createElement("div");
+        el.className = "end-roll-line";
+        el.style.animationDelay = `${i * 1.5}s`;
+        el.textContent = line;
+        overlay.appendChild(el);
+      });
+
+      setTimeout(() => {
+        window.location.href = "/kiwiSisters/controller/StartMenu.php";
+      }, credits.length * 1500 + 2000);  // 全部表示後2秒待って戻る
+    }
 
 
     document.getElementById("nextButton").onclick = handleNext;
@@ -459,6 +507,11 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         bgmWindow.postMessage({ type: "retryPlay" }, "*");
         shouldRetryPlay = false;
         sessionStorage.removeItem("bgmPlayFailed");
+      }
+
+      if (currentData.next_state == 6) {  // ⭐️ new: next_state == 6 があれば TrueEnd にする
+        triggerTrueEndSequence();
+        return;
       }
 
       if (currentData.next_state == 0) {
