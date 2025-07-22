@@ -118,6 +118,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '敵': 'teki.mp3',
       'かまえ': 'kamae.mp3',
       '解放': 'kaihou.mp3',
+      'キック': 'kikku.mp3',
       // 必要に応じて追加
     };
 
