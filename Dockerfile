@@ -16,7 +16,9 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libonig-dev \
  && docker-php-ext-configure gd --with-freetype --with-jpeg \
- && docker-php-ext-install gd pdo pdo_mysql curl zip xml mbstring
+ && docker-php-ext-install gd pdo pdo_mysql curl zip xml mbstring bcmath
+
+# ↑ 最後に bcmath を追加！
 
 # Apacheのmod_rewrite有効化
 RUN a2enmod rewrite
