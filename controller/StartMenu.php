@@ -75,7 +75,7 @@ $user = htmlspecialchars($_SESSION['login']['name'], ENT_QUOTES);
 
         if (!sessionStorage.getItem("bgmFrameLoaded")) {
             const iframe = document.createElement("iframe");
-            iframe.src = "/kiwiSisters/controller/story/bgm.html";
+            iframe.src = "/controller/story/bgm.html";
             iframe.style.display = "none";
             iframe.allow = "autoplay";
             document.body.appendChild(iframe);

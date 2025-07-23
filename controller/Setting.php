@@ -22,7 +22,7 @@ if (!isset($_SESSION['login'])) {
 <body>
   <div class="header">
     <div class="are">オプション</div>
-    <a href="/kiwiSisters/controller/StartMenu.php" class="back">戻る→</a>
+    <a href="/controller/StartMenu.php" class="back">戻る→</a>
   </div>
 
   <div class="menu" id="menu">

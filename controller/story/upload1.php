@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
 
     if ($doorState === "open") {
         $nextPage = $correctjumpTarget;
-        
+
         // データベース接続してprogressを更新
         try {
             $pdo = new PDO(
@@ -37,19 +37,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
                 'staff',
                 'password'
             );
-            
+
             // 現在のprogressを取得
             $selectSql = $pdo->prepare('SELECT progress FROM login WHERE name = ?');
             $selectSql->execute([$username]);
             $currentProgress = $selectSql->fetchColumn();
-            
+
             // progressが2の倍数でなければ2を掛ける
             if ($currentProgress % 2 !== 0) {
                 $newProgress = $currentProgress * 2;
                 $updateSql = $pdo->prepare('UPDATE login SET progress = ? WHERE name = ?');
                 $updateSql->execute([$newProgress, $username]);
             }
-            
+
         } catch (PDOException $e) {
             error_log('Progress更新エラー: ' . $e->getMessage());
         }
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $_SESSION['nextPageAfterUpload'] = $nextPage;
     $_SESSION['chapterAfterUpload'] = $chapter;
 
-    header("Location: /kiwiSisters/controller/story/StoryPlayController1.php?fromUpload=1");
+    header("Location: /controller/story/StoryPlayController1.php?fromUpload=1");
     exit;
 } else {
     echo "ファイルが選択されていません。";

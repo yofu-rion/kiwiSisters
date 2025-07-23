@@ -15,6 +15,6 @@ $_SESSION['chapterAfterUpload'] = $chapter;
 // BGM を使う場合はここで bgm も保存してよい
 // $_SESSION['bgmAfterUpload'] = $bgm;
 
-header("Location: /kiwiSisters/controller/story/StoryPlayController{$chapter}.php");
+header("Location: /controller/story/StoryPlayController{$chapter}.php");
 exit;
 

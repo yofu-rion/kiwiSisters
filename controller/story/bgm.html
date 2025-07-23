@@ -68,7 +68,7 @@
         const bgmTime = parseFloat(sessionStorage.getItem('bgmTime') || '0')
 
         if (filename) {
-          const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`
+          const expectedSrc = `${location.origin}/music/${filename}`
           audio.src = `${expectedSrc}?v=${Date.now()}`
           audio.onloadedmetadata = () => {
             console.log(
@@ -129,7 +129,7 @@
             return
           }
 
-          const expectedSrc = `${location.origin}/kiwiSisters/music/${filename}`
+          const expectedSrc = `${location.origin}/music/${filename}`
           const savedTime = parseFloat(sessionStorage.getItem('bgmTime') || '0')
 
           if (lastFile === filename && audio.src.endsWith(filename)) {

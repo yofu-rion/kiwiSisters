@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $_SESSION['nextPageAfterUpload'] = $nextPage;
     $_SESSION['chapterAfterUpload'] = $chapter;
 
-    header("Location: /kiwiSisters/controller/story/StoryPlayController4.php?fromUpload=1");
+    header("Location: /controller/story/StoryPlayController4.php?fromUpload=1");
     exit;
 } else {
     echo "ファイルが選択されていません。";

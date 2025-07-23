@@ -38,7 +38,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
 </head>
 
 <body>
-  <iframe id="bgm-frame" src="/kiwiSisters/controller/story/bgm.html" allow="autoplay" style="display:none;"></iframe>
+  <iframe id="bgm-frame" src="/controller/story/bgm.html" allow="autoplay" style="display:none;"></iframe>
 
   <div class="full">
     <div id="charImagesContainer" class="char-stand-container"></div>
@@ -54,7 +54,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         </div>
         <div class="menu">
           <a href="#" class="save" id="saveButton">セーブ</a>
-          <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトル</a>
+          <a href="/controller/StartMenu.php" class="title">タイトル</a>
         </div>
       </div>
     </div>
@@ -63,34 +63,34 @@ if (isset($_SESSION['chapterAfterUpload'])) {
   <script>
     let currentPage = parseInt(sessionStorage.getItem("currentPage") || "2");
     const charImageMap = {
-      '白鷺_通常': '/kiwiSisters/img/shirasagi_standard.png',
-      '白鷺_恐怖': '/kiwiSisters/img/shirasagi_scared.png',
-      '白鷺_笑顔': '/kiwiSisters/img/shirasagi_smile.png',
-      '白鷺_驚き': '/kiwiSisters/img/shirasagi_surprise.png',
-      '白鷺_考察': '/kiwiSisters/img/shirasagi_thinking.png',
-      '白鷺_怒る': '/kiwiSisters/img/shirasagi_ungry.png',
-      '雉真_通常': '/kiwiSisters/img/kijima_chotosmile.png',
-      '雉真_怒る': '/kiwiSisters/img/kijima_angry.png',
-      '雉真_焦り': '/kiwiSisters/img/kijima_aseri.png',
-      '雉真_真顔': '/kiwiSisters/img/kijima_nomal.png',
-      '雉真_笑顔': '/kiwiSisters/img/kijima_smile.png',
-      '雉真_考察': '/kiwiSisters/img/kijima_thinking.png',
-      '鷹森_通常': '/kiwiSisters/img/takamori_nomal.png',
-      '鷹森_驚き': '/kiwiSisters/img/takamori_bikkuri.png',
-      '鷹森_江永ピンチ': '/kiwiSisters/img/takamori_enagapinch.png',
-      '鷹森_戦闘': '/kiwiSisters/img/takamori_kamae.png',
-      '鷹森_落胆': '/kiwiSisters/img/takamori_syonbori.png',
-      '江永_通常': '/kiwiSisters/img/enaga_nomal.png',
-      '江永_どや': '/kiwiSisters/img/enaga_doya.png',
-      '江永_笑顔': '/kiwiSisters/img/enaga_smile.png',
-      '江永_おこ': '/kiwiSisters/img/enaga_ungry.png',
-      'テケ': '/kiwiSisters/img/teketeke.png',
-      '先生_通常': '/kiwiSisters/img/sensei_normal.png',
-      '先生_激怒': '/kiwiSisters/img/sensei_angry.png',
-      '志乃_通常': '/kiwiSisters/img/sino_normal.png',
-      '志乃_笑顔': '/kiwiSisters/img/sino_smile.png',
-      '志乃_未知': '/kiwiSisters/img/sino_kowai.png',
-      'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
+      '白鷺_通常': '/img/shirasagi_standard.png',
+      '白鷺_恐怖': '/img/shirasagi_scared.png',
+      '白鷺_笑顔': '/img/shirasagi_smile.png',
+      '白鷺_驚き': '/img/shirasagi_surprise.png',
+      '白鷺_考察': '/img/shirasagi_thinking.png',
+      '白鷺_怒る': '/img/shirasagi_ungry.png',
+      '雉真_通常': '/img/kijima_chotosmile.png',
+      '雉真_怒る': '/img/kijima_angry.png',
+      '雉真_焦り': '/img/kijima_aseri.png',
+      '雉真_真顔': '/img/kijima_nomal.png',
+      '雉真_笑顔': '/img/kijima_smile.png',
+      '雉真_考察': '/img/kijima_thinking.png',
+      '鷹森_通常': '/img/takamori_nomal.png',
+      '鷹森_驚き': '/img/takamori_bikkuri.png',
+      '鷹森_江永ピンチ': '/img/takamori_enagapinch.png',
+      '鷹森_戦闘': '/img/takamori_kamae.png',
+      '鷹森_落胆': '/img/takamori_syonbori.png',
+      '江永_通常': '/img/enaga_nomal.png',
+      '江永_どや': '/img/enaga_doya.png',
+      '江永_笑顔': '/img/enaga_smile.png',
+      '江永_おこ': '/img/enaga_ungry.png',
+      'テケ': '/img/teketeke.png',
+      '先生_通常': '/img/sensei_normal.png',
+      '先生_激怒': '/img/sensei_angry.png',
+      '志乃_通常': '/img/sino_normal.png',
+      '志乃_笑顔': '/img/sino_smile.png',
+      '志乃_未知': '/img/sino_kowai.png',
+      'キーウィ・キウイ': '/img/kiwi.png',
     };
 
     const seMap = {
@@ -135,7 +135,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       sessionStorage.setItem("currentChapter", sessionStorage.getItem("currentChapter") || "3");
 
 
-      const res = await fetch(`/kiwiSisters/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 3}&page=${page}`);
+      const res = await fetch(`/controller/getPageData.php?chapter=${sessionStorage.getItem("currentChapter") || 3}&page=${page}`);
       const data = await res.json();
       console.log("🎯 fetch結果 =", data);
       currentData = data;
@@ -287,7 +287,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         const incorrect = data.incorrectjumpTarget || "1";
 
         const downloadForm = document.createElement("form");
-        downloadForm.action = "/kiwiSisters/controller/story/download3.php";
+        downloadForm.action = "/controller/story/download3.php";
         downloadForm.method = "get";
         downloadForm.className = "file-download";
 
@@ -297,7 +297,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         downloadForm.appendChild(downloadButton);
 
         const uploadForm = document.createElement("form");
-        uploadForm.action = "/kiwiSisters/controller/story/upload3.php";
+        uploadForm.action = "/controller/story/upload3.php";
         uploadForm.method = "post";
         uploadForm.enctype = "multipart/form-data";
         uploadForm.className = "file-upload";
@@ -351,7 +351,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         const seKey = data.se.trim();
         const seFile = seMap[seKey];
         if (seFile) {
-          const seAudio = new Audio(`/kiwiSisters/se/${seFile}`);
+          const seAudio = new Audio(`/se/${seFile}`);
           seAudio.play().catch(e => console.warn("SE 再生失敗:", e));
         } else {
           console.warn(`未登録のSE: ${seKey}`);
@@ -367,11 +367,11 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       const chapter = sessionStorage.getItem("currentChapter") || "2";
       const page = sessionStorage.getItem("currentPage") || "2";
 
-      window.location.href = `/kiwiSisters/controller/SaveSelect.php?page=${page}&chapter=${chapter}`;
+      window.location.href = `/controller/SaveSelect.php?page=${page}&chapter=${chapter}`;
     };
 
-    const hoverSound = new Audio("/kiwiSisters/se/hover.mp3");
-    const sentakuSound = new Audio("/kiwiSisters/se/sentaku.mp3");
+    const hoverSound = new Audio("/se/hover.mp3");
+    const sentakuSound = new Audio("/se/sentaku.mp3");
 
     function setupChoiceButtonSE(button) {
       button.addEventListener("mouseenter", () => {
@@ -463,7 +463,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       }
 
       if (currentData.next_state == 0) {
-        window.location.href = "/kiwiSisters/controller/StartMenu.php";
+        window.location.href = "/controller/StartMenu.php";
       } else if (currentData.next_state == 3 && currentData.jumpTarget && /^\d+$/.test(currentData.jumpTarget)) {
         const targetPage = parseInt(currentData.jumpTarget, 10);
         loadPage(targetPage);

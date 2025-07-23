@@ -107,7 +107,7 @@ try {
     sessionStorage.setItem("currentBackground", savedBackground);
 
     setTimeout(() => {
-      window.location.href = `/kiwiSisters/controller/story/StoryPlayController${savedChapter}.php`;
+      window.location.href = `/controller/story/StoryPlayController${savedChapter}.php`;
     }, 1000);
 
   </script>

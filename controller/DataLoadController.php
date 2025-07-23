@@ -81,7 +81,7 @@ try {
             ?>
             <div class="slot-info">スロット<?= $i ?>：<?= $timestamp ?> に Chapter <?= $chapterNumber ?> Page <?= $pageNumber ?>
               を保存済み</div>
-            <form method="post" action="/kiwiSisters/controller/story/LoadHandler.php" style="display:inline;">
+            <form method="post" action="/controller/story/LoadHandler.php" style="display:inline;">
               <input type="hidden" name="page" value="<?= $pageNumber ?>">
               <input type="hidden" name="chapter" value="<?= $chapterNumber ?>">
               <input type="hidden" name="bgm" value="<?= htmlspecialchars($data['bgm']) ?>">
