@@ -5,4 +5,3 @@ vendor
 *.log
 *.md
 docker-compose.yml
-.env
