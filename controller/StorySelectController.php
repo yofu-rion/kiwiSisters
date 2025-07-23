@@ -29,23 +29,24 @@ $isFinalChapter = $page === 4;
 
 // データベース接続してprogressを確認
 try {
-    $pdo = new PDO(
-        'mysql:host=127.0.0.1;dbname=kiwi_datas;charset=utf8',
-        'staff',
-        'password'
-    );
+  $pdo = new PDO(
+    "mysql:host={$_ENV['DB_HOST']};port={$_ENV['DB_PORT']};dbname={$_ENV['DB_NAME']};charset=utf8mb4",
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASS']
+  );
 
-    // 現在のprogressを取得
-    $sql = $pdo->prepare('SELECT progress FROM login WHERE name = ?');
-    $sql->execute([$username]);
-    $progress = $sql->fetchColumn();
 
-    // progressが2、3、5全ての倍数かチェック
-    $unlockFinalChapter = ($progress % 2 === 0) && ($progress % 3 === 0) && ($progress % 5 === 0);
+  // 現在のprogressを取得
+  $sql = $pdo->prepare('SELECT progress FROM login WHERE name = ?');
+  $sql->execute([$username]);
+  $progress = $sql->fetchColumn();
+
+  // progressが2、3、5全ての倍数かチェック
+  $unlockFinalChapter = ($progress % 2 === 0) && ($progress % 3 === 0) && ($progress % 5 === 0);
 
 } catch (PDOException $e) {
-    error_log('Progress取得エラー: ' . $e->getMessage());
-    $unlockFinalChapter = false;
+  error_log('Progress取得エラー: ' . $e->getMessage());
+  $unlockFinalChapter = false;
 }
 
 $stories = [
