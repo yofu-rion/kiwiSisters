@@ -1,6 +1,7 @@
 {
     "require": {
         "phpoffice/phpspreadsheet": "^2.1",
-        "hashids/hashids": "^4.1"
+        "hashids/hashids": "^4.1",
+        "vlucas/phpdotenv": "^5.6"
     }
 }
