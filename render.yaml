@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: kiwiSisters
+    env: docker
+    plan: free
+    branch: main
+    rootDir: .
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: kiwiSistersDB
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: kiwiSistersDB
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: kiwiSistersDB
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: kiwiSistersDB
+          property: password
+databases:
+  - name: kiwiSistersDB
+    plan: free
+    databaseName: kiwi_sisters
+    user: kiwi_user
