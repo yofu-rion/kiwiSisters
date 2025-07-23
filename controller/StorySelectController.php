@@ -63,7 +63,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>kiwi-sisters - 章選択</title>
-  <link rel="stylesheet" href="/kiwiSisters/css/storySelect.css">
+  <link rel="stylesheet" href="/css/storySelect.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
@@ -81,7 +81,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
   <audio id="kettei-sound" src="/kiwiSisters/music/kettei.mp3" preload="auto"></audio>
 
   <?php if ($prevPage): ?>
-    <a href="/kiwiSisters/controller/StorySelectController.php?page=<?= $prevPage ?>" class="arrow left">◀</a>
+    <a href="/controller/StorySelectController.php?page=<?= $prevPage ?>" class="arrow left">◀</a>
   <?php endif; ?>
   <div class="kokuban<?= $isFinalChapter ? ' final-chapter' : '' ?>">
     <div class="chapter-content">
@@ -94,12 +94,12 @@ $nextPage = $page < 4 ? $page + 1 : null;
         <?php if (!$isFinalChapter || ($isFinalChapter && $unlockFinalChapter)): ?>
           <button class="start" id="start-button">はじめる</button>
         <?php endif; ?>
-        <a href="/kiwiSisters/controller/StartMenu.php" class="title">タイトルへ</a>
+        <a href="/controller/StartMenu.php" class="title">タイトルへ</a>
       </div>
     </div>
   </div>
   <?php if ($nextPage): ?>
-    <a href="/kiwiSisters/controller/StorySelectController.php?page=<?= $nextPage ?>" class="arrow right">▶</a>
+    <a href="/controller/StorySelectController.php?page=<?= $nextPage ?>" class="arrow right">▶</a>
   <?php endif; ?>
 
   <div id="modal-overlay" class="modal-overlay hidden">
@@ -118,7 +118,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <script>
       const audioSelect = document.getElementById("select-sound");
       const chapterPage = <?= $page ?>;
-      const storyUrl = "/kiwiSisters/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
+      const storyUrl = "/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
       const modal = document.getElementById("modal-overlay");
       const okButton = document.getElementById("modal-ok");
       const cancelButton = document.getElementById("modal-cancel");
