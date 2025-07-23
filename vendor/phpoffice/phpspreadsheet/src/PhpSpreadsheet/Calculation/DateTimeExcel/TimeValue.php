@@ -64,7 +64,7 @@ class TimeValue
         $timeValue = trim((string) $timeValue, '"');
         if (Preg::isMatch(self::EXTRACT_TIME, $timeValue, $matches)) {
             if (empty($matches[6])) { // am/pm
-                $hour = (int) $matches[1];
+                $hour = (int) $matches[0];
                 $timeValue = ($hour % 24) . $matches[2];
             } elseif ($matches[6] === $matches[7]) { // Excel wants space before am/pm
                 return ExcelError::VALUE();
