@@ -1,5 +1,9 @@
 <?php
 session_start();
+require_once __DIR__ . '/../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
 
 // ログイン確認
 if (!isset($_SESSION['login'])) {
@@ -10,11 +14,15 @@ if (!isset($_SESSION['login'])) {
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
 
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-if ($page < 1 || $page > 4) {
+$path = $_SERVER['PATH_INFO'] ?? '';
+$matches = [];
+if (preg_match('#^/(\d+)$#', $path, $matches)) {
+  $page = intval($matches[1]);
+} elseif (isset($_GET['page'])) {
+  $page = intval($_GET['page']);
+} else {
   $page = 1;
 }
-
 
 if ($page < 1 || $page > 4) {
   $page = 1;
