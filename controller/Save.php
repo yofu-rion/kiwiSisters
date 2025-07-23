@@ -35,9 +35,9 @@ if ($slot < 1 || $slot > 4) {
 
 // DB接続
 $pdo = new PDO(
-  'mysql:host=localhost;dbname=kiwi_datas;charset=utf8',
-  'staff',
-  'password'
+  'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'] . ';charset=utf8mb4',
+  $_ENV['DB_USER'],
+  $_ENV['DB_PASS']
 );
 
 $pageDecoded = $hashids->decode($pageHash);
