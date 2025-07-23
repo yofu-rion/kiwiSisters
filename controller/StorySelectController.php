@@ -4,7 +4,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-
 // ログイン確認
 if (!isset($_SESSION['login'])) {
   header('Location: ../index.php');
@@ -14,23 +13,15 @@ if (!isset($_SESSION['login'])) {
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
 
-$path = $_SERVER['PATH_INFO'] ?? '';
-$matches = [];
-if (preg_match('#^/(\d+)$#', $path, $matches)) {
-  $page = intval($matches[1]);
-} elseif (isset($_GET['page'])) {
-  $page = intval($_GET['page']);
-} else {
-  $page = 1;
-}
-
+// クエリパラメータからページ番号を取得
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : 1;
 if ($page < 1 || $page > 4) {
   $page = 1;
 }
 
 $isFinalChapter = $page === 4;
 
-// データベース接続してprogressを確認
+// DB接続してprogressチェック
 try {
   $pdo = new PDO(
     "mysql:host={$_ENV['DB_HOST']};port={$_ENV['DB_PORT']};dbname={$_ENV['DB_NAME']};charset=utf8mb4",
@@ -38,15 +29,11 @@ try {
     $_ENV['DB_PASS']
   );
 
-
-  // 現在のprogressを取得
   $sql = $pdo->prepare('SELECT progress FROM login WHERE name = ?');
   $sql->execute([$username]);
   $progress = $sql->fetchColumn();
 
-  // progressが2、3、5全ての倍数かチェック
   $unlockFinalChapter = ($progress % 2 === 0) && ($progress % 3 === 0) && ($progress % 5 === 0);
-
 } catch (PDOException $e) {
   error_log('Progress取得エラー: ' . $e->getMessage());
   $unlockFinalChapter = false;
@@ -66,6 +53,8 @@ $current = $stories[$page];
 $prevPage = $page > 1 ? $page - 1 : null;
 $nextPage = $page < 4 ? $page + 1 : null;
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="ja">
