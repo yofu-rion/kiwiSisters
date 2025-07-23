@@ -40,12 +40,12 @@ try {
 }
 
 $stories = [
-  1 => ["title" => "鷺の話", "image" => "/kiwiSisters/img/story1.png"],
-  2 => ["title" => "雉の話", "image" => "/kiwiSisters/img/story2.png"],
-  3 => ["title" => "鷹の話", "image" => "/kiwiSisters/img/story3.png"],
+  1 => ["title" => "鷺の話", "image" => "/img/story1.png"],
+  2 => ["title" => "雉の話", "image" => "/img/story2.png"],
+  3 => ["title" => "鷹の話", "image" => "/img/story3.png"],
   4 => [
     "title" => $unlockFinalChapter ? "飛べない鳥の話" : "?????",
-    "image" => $unlockFinalChapter ? "/kiwiSisters/img/story4.png" : "/kiwiSisters/img/story.png"
+    "image" => $unlockFinalChapter ? "/img/story4.png" : "/img/story.png"
   ],
 ];
 
@@ -156,7 +156,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
         }, 2500);
 
         setTimeout(() => {
-          window.location.href = `/kiwiSisters/controller/story/StoryPlayController${chapterPage}.php`;
+          window.location.href = `/controller/story/StoryPlayController${chapterPage}.php`;
         }, 3500);
       });
 
@@ -179,13 +179,13 @@ $nextPage = $page < 4 ? $page + 1 : null;
 
         if (e.key === "ArrowLeft") {
           <?php if ($prevPage): ?>
-            window.location.href = "/kiwiSisters/controller/StorySelectController.php?page=<?= $prevPage ?>";
+            window.location.href = "/controller/StorySelectController.php?page=<?= $prevPage ?>";
             audioSelect.currentTime = 0;
             audioSelect.play().catch(() => { });
           <?php endif; ?>
         } else if (e.key === "ArrowRight") {
           <?php if ($nextPage): ?>
-            window.location.href = "/kiwiSisters/controller/StorySelectController.php?page=<?= $nextPage ?>";
+            window.location.href = "/controller/StorySelectController.php?page=<?= $nextPage ?>";
             audioSelect.currentTime = 0;
             audioSelect.play().catch(() => { });
           <?php endif; ?>
