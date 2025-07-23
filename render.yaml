@@ -1,30 +1,15 @@
 services:
   - type: web
-    name: kiwiSisters
+    name: php-app
     env: docker
-    plan: free
-    branch: main
-    rootDir: .
-    dockerfilePath: Dockerfile
     envVars:
       - key: DB_HOST
-        fromDatabase:
-          name: kiwiSistersDB
-          property: host
+        value: sql.freedb.tech
+      - key: DB_PORT
+        value: 3306
       - key: DB_NAME
-        fromDatabase:
-          name: kiwiSistersDB
-          property: database
+        value: freedb_kiwi_db
       - key: DB_USER
-        fromDatabase:
-          name: kiwiSistersDB
-          property: user
+        value: freedb_kiwiuser
       - key: DB_PASS
-        fromDatabase:
-          name: kiwiSistersDB
-          property: password
-databases:
-  - name: kiwiSistersDB
-    plan: free
-    databaseName: kiwi_sisters
-    user: kiwi_user
+        value: Ej9xCX*Rz%?TT*E
