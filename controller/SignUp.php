@@ -33,14 +33,42 @@
         $_ENV['DB_PASS']
     );
 
-    $sql = $pdo->prepare('select * from login where name=?');
+    // login テーブル（進捗カラム付き）
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS login (
+            name VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+            password VARCHAR(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+            progress INT NOT NULL DEFAULT 1,
+            PRIMARY KEY (name)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    ");
+
+    // save_data テーブル
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS save_data (
+            user_name VARCHAR(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+            slot_num INT NOT NULL,
+            page INT NOT NULL,
+            timestamp DATETIME NOT NULL,
+            chapter INT NOT NULL,
+            bgm VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+            background VARCHAR(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    ");
+
+
+    $sql = $pdo->prepare('SELECT * FROM login WHERE name = ?');
     $sql->execute([$_REQUEST['name']]);
+
+
 
     if (empty($sql->fetchAll())) {
 
         if ($_REQUEST['password'] == $_REQUEST['password_check']) {
-            $sql = $pdo->prepare('insert into login values(?,?)');
-            $sql->execute([$_REQUEST['name'], $_REQUEST['password']]);
+            $hashed = password_hash($_REQUEST['password'], PASSWORD_DEFAULT);
+            $sql = $pdo->prepare('INSERT INTO login (name, password) VALUES (?, ?)');
+            $sql->execute([$_REQUEST['name'], $hashed]);
+
 
             echo <<<HTML
             <!DOCTYPE html>

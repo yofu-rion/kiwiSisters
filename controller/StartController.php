@@ -15,17 +15,21 @@ if (
     exit;
 }
 
+// DB接続
 $pdo = new PDO(
     "mysql:host={$_ENV['DB_HOST']};port={$_ENV['DB_PORT']};dbname={$_ENV['DB_NAME']};charset=utf8mb4",
     $_ENV['DB_USER'],
     $_ENV['DB_PASS']
 );
 
-$sql = $pdo->prepare('SELECT * FROM login WHERE name=? AND password=?');
-$sql->execute([$_POST['name'], $_POST['password']]);
+// ユーザー名だけで取得（パスワードは後で照合）
+$sql = $pdo->prepare('SELECT * FROM login WHERE name=?');
+$sql->execute([$_POST['name']]);
+$user = $sql->fetch();
 
-if ($row = $sql->fetch()) {
-    $_SESSION['login'] = ['name' => $row['name']];
+if ($user && password_verify($_POST['password'], $user['password'])) {
+    // ログイン成功
+    $_SESSION['login'] = ['name' => $user['name']];
     header('Location: StartMenu.php');
     exit;
 } else {
