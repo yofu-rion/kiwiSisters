@@ -77,8 +77,8 @@ $nextPage = $page < 4 ? $page + 1 : null;
     }
   </script>
 
-  <audio id="select-sound" src="/kiwiSisters/music/select.mp3" preload="auto"></audio>
-  <audio id="kettei-sound" src="/kiwiSisters/music/kettei.mp3" preload="auto"></audio>
+  <audio id="select-sound" src="/music/select.mp3" preload="auto"></audio>
+  <audio id="kettei-sound" src="/music/kettei.mp3" preload="auto"></audio>
 
   <?php if ($prevPage): ?>
     <a href="/controller/StorySelectController.php?page=<?= $prevPage ?>" class="arrow left">◀</a>
