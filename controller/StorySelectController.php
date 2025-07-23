@@ -10,16 +10,11 @@ if (!isset($_SESSION['login'])) {
 // ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
 
-$uri = $_SERVER['REQUEST_URI'];
-$parts = explode('/', rtrim($uri, '/'));
-$pagePart = end($parts);
-
-if ($pagePart === 'StorySelectController.php') {
-  header("Location: /kiwiSisters/controller/StorySelectController.php/1");
-  exit;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+if ($page < 1 || $page > 4) {
+  $page = 1;
 }
 
-$page = is_numeric($pagePart) ? intval($pagePart) : 1;
 
 if ($page < 1 || $page > 4) {
   $page = 1;
@@ -89,7 +84,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
   <audio id="kettei-sound" src="/kiwiSisters/music/kettei.mp3" preload="auto"></audio>
 
   <?php if ($prevPage): ?>
-    <a href="/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>" class="arrow left">◀</a>
+    <a href="/kiwiSisters/controller/StorySelectController.php?page=<?= $prevPage ?>" class="arrow left">◀</a>
   <?php endif; ?>
   <div class="kokuban<?= $isFinalChapter ? ' final-chapter' : '' ?>">
     <div class="chapter-content">
@@ -107,7 +102,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
     </div>
   </div>
   <?php if ($nextPage): ?>
-    <a href="/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>" class="arrow right">▶</a>
+    <a href="/kiwiSisters/controller/StorySelectController.php?page=<?= $nextPage ?>" class="arrow right">▶</a>
   <?php endif; ?>
 
   <div id="modal-overlay" class="modal-overlay hidden">
@@ -187,13 +182,13 @@ $nextPage = $page < 4 ? $page + 1 : null;
 
         if (e.key === "ArrowLeft") {
           <?php if ($prevPage): ?>
-            window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $prevPage ?>";
+            window.location.href = "/kiwiSisters/controller/StorySelectController.php?page=<?= $prevPage ?>";
             audioSelect.currentTime = 0;
             audioSelect.play().catch(() => { });
           <?php endif; ?>
         } else if (e.key === "ArrowRight") {
           <?php if ($nextPage): ?>
-            window.location.href = "/kiwiSisters/controller/StorySelectController.php/<?= $nextPage ?>";
+            window.location.href = "/kiwiSisters/controller/StorySelectController.php?page=<?= $nextPage ?>";
             audioSelect.currentTime = 0;
             audioSelect.play().catch(() => { });
           <?php endif; ?>
