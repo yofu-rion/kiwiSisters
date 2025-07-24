@@ -49,7 +49,7 @@
         fetch('./preload.php')
             .then(res => res.json())
             .then(data => {
-                const total = data.images.length + data.sounds.length + data.scenarios.length
+                const total = data.images.length + data.sounds.length + data.scenarios.length + data.controllers.length
                 let loaded = 0
 
                 const updateProgress = () => {
@@ -79,6 +79,14 @@
                     audio.src = path
                     audio.preload = 'auto'
                 })
+
+                data.controllers.forEach((path) => {
+                    fetch(path)
+                        .then(res => res.text())
+                        .then(() => checkDone())
+                        .catch(() => checkDone())
+                })
+
 
                 data.scenarios.forEach((path) => {
                     fetch(path)
