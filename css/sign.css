@@ -172,3 +172,9 @@ body {
   color: white;
   font-family: 'Kiwi Maru', serif;
 }
+
+#loading span#progress {
+  margin-left: 8px;
+  font-weight: bold;
+}
+

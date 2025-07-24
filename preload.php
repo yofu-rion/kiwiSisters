@@ -1,6 +1,8 @@
 <?php
 function listFiles($dir, $exts = []) {
   $files = [];
+  if (!is_dir($dir)) return $files;
+
   foreach (scandir($dir) as $file) {
     if ($file === '.' || $file === '..') continue;
     $path = "$dir/$file";
@@ -16,10 +18,11 @@ function listFiles($dir, $exts = []) {
 
 header('Content-Type: application/json');
 
-$imgFiles = listFiles('img', ['png', 'jpg', 'jpeg', 'gif', 'webp']);
-$seFiles = listFiles('se', ['mp3', 'ogg', 'wav']);
-
 echo json_encode([
-  'images' => $imgFiles,
-  'sounds' => $seFiles,
+  'images' => listFiles('img', ['png', 'jpg', 'jpeg', 'gif', 'webp']),
+  'sounds' => array_merge(
+    listFiles('se', ['mp3', 'ogg', 'wav']),
+    listFiles('music', ['mp3', 'ogg'])
+  ),
+  'scenarios' => listFiles('scenario', ['csv', 'json', 'txt']),
 ]);

@@ -11,7 +11,10 @@
 </head>
 
 <body>
-    <div id="loading" class="loading">ダウンロード中です...</div>
+    <div id="loading" class="loading">
+        ダウンロード中です... <span id="progress">0%</span>
+    </div>
+
     <div class="water-place">
         <img src="./img/water.png" class="water" />
     </div>
@@ -41,15 +44,22 @@
     </div>
     <script>
         const loadingText = document.getElementById('loading')
+        const progressText = document.getElementById('progress')
 
         fetch('./preload.php')
             .then(res => res.json())
             .then(data => {
-                const total = data.images.length + data.sounds.length
+                const total = data.images.length + data.sounds.length + data.scenarios.length
                 let loaded = 0
+
+                const updateProgress = () => {
+                    const percent = Math.floor((loaded / total) * 100)
+                    progressText.textContent = `${percent}%`
+                }
 
                 const checkDone = () => {
                     loaded++
+                    updateProgress()
                     if (loaded >= total) {
                         loadingText.style.display = 'none'
                     }
@@ -68,6 +78,13 @@
                     audio.onerror = checkDone
                     audio.src = path
                     audio.preload = 'auto'
+                })
+
+                data.scenarios.forEach((path) => {
+                    fetch(path)
+                        .then(res => res.text())
+                        .then(() => checkDone())
+                        .catch(() => checkDone())
                 })
             })
             .catch(err => {
