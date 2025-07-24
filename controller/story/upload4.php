@@ -35,8 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     if ($evalSucceeded && strpos($output, "Memory recovered.") !== false) {
         $nextPage = $correctjumpTarget;
         $_SESSION['cleared_program_4'] = true;
+        $_SESSION['failure_count_4'] = 0;
+        error_log("✅ 成功: メモリ回復検出。次ページ = $correctjumpTarget");
     } else {
-        $nextPage = $incorrectjumpTarget;
+        $_SESSION['failure_count_4'] += 1;
+
+        if ($_SESSION['failure_count_4'] >= 5) {
+            $nextPage = 320; // BadEnd
+            error_log("💀 5回失敗: BadEnd に遷移");
+        } else {
+            $nextPage = $incorrectjumpTarget;
+            error_log("❌ 失敗: 回数 = {$_SESSION['failure_count_4']} → 次ページ = $incorrectjumpTarget");
+        }
     }
 
     $_SESSION['nextPageAfterUpload'] = $nextPage;

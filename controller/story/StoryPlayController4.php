@@ -85,12 +85,18 @@ if (isset($_SESSION['chapterAfterUpload'])) {
       '江永_笑顔': '/kiwiSisters/img/enaga_smile.png',
       '江永_おこ': '/kiwiSisters/img/enaga_ungry.png',
       'テケ': '/kiwiSisters/img/teketeke.png',
+      '花子_通常': '/kiwiSisters/img/hanakosan_nomal.png',
+      '花子_笑顔': '/kiwiSisters/img/hanakosan_smile.png',
       '先生_通常': '/kiwiSisters/img/sensei_normal.png',
       '先生_激怒': '/kiwiSisters/img/sensei_angry.png',
       '志乃_通常': '/kiwiSisters/img/sino_normal.png',
       '志乃_笑顔': '/kiwiSisters/img/sino_smile.png',
       '志乃_未知': '/kiwiSisters/img/sino_kowai.png',
+      'べと': '/kiwiSisters/img/beto.png',
+      'もつ': '/kiwiSisters/img/motu.png',
       'キーウィ・キウイ': '/kiwiSisters/img/kiwi.png',
+      '女子生徒A':'/kiwiSisters/img/A.png',
+      '女子生徒B':'/kiwiSisters/img/B.png',
     };
 
     const seMap = {
@@ -192,7 +198,9 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         "先生_激怒",
         "志乃_通常",
         "志乃_笑顔",
-        "志乃_未知"
+        "志乃_未知",
+        "べと",
+        "もつ"
       ];
 
       const hasSpecialCharacter = [data.illustration, data.illustration2, data.illustration3, data.illustration4, data.illustration5]
