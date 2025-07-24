@@ -156,3 +156,19 @@ body {
   height: auto;
   transform: rotate(-20deg);
 }
+
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: white;
+  font-family: 'Kiwi Maru', serif;
+}

@@ -11,6 +11,7 @@
 </head>
 
 <body>
+    <div id="loading" class="loading">ダウンロード中です...</div>
     <div class="water-place">
         <img src="./img/water.png" class="water" />
     </div>
@@ -29,7 +30,7 @@
                 <button type="submit" class="button-login">
                     ログイン
                 </button>
-                <button type="submit" class="button-signup" onclick="location.href='./controller/SignUpController.php'">
+                <button type="button" class="button-signup" onclick="location.href='./controller/SignUpController.php'">
                     新規登録
                 </button>
             </form>
@@ -38,7 +39,42 @@
             <img src="./img/flower.png" class="flower" />
         </div>
     </div>
+    <script>
+        const loadingText = document.getElementById('loading')
 
+        fetch('./preload.php')
+            .then(res => res.json())
+            .then(data => {
+                const total = data.images.length + data.sounds.length
+                let loaded = 0
+
+                const checkDone = () => {
+                    loaded++
+                    if (loaded >= total) {
+                        loadingText.style.display = 'none'
+                    }
+                }
+
+                data.images.forEach((path) => {
+                    const img = new Image()
+                    img.onload = checkDone
+                    img.onerror = checkDone
+                    img.src = path
+                })
+
+                data.sounds.forEach((path) => {
+                    const audio = new Audio()
+                    audio.oncanplaythrough = checkDone
+                    audio.onerror = checkDone
+                    audio.src = path
+                    audio.preload = 'auto'
+                })
+            })
+            .catch(err => {
+                console.error('プリロード失敗:', err)
+                loadingText.textContent = '読み込みに失敗しました'
+            })
+    </script>
 </body>
 
 </html>

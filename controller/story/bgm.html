@@ -5,7 +5,7 @@
     <title>BGM Player</title>
   </head>
   <body>
-    <audio id="bgm" loop autoplay></audio>
+    <audio id="bgm" loop autoplay preload="auto"></audio>
     <script>
       const audio = document.getElementById('bgm')
 
@@ -29,7 +29,7 @@
         回想: 'kaisou.mp3',
         回想2: 'kaisou2.mp3',
         先生: 'teacher.mp3',
-        志乃:'sino.mp3',
+        志乃: 'sino.mp3',
         祖母: 'sobo.mp3',
         ノーマルエンド: 'normalEnd.mp3',
         トゥルーエンド: 'true.mp3',
@@ -37,8 +37,12 @@
         静止: '',
       }
 
-
-
+      const bgmFiles = Object.values(bgmMap).filter((f) => f !== '')
+      bgmFiles.forEach((filename) => {
+        const preloadAudio = new Audio()
+        preloadAudio.src = `${location.origin}/music/${filename}`
+        preloadAudio.preload = 'auto'
+      })
 
       let lastBgmName = null
       let lastFile = null
