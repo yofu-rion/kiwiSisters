@@ -69,7 +69,7 @@ $nextPage = $page < 4 ? $page + 1 : null;
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
 </head>
 
-<body class="<?= $isFinalChapter ? 'final-page' : '' ?>">
+<body>
   <script>
     // fallback: currentChapter が存在しなければセット
     if (!sessionStorage.getItem('currentChapter')) {
@@ -116,83 +116,102 @@ $nextPage = $page < 4 ? $page + 1 : null;
     <div id="chapter-title"></div>
     <div id="fade-overlay" class="fade-overlay"></div>
     <script>
-      const audioSelect = document.getElementById("select-sound");
-      const chapterPage = <?= $page ?>;
-      const storyUrl = "/controller/story/StoryPlayController" + chapterPage + ".php?page=2";
-      const modal = document.getElementById("modal-overlay");
-      const okButton = document.getElementById("modal-ok");
-      const cancelButton = document.getElementById("modal-cancel");
-      const fadeOverlay = document.getElementById("fade-overlay");
-      const audioKettei = document.getElementById("kettei-sound");
+      const stories = <?= json_encode($stories, JSON_UNESCAPED_UNICODE) ?>;
+      let currentPage = <?= $page ?>;
+      const maxPage = 4;
+      const unlockFinalChapter = <?= $unlockFinalChapter ? 'true' : 'false' ?>;
+      const isFinalChapter = (page) => page === 4 && unlockFinalChapter;
 
-      const showModal = () => {
-        modal.classList.remove("hidden");
-      };
+      document.addEventListener("DOMContentLoaded", () => {
+        const showModal = () => {
+          document.getElementById("modal-overlay").classList.remove("hidden");
+        };
 
-      const hideModal = () => {
-        modal.classList.add("hidden");
-      };
+        const hideModal = () => {
+          document.getElementById("modal-overlay").classList.add("hidden");
+        };
 
-      document.getElementById("start-button")?.addEventListener("click", showModal);
-      document.getElementById("modal-cancel")?.addEventListener("click", hideModal);
-      document.getElementById("modal-ok")?.addEventListener("click", () => {
-        sessionStorage.setItem("currentChapter", chapterPage);
-        sessionStorage.setItem("currentPage", 1);
+        const setupModalHandlers = () => {
+          const ok = document.getElementById("modal-ok");
+          const cancel = document.getElementById("modal-cancel");
 
-        audioKettei.currentTime = 0;
-        audioKettei.play().catch(() => { });
+          cancel.onclick = hideModal;
+          ok.onclick = () => {
+            sessionStorage.setItem("currentChapter", currentPage);
+            sessionStorage.setItem("currentPage", 1);
 
-        const chapterTitle = document.getElementById("chapter-title");
-        chapterTitle.textContent = `第${chapterPage}章　　${"<?= htmlspecialchars($current["title"]) ?>"}`;
+            const fadeOverlay = document.getElementById("fade-overlay");
+            const chapterTitle = document.getElementById("chapter-title");
+            const kettei = document.getElementById("kettei-sound");
 
-        fadeOverlay.classList.add("fade-in");
+            chapterTitle.textContent = `第${currentPage}章　　${stories[currentPage].title}`;
+            fadeOverlay.classList.add("fade-in");
+            chapterTitle.style.opacity = "1";
 
-        setTimeout(() => {
-          chapterTitle.style.opacity = "1";
-        }, 500);
+            kettei.currentTime = 0;
+            kettei.play().catch(() => { });
 
-        setTimeout(() => {
-          chapterTitle.style.opacity = "0";
-        }, 2500);
+            setTimeout(() => chapterTitle.style.opacity = "0", 2500);
+            setTimeout(() => {
+              window.location.href = `/controller/story/StoryPlayController${currentPage}.php`;
+            }, 3500);
+          };
+        };
 
-        setTimeout(() => {
-          window.location.href = `/controller/story/StoryPlayController${chapterPage}.php`;
-        }, 3500);
-      });
+        const updateUI = () => {
+          const story = stories[currentPage];
+          const title = isFinalChapter(currentPage) ? '最終章' : `第${currentPage}章`;
+          const displayTitle = story.title;
+          const imagePath = story.image;
 
+          document.querySelector(".chapter-content h2").textContent = title;
+          document.querySelector(".chapter-content h1").textContent = displayTitle;
+          document.querySelector(".img").src = imagePath;
+          document.querySelector("body").className = isFinalChapter(currentPage) ? 'final-page' : '';
+          document.querySelector(".kokuban").className = `kokuban${isFinalChapter(currentPage) ? ' final-chapter' : ''}`;
+          document.getElementById("start-button")?.remove();
 
+          if (isFinalChapter(currentPage) || currentPage < 4) {
+            const startBtn = document.createElement("button");
+            startBtn.className = "start";
+            startBtn.id = "start-button";
+            startBtn.textContent = "はじめる";
+            startBtn.addEventListener("click", showModal);
+            document.querySelector(".buttons").prepend(startBtn);
+          }
 
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
+          setupModalHandlers();
+        };
+
+        document.addEventListener("keydown", (e) => {
+          const select = document.getElementById("select-sound");
+          const modal = document.getElementById("modal-overlay");
           if (!modal.classList.contains("hidden")) {
-            okButton.click();
+            if (e.key === "Enter") {
+              document.getElementById("modal-ok").click();
+            }
             return;
           }
 
-          const startButton = document.getElementById("start-button");
-          if (startButton) {
-            startButton.click();
+          if (e.key === "ArrowRight" && currentPage < maxPage) {
+            currentPage++;
+            select.currentTime = 0;
+            select.play().catch(() => { });
+            updateUI();
+          } else if (e.key === "ArrowLeft" && currentPage > 1) {
+            currentPage--;
+            select.currentTime = 0;
+            select.play().catch(() => { });
+            updateUI();
+          } else if (e.key === "Enter") {
+            document.getElementById("start-button")?.click();
           }
-        }
+        });
 
-        if (!modal.classList.contains("hidden")) return;
-
-        if (e.key === "ArrowLeft") {
-          <?php if ($prevPage): ?>
-            window.location.href = "/controller/StorySelectController.php?page=<?= $prevPage ?>";
-            audioSelect.currentTime = 0;
-            audioSelect.play().catch(() => { });
-          <?php endif; ?>
-        } else if (e.key === "ArrowRight") {
-          <?php if ($nextPage): ?>
-            window.location.href = "/controller/StorySelectController.php?page=<?= $nextPage ?>";
-            audioSelect.currentTime = 0;
-            audioSelect.play().catch(() => { });
-          <?php endif; ?>
-        }
+        updateUI();
       });
-
     </script>
+
 </body>
 
 </html>
