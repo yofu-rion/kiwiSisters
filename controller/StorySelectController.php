@@ -27,7 +27,6 @@ if ($page < 1 || $page > 4) {
 
 $isFinalChapter = $page === 4;
 
-// データベース接続してprogressを確認
 try {
     $pdo = new PDO(
         'mysql:host=127.0.0.1;dbname=kiwi_datas;charset=utf8',
