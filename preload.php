@@ -7,7 +7,7 @@ function listFiles($dir, $exts = []) {
     if (is_file($path)) {
       $ext = pathinfo($file, PATHINFO_EXTENSION);
       if (empty($exts) || in_array(strtolower($ext), $exts)) {
-        $files[] = $path;
+        $files[] = '/' . ltrim($path, '/');
       }
     } elseif (is_dir($path)) {
       $files = array_merge($files, listFiles($path, $exts));
