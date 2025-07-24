@@ -12,8 +12,6 @@ $bgm = isset($_POST['bgm']) ? $_POST['bgm'] : '';
 
 $_SESSION['nextPageAfterUpload'] = $page;
 $_SESSION['chapterAfterUpload'] = $chapter;
-// BGM を使う場合はここで bgm も保存してよい
-// $_SESSION['bgmAfterUpload'] = $bgm;
 
 header("Location: /controller/story/StoryPlayController{$chapter}.php");
 exit;
