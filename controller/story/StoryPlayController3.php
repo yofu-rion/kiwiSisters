@@ -38,6 +38,9 @@ if (isset($_SESSION['chapterAfterUpload'])) {
 </head>
 
 <body>
+  <div id="loading" class="loading">
+    ロード中です... <span id="progress">0%</span>
+  </div>
   <iframe id="bgm-frame" src="/controller/story/bgm.html" allow="autoplay" style="display:none;"></iframe>
 
   <div class="full">
@@ -390,6 +393,59 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     document.getElementById("nextButton").onclick = handleNext;
 
     window.addEventListener("DOMContentLoaded", async () => {
+      const loadingText = document.getElementById('loading');
+      const progressText = document.getElementById('progress');
+
+      function preloadAssets() {
+        return fetch('/preload.php')
+          .then(res => res.json())
+          .then(data => {
+            const total = data.images.length + data.sounds.length + data.scenarios.length;
+            let loaded = 0;
+
+            const updateProgress = () => {
+              const percent = Math.floor((loaded / total) * 100);
+              progressText.textContent = `${percent}%`;
+            };
+
+            const checkDone = () => {
+              loaded++;
+              updateProgress();
+              if (loaded >= total) {
+                loadingText.style.display = 'none';
+              }
+            };
+
+            data.images.forEach(path => {
+              const img = new Image();
+              img.onload = checkDone;
+              img.onerror = checkDone;
+              img.src = path;
+            });
+
+            data.sounds.forEach(path => {
+              const audio = new Audio();
+              audio.oncanplaythrough = checkDone;
+              audio.onerror = checkDone;
+              audio.src = path;
+              audio.preload = 'auto';
+            });
+
+            data.scenarios.forEach(path => {
+              fetch(path).then(() => checkDone()).catch(() => checkDone());
+            });
+
+            return new Promise(resolve => {
+              const interval = setInterval(() => {
+                if (loaded >= total) {
+                  clearInterval(interval);
+                  resolve();
+                }
+              }, 100);
+            });
+          });
+      }
+
       sessionStorage.removeItem("bgmPlayFailed");
       console.log("DOMContentLoaded START");
 
@@ -417,6 +473,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         sessionStorage.setItem("currentPage", "2");
       }
 
+      await preloadAssets();
       currentPage = initialPage;
       await loadPage(currentPage);
 
