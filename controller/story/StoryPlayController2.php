@@ -548,16 +548,19 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     }
 
     let lastEnterTime = 0;
-    const enterDelay = 200;
+    const enterDelay = 500;
+    let enterPressed = false;
 
     document.addEventListener("keydown", e => {
       if (e.key === "Enter") {
-        const now = Date.now();
-        if (now - lastEnterTime < enterDelay) {
-          console.log("⏸️ Enter key ignored due to delay");
-          return;
-        }
-        lastEnterTime = now;
+        if (enterPressed) return; // 長押しで連続発火するのを防ぐ
+        enterPressed = true;
+      }
+    });
+
+    document.addEventListener("keyup", e => {
+      if (e.key === "Enter") {
+        enterPressed = false;
 
         if (currentData && currentData.next_state == 2) {
           console.log("🔒 Enter 無効化: next_state == 2");
@@ -569,6 +572,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
         }
       }
     });
+
   </script>
 
 </body>
