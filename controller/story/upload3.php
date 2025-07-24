@@ -11,7 +11,6 @@ if (!isset($_SESSION['login'])) {
     exit;
 }
 
-// ログイン中のユーザー名を取得
 $username = $_SESSION['login']['name'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
@@ -34,8 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     $code = preg_replace('/\s*\?>\s*$/', '', $code);
 
     try {
-        eval ($code);
+        ob_start(); // 出力をバッファリング開始
+        eval($code);
+        ob_end_clean(); // 出力を破棄
     } catch (Throwable $e) {
+        ob_end_clean(); // バッファ中でも確実に破棄
         error_log("🔥 Eval error: " . $e->getMessage());
         echo "Eval error: " . $e->getMessage();
         exit;
@@ -48,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
         $nextPage = $correctjumpTarget;
         $_SESSION['cleared_program_3'] = true;
 
-        // データベース接続してprogressを更新
         try {
             $pdo = new PDO(
                 'mysql:host=127.0.0.1;dbname=kiwi_datas;charset=utf8',
@@ -56,12 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
                 'password'
             );
 
-            // 現在のprogressを取得
             $selectSql = $pdo->prepare('SELECT progress FROM login WHERE name = ?');
             $selectSql->execute([$username]);
             $currentProgress = $selectSql->fetchColumn();
 
-            // progressが5の倍数でなければ5を掛ける
             if ($currentProgress % 5 !== 0) {
                 $newProgress = $currentProgress * 5;
                 $updateSql = $pdo->prepare('UPDATE login SET progress = ? WHERE name = ?');
@@ -71,11 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
         } catch (PDOException $e) {
             error_log('Progress更新エラー: ' . $e->getMessage());
         }
+
     } else {
         error_log("❌ 判定: 不正解と判断。次のページ = $incorrectjumpTarget");
         $nextPage = $incorrectjumpTarget;
     }
-
 
     $_SESSION['nextPageAfterUpload'] = $nextPage;
     $_SESSION['chapterAfterUpload'] = $chapter;
