@@ -64,6 +64,7 @@ if (isset($_SESSION['chapterAfterUpload'])) {
     let currentPage = parseInt(sessionStorage.getItem("currentPage") || "2");
     const charImageMap = {
       '白鷺_通常': '/kiwiSisters/img/shirasagi_standard.png',
+      '白鷺_和ロリ': '/kiwiSisters/img/shirasagikyun.png',
       '白鷺_恐怖': '/kiwiSisters/img/shirasagi_scared.png',
       '白鷺_笑顔': '/kiwiSisters/img/shirasagi_smile.png',
       '白鷺_驚き': '/kiwiSisters/img/shirasagi_surprise.png',
