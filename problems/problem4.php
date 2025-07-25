@@ -5,7 +5,7 @@ $correctOrder = ["enaga"];
 $isRecovered = ($memoryFragments === $correctOrder);
 
 if (？？？？) {
-    "Memory recovered.";
+    echo "忘れていた記憶";
 } else {
     echo "Memory remains fragmented...";
 }

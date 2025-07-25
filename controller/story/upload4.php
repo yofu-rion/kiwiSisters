@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     }
     $output = ob_get_clean();
 
-    if ($evalSucceeded && strpos($output, "Memory recovered.") !== false) {
+    if ($evalSucceeded && strpos($output, "忘れていた記憶") !== false) {
         $nextPage = $correctjumpTarget;
         $_SESSION['cleared_program_4'] = true;
         $_SESSION['failure_count_4'] = 0;
