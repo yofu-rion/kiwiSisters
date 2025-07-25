@@ -40,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploaded_file'])) {
     } else {
         $_SESSION['failure_count_4'] += 1;
 
-        if ($_SESSION['failure_count_4'] >= 5) {
+        if ($_SESSION['failure_count_4'] >= 4) {
             $nextPage = 320; // BadEnd
-            error_log("💀 5回失敗: BadEnd に遷移");
+            error_log("💀 4回失敗: BadEnd に遷移");
         } else {
             $nextPage = $incorrectjumpTarget;
             error_log("❌ 失敗: 回数 = {$_SESSION['failure_count_4']} → 次ページ = $incorrectjumpTarget");
